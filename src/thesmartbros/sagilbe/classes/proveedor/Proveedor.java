@@ -11,18 +11,22 @@ public class Proveedor {
 
 	private int consumoTotal;
 
-	
-	//cálculo del precio
+	// cálculo del precio
 	private void calcular_precio(int consumo) {
 
 	}
 
-	
-	//para enviar al técnico
+	// para enviar al técnico
 	private void enviar_tecnico() {
 
 	}
-	
-	
+
+	private void actualizar_estado_zona() {
+
+	}
+
+	private void get_calle() {
+
+	}
 
 }
