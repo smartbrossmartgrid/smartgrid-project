@@ -19,10 +19,16 @@ public class Proveedor {
 	// para enviar al técnico
 	private void enviar_tecnico() {
 
+		System.out.println("Enviando técnico");
+		
 	}
 
-	private void actualizar_estado_zona() {
-
+	
+	//establece el estado que le entras como String a la zona que le pases como parametro
+	private void actualizar_estado_zona(int num_zona, String estado) {
+		
+		this.miszonas.get(num_zona).setEstado(estado);
+		
 	}
 
 	private void get_calle() {

@@ -30,6 +30,9 @@ public class Zona {
 	//lista de users
 	private int[] lista_usuarios =new int[max_users];
 	
+	//describe el estado de la zona
+	private String estado;
+	
 	
 	
 	//Getters y Setters
@@ -74,6 +77,12 @@ public class Zona {
 	}
 	public void setAverias_sol(int averias_sol) {
 		this.averias_sol = averias_sol;
+	}
+	public String getEstado() {
+		return estado;
+	}
+	public void setEstado(String estado) {
+		this.estado = estado;
 	}
 	
 	
