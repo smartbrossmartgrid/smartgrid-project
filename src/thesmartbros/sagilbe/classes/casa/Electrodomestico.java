@@ -8,6 +8,20 @@ public class Electrodomestico {
 	private int coste_energetico;
 	private boolean estado;
 
+	private boolean forzar_apagado=false;
+	private boolean forzar_encendido=false;
+	
+	//variable que defino yo mismo para decir cuantos tiempos tendremos cómo máximo
+	private int max=15;
+	
+	//matriz que nos indica los tiempos en que el electrodomestico se encuentra encendido
+	//hora de inicio y hora de final
+	private int [][] tiempos = new int[2][max]; 
+
+	
+	
+	
+	
 	public long getTiempo_uso() {
 		return tiempo_uso;
 	}
@@ -46,6 +60,34 @@ public class Electrodomestico {
 
 	public void setEstado(boolean estado) {
 		this.estado = estado;
+	}
+
+	/**
+	 * @return the forzar_apagado
+	 */
+	public boolean isForzar_apagado() {
+		return forzar_apagado;
+	}
+
+	/**
+	 * @param forzar_apagado the forzar_apagado to set
+	 */
+	public void setForzar_apagado(boolean forzar_apagado) {
+		this.forzar_apagado = forzar_apagado;
+	}
+
+	/**
+	 * @return the forzar_encendido
+	 */
+	public boolean isForzar_encendido() {
+		return forzar_encendido;
+	}
+
+	/**
+	 * @param forzar_encendido the forzar_encendido to set
+	 */
+	public void setForzar_encendido(boolean forzar_encendido) {
+		this.forzar_encendido = forzar_encendido;
 	}
 
 }
