@@ -1,12 +1,50 @@
 package thesmartbros.sagilbe.classes.casa;
 
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.math.BigInteger;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+import thesmartbros.sagilbe.tools.Paillier;
+
 public class Contador {
 
 	private float precio_acumulado;
 	private float precio_actual;
-	private int energia_consumida;
+	private int energiaConsumidaMensual = 0;
+	private int contadorId = 0;
+
+	/* map */
 	private float latitud;
 	private float longitud;
+
+	private ElectrodomesticoResource casa = new ElectrodomesticoResource();
+
+	public void enviarConsumoInstantaneo() {
+		int consumoInstantaneo = casa.getConsumoTotal();
+		this.energiaConsumidaMensual += consumoInstantaneo;
+		BigInteger consumoInstantaneoPaillier = Paillier.getInstance()
+				.Encryption(BigInteger.valueOf(consumoInstantaneo));
+		String jsonMessage = "{ \"consum\": "
+				+ consumoInstantaneoPaillier.toString() + ", \"contadorId\":"
+				+ contadorId + "}";
+		Socket socket = null;
+		OutputStream outstream = null;
+		PrintWriter out = null;
+		try {
+			socket = new Socket("127.0.0.1", 80000 + contadorId);
+			outstream = socket.getOutputStream();
+			out = new PrintWriter(outstream);
+			out.print(jsonMessage);
+		} catch (UnknownHostException e) {
+			System.err.print(e);
+		} finally {
+			out.close();
+			outstream.close();
+			socket.close();
+		}
+	}
 
 	public float getPrecio_acumulado() {
 		return precio_acumulado;
@@ -24,12 +62,12 @@ public class Contador {
 		this.precio_actual = precio_actual;
 	}
 
-	public int getEnergia_consumida() {
-		return energia_consumida;
+	public int getEnergiaConsumidaMensual() {
+		return energiaConsumidaMensual;
 	}
 
-	public void setEnergia_consumida(int energia_consumida) {
-		this.energia_consumida = energia_consumida;
+	public void setEnergiaConsumidaMensual(int energiaConsumidaMensual) {
+		this.energiaConsumidaMensual = energiaConsumidaMensual;
 	}
 
 	public float getLatitud() {

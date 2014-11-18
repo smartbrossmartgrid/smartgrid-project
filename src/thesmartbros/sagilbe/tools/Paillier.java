@@ -31,7 +31,7 @@ import java.util.*;
  * @author Kun Liu (kunliu1@cs.umbc.edu)
  * @version 1.0
  */
-public class Paillier {
+public final class Paillier {
 
     /**
      * p and q are two large primes. 
@@ -67,7 +67,22 @@ public class Paillier {
     /**
      * Constructs an instance of the Paillier cryptosystem with 512 bits of modulus and at least 1-2^(-64) certainty of primes generation.
      */
-    public Paillier() {
+    
+    private static Paillier INSTANCE = null;
+
+    private synchronized static void createInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new Paillier();
+        }
+    }
+
+    public static Paillier getInstance() {
+        if (INSTANCE == null) createInstance();
+        return INSTANCE;
+    }
+
+    
+    private Paillier() {
         KeyGeneration(512, 64);
     }
 

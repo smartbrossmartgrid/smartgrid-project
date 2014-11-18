@@ -10,7 +10,7 @@ public class ProgramaPrincipal {
 		System.out.println("Prueba Eric");
 		
 		// Ejemplo Paillier
-		Paillier p = new Paillier();
+		Paillier p = Paillier.getInstance();
 
 		// casa1
         BigInteger casa1 = new BigInteger("20");
