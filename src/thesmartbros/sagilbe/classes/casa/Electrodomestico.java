@@ -22,7 +22,7 @@ public class Electrodomestico {
 	// matriz que nos indica los tiempos en que el electrodomestico se encuentra
 	// encendido
 	// hora de inicio y hora de final
-	private int[][] tiempos = new int[2][max];
+	public int[][] tiempos = new int[2][max];
 
 	//el consumo fijo del electrodoméstico
 	private int consumo;
@@ -101,5 +101,13 @@ public class Electrodomestico {
 	public void setConsumo(int consumo) {
 		this.consumo = consumo;
 	}
+
+	/**
+	 * @return the tiempos
+	 */
+	public int[][] getTiempos() {
+		return tiempos;
+	}
+
 
 }
