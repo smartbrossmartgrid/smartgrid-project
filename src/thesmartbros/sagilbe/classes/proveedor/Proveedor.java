@@ -15,7 +15,10 @@ public class Proveedor {
 	// cálculo del precio
 	private void calcular_precio(int consumo, int precio) {
 
-		
+
+		System.out.println("consumo:"+consumo);
+
+		System.out.println("precio:"+precio);
 		
 	}
 
