@@ -78,6 +78,7 @@ public class Electrodomestico {
 
 	}
 
+	// //////// GETTERS Y SETTERS ////////////////
 	public String getNombre() {
 		return nombre;
 	}
