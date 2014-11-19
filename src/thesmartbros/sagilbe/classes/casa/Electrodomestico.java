@@ -2,8 +2,6 @@ package thesmartbros.sagilbe.classes.casa;
 
 public class Electrodomestico {
 
-
-
 	// nombre del electrodoméstico
 	private String nombre;
 
@@ -24,8 +22,42 @@ public class Electrodomestico {
 	// hora de inicio y hora de final
 	public int[][] tiempos = new int[2][max];
 
-	//el consumo fijo del electrodoméstico
+	// el consumo fijo del electrodoméstico
 	private int consumo;
+
+	// para obtener el consumo actual
+	public int getConsumoActual(int hora_actual) {
+
+		
+		
+		//si está apagado devuelvo consumo 0
+		if(this.forzar_apagado==true)
+		{
+			return 0;
+		}
+		
+		//si está encendido devuelvo el consumo sin mirar la hora
+		else if(this.forzar_encendido==true){
+			return consumo;
+		}
+		
+		// devuelve el valor entero del consumo
+		return consumo;
+
+	}
+
+	// forzar el apagado de un electrodoméstico
+	public boolean forzarapagar() {
+
+		this.forzar_apagado = true;
+		return forzar_apagado;
+	}
+
+	// forzar el encendido de un electrodoméstico
+	public boolean forzarencender() {
+		this.forzar_encendido = true;
+		return forzar_encendido;
+	}
 
 	public String getNombre() {
 		return nombre;
@@ -96,7 +128,8 @@ public class Electrodomestico {
 	}
 
 	/**
-	 * @param consumo the consumo to set
+	 * @param consumo
+	 *            the consumo to set
 	 */
 	public void setConsumo(int consumo) {
 		this.consumo = consumo;
@@ -108,6 +141,5 @@ public class Electrodomestico {
 	public int[][] getTiempos() {
 		return tiempos;
 	}
-
 
 }

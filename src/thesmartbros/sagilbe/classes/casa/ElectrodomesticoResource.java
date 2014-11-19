@@ -85,6 +85,12 @@ public class ElectrodomesticoResource {
 
 		electrodomesticos.add(elec);
 
+		
+		
+		
 	}
+	
+
+	
 
 }
