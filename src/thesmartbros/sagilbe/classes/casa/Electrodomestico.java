@@ -28,35 +28,54 @@ public class Electrodomestico {
 	// para obtener el consumo actual
 	public int getConsumoActual(int hora_actual) {
 
-		
-		
-		//si está apagado devuelvo consumo 0
-		if(this.forzar_apagado==true)
-		{
+		// if(10<x && x<20)
+
+		int i = 0;
+		// mientras el contador sea menor al número máximo de entradas de horas
+		while (i < max) {
+
+			// si la hora actual se encuetra entre los dos valores de hora
+			// inicial y final
+			if (this.tiempos[0][i] <= hora_actual
+					&& hora_actual >= this.tiempos[1][i]) {
+
+				// devuelves el consumo
+				return consumo;
+			}
+			i++;
+		}
+
+		// si está apagado devuelvo consumo 0
+		if (this.forzar_apagado == true) {
 			return 0;
 		}
-		
-		//si está encendido devuelvo el consumo sin mirar la hora
-		else if(this.forzar_encendido==true){
+
+		// si está encendido devuelvo el consumo sin mirar la hora
+		else if (this.forzar_encendido == true) {
 			return consumo;
 		}
-		
-		// devuelve el valor entero del consumo
-		return consumo;
 
+		// devuelve el valor entero del consumo
+		return 0;
 	}
 
 	// forzar el apagado de un electrodoméstico
 	public boolean forzarapagar() {
 
 		this.forzar_apagado = true;
+
+		System.out.println("Apagando electrodoméstico");
 		return forzar_apagado;
+
 	}
 
 	// forzar el encendido de un electrodoméstico
 	public boolean forzarencender() {
 		this.forzar_encendido = true;
+
+		System.out.println("Electrodoméstico encendido");
 		return forzar_encendido;
+
 	}
 
 	public String getNombre() {
