@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ElectrodomesticoResource {
 
-	public List<Electrodomestico> electrodomesticos;
+	public static List<Electrodomestico> electrodomesticos;
 
 	// Electrodomestico electrodomestico = new Electrodomestico();
 
@@ -23,18 +23,19 @@ public class ElectrodomesticoResource {
 		elec.setEstado("encendido");
 		elec.setForzar_apagado(false);
 		elec.setForzar_encendido(false);
-		
-		//por ejemplo que esté abierto de 8 a 10h de la mañana 
-		// y de 12 a 14h de la mañana también
-		elec.tiempos[0][0]=8;
-		elec.tiempos[1][0]=10;
 
-		elec.tiempos[0][1]=12;
-		elec.tiempos[1][1]=14;
-		
-		
-	//	elec.tiempos =  {{16,18}, {8,12}}, {9,5}};
-		//elec.setTiempos();
+		// por ejemplo que esté abierto de 8 a 10h de la mañana
+		// y de 12 a 14h de la mañana también
+		elec.tiempos[0][0] = 8;
+		elec.tiempos[1][0] = 10;
+
+		elec.tiempos[0][1] = 12;
+		elec.tiempos[1][1] = 14;
+
+		// elec.tiempos = {{16,18}, {8,12}}, {9,5}};
+		// elec.setTiempos();
+
+
 		electrodomesticos.add(elec);
 
 		elec.setNombre("Microondas");
@@ -43,14 +44,12 @@ public class ElectrodomesticoResource {
 		elec.setForzar_apagado(false);
 		elec.setForzar_encendido(false);
 
-		
-		
-		elec.tiempos[0][0]=8;
-		elec.tiempos[1][0]=10;
-		
-		elec.tiempos[0][1]=12;
-		elec.tiempos[1][1]=18;
-		
+		elec.tiempos[0][0] = 8;
+		elec.tiempos[1][0] = 10;
+
+		elec.tiempos[0][1] = 12;
+		elec.tiempos[1][1] = 18;
+
 		electrodomesticos.add(elec);
 
 		elec.setNombre("PC");
@@ -58,14 +57,12 @@ public class ElectrodomesticoResource {
 		elec.setEstado("encendido");
 		elec.setForzar_apagado(false);
 		elec.setForzar_encendido(false);
-		
-		
-		elec.tiempos[0][0]=8;
-		elec.tiempos[1][0]=10;
-		
-		elec.tiempos[0][1]=12;
-		elec.tiempos[1][1]=24;
-		
+
+		elec.tiempos[0][0] = 8;
+		elec.tiempos[1][0] = 10;
+
+		elec.tiempos[0][1] = 12;
+		elec.tiempos[1][1] = 24;
 
 		electrodomesticos.add(elec);
 
@@ -74,23 +71,33 @@ public class ElectrodomesticoResource {
 		elec.setEstado("encendido");
 		elec.setForzar_apagado(false);
 		elec.setForzar_encendido(false);
-		
-		
-		elec.tiempos[0][0]=10;
-		elec.tiempos[1][0]=11;
-		
-		elec.tiempos[0][1]=12;
-		elec.tiempos[1][1]=14;
-		
+
+		elec.tiempos[0][0] = 10;
+		elec.tiempos[1][0] = 11;
+
+		elec.tiempos[0][1] = 12;
+		elec.tiempos[1][1] = 14;
 
 		electrodomesticos.add(elec);
 
-		
-		
-		
 	}
 	
+	public static void main(){
+		
+		
 
-	
+		System.out.println("Nombre:" + electrodomesticos.get(1).getNombre());
+		System.out.println("Consumo" + electrodomesticos.get(1).getConsumo());
+		System.out.println("Estado:" + electrodomesticos.get(1).getEstado());
+		System.out.println("Tiempos:");
+		
+		int i = 0;
+		while (i < electrodomesticos.get(1).max) {
+			System.out.print("hora inicio:"+electrodomesticos.get(1).tiempos[0][i]);
+			System.out.print("hora final:"+electrodomesticos.get(1).tiempos[1][i]);
+			i++;
+		}
+		
+	}
 
 }

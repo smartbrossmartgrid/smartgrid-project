@@ -15,7 +15,7 @@ public class Electrodomestico {
 
 	// variable que defino yo mismo para decir cuantos tiempos tendremos cómo
 	// máximo
-	private int max = 15;
+	public int max = 5;
 
 	// matriz que nos indica los tiempos en que el electrodomestico se encuentra
 	// encendido
