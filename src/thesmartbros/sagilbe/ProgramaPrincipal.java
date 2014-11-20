@@ -1,5 +1,8 @@
 package thesmartbros.sagilbe;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,10 +12,13 @@ import thesmartbros.sagilbe.tools.Paillier;
 
 public class ProgramaPrincipal {
 
-	public static void main(String args[]) {
+	public static void main(String args[]) throws NumberFormatException, IOException {
 
 		List<Electrodomestico> electrodomesticos = new ArrayList<Electrodomestico>();
-
+		InputStreamReader isr = new InputStreamReader(System.in);
+		BufferedReader br = new BufferedReader (isr);
+		
+		
 		// defino una serie de electrodomesticos
 		Electrodomestico elec = new Electrodomestico();
 		elec.setNombre("Tele");
@@ -29,7 +35,7 @@ public class ProgramaPrincipal {
 		elec.tiempos[0][1] = 12;
 		elec.tiempos[1][1] = 14;
 
-		electrodomesticos.add(elec);
+		electrodomesticos.add(0,elec);
 
 		elec.setNombre("Microondas");
 		elec.setConsumo(200);
@@ -43,7 +49,7 @@ public class ProgramaPrincipal {
 		elec.tiempos[0][1] = 12;
 		elec.tiempos[1][1] = 18;
 
-		electrodomesticos.add(elec);
+		electrodomesticos.add(1,elec);
 
 		elec.setNombre("PC");
 		elec.setConsumo(50);
@@ -135,5 +141,14 @@ public class ProgramaPrincipal {
 					+ electrodomesticos.get(1).tiempos[1][k] + "h");
 			k++;
 		}
+		
+
+		System.out.println("Introduce número de electrodoméstico:");
+		int elec_num = Integer.parseInt (br.readLine());
+		System.out.println("Nombre:" + electrodomesticos.get(elec_num).getNombre());
+		
+		System.out.println("Introduce una hora:");
+		int hora = Integer.parseInt (br.readLine());
+		System.out.println("Consumo Actual a esa hora:" + electrodomesticos.get(elec_num).getConsumoActual(hora));
 	}
 }

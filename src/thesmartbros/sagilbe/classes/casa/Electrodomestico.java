@@ -28,8 +28,6 @@ public class Electrodomestico {
 	// para obtener el consumo actual
 	public int getConsumoActual(int hora_actual) {
 
-		// if(10<x && x<20)
-
 		int i = 0;
 		// mientras el contador sea menor al número máximo de entradas de horas
 		while (i < max) {
