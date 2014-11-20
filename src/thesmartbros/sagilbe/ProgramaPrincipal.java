@@ -37,6 +37,8 @@ public class ProgramaPrincipal {
 
 		electrodomesticos.add(0,elec);
 
+		
+		elec = new Electrodomestico();
 		elec.setNombre("Microondas");
 		elec.setConsumo(200);
 		elec.setEstado("encendido");
@@ -51,6 +53,7 @@ public class ProgramaPrincipal {
 
 		electrodomesticos.add(1,elec);
 
+		elec = new Electrodomestico();
 		elec.setNombre("PC");
 		elec.setConsumo(50);
 		elec.setEstado("encendido");
@@ -65,6 +68,7 @@ public class ProgramaPrincipal {
 
 		electrodomesticos.add(elec);
 
+		elec = new Electrodomestico();
 		elec.setNombre("Luces");
 		elec.setConsumo(200);
 		elec.setEstado("encendido");
