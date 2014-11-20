@@ -117,7 +117,7 @@ public class ProgramaPrincipal {
 
 		// System.out.println(""+electrodomesticos.get(0).getNombre());
 
-		System.out.println("Electrodoméstico 1:");
+		System.out.println("Electrodoméstico 0:");
 		System.out.println("Nombre:" + electrodomesticos.get(0).getNombre());
 		System.out.println("Consumo" + electrodomesticos.get(0).getConsumo());
 		System.out.println("Estado:" + electrodomesticos.get(0).getEstado());
@@ -131,7 +131,7 @@ public class ProgramaPrincipal {
 					+ electrodomesticos.get(0).tiempos[1][i] + "h");
 			i++;
 		}
-		System.out.println("Electrodoméstico 2:");
+		System.out.println("Electrodoméstico 1:");
 		System.out.println("Nombre:" + electrodomesticos.get(1).getNombre());
 		System.out.println("Consumo" + electrodomesticos.get(1).getConsumo());
 		System.out.println("Estado:" + electrodomesticos.get(1).getEstado());
