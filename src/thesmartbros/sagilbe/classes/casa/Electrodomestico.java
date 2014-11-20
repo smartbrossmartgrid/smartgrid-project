@@ -15,7 +15,11 @@ public class Electrodomestico {
 
 	// variable que defino yo mismo para decir cuantos tiempos tendremos cómo
 	// máximo
-	public int max = 5;
+	
+	
+	
+	//he definido un máximo de dos intervalos de horas en que el electrodoméstico está encendido, para poder calcular bien el consumo
+	public int max = 2;
 
 	// matriz que nos indica los tiempos en que el electrodomestico se encuentra
 	// encendido
@@ -32,15 +36,17 @@ public class Electrodomestico {
 		// mientras el contador sea menor al número máximo de entradas de horas
 		while (i < max) {
 
+			System.out.println("hora inicial:" + this.tiempos[0][i]);
+
+			System.out.println("hora final:" + this.tiempos[1][i]);
+
 			// si la hora actual se encuetra entre los dos valores de hora
 			// inicial y final
-			if (this.tiempos[0][i] <= hora_actual
-					&& hora_actual >= this.tiempos[1][i]) {
-
+			if ((this.tiempos[0][i] >= hora_actual)&& (hora_actual <= this.tiempos[1][i])) {
 				// devuelves el consumo
 				return consumo;
-			}
-			i++;
+			} else
+				i++;
 		}
 
 		// si está apagado devuelvo consumo 0
