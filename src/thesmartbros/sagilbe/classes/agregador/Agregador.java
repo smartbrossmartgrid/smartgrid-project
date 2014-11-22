@@ -37,7 +37,7 @@ public class Agregador {
 	DataOutputStream salida2;
 
 	String mensajeRecibido2;
-	final int PUERTO3 = 80003;
+	final int PUERTO3 = 80002;
 
 	ServerSocket sc3;
 
