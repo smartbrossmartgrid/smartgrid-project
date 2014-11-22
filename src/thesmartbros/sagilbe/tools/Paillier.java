@@ -82,7 +82,7 @@ public final class Paillier {
     }
 
     
-    private Paillier() {
+    public Paillier() {
         KeyGeneration(512, 64);
     }
 
