@@ -163,5 +163,7 @@ public class Electrodomestico {
 	public int[][] getTiempos() {
 		return tiempos;
 	}
+	
+	
 
 }

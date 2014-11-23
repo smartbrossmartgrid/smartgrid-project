@@ -27,13 +27,14 @@ public class Contador {
 	private int time = 0; /* from 0 to 23 */
 	private final int _THREAD_TIME_INTERVAL = 5000; /* ms */
 
-	private ElectrodomesticoResource casa = new ElectrodomesticoResource();
+	private ElectrodomesticoResource casa;
 
 	public Contador(int contadorId, int zonaId) {
 		this.contadorId = contadorId;
 		this.zonaId = zonaId;
+		this.casa = new ElectrodomesticoResource();
 	}
-	
+
 	public void work() {
 		Timer timer = new Timer();
 		timer.schedule(new TimerTask() {
@@ -48,12 +49,8 @@ public class Contador {
 	public void enviarConsumoInstantaneo(int time) {
 		int consumoInstantaneo = casa.getConsumoTotal(time);
 		this.energiaConsumidaMensual += consumoInstantaneo;
-		BigInteger consumoInstantaneoPaillier = Paillier.getInstance()
-				.Encryption(BigInteger.valueOf(consumoInstantaneo));
-		String jsonMessage = "{ \"consum\": "
-				+ consumoInstantaneoPaillier.toString() + ", \"contadorId\":"
-				+ this.contadorId + ", \"zonaId\":"
-				+ this.zonaId + "}";
+		BigInteger consumoInstantaneoPaillier = Paillier.getInstance().Encryption(BigInteger.valueOf(consumoInstantaneo));
+		String jsonMessage = "{ \"consum\": " + consumoInstantaneoPaillier.toString() + ", \"contadorId\":" + this.contadorId + ", \"zonaId\":" + this.zonaId + "}";
 		Socket socket = null;
 		OutputStream outstream = null;
 		PrintWriter out = null;
@@ -62,25 +59,27 @@ public class Contador {
 			outstream = socket.getOutputStream();
 			out = new PrintWriter(outstream);
 			out.print(jsonMessage);
-			System.out.println("[Contador="+this.contadorId+" at zoneid="+this.zonaId+" sends data]");
+			System.out.println("[Contador=" + this.contadorId + " at zoneid=" + this.zonaId + " sends data; time="+this.time+"]");
 		} catch (UnknownHostException e) {
 			System.err.print(e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.print(e);
 		} finally {
 			try {
 				out.close();
 				outstream.close();
 				socket.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.err.print(e);
 			} catch (Exception e) {
-				e.printStackTrace();
+				System.err.print(e);
 			}
 		}
 	}
 
+	public String toString() {
+		return casa.toString();
+	}
 	
 	/* POJO */
 	public float getPrecio_acumulado() {

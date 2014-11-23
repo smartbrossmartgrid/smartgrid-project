@@ -12,7 +12,7 @@ import org.json.JSONObject;
 
 import thesmartbros.sagilbe.tools.JSONParser;
 
-public class Agregador {
+public class Agregador extends Thread {
 
 	BigInteger[] Consumos;
 
@@ -28,7 +28,7 @@ public class Agregador {
 
 	String mensajeRecibido1;
 
-	final int PUERTO2 = 80001;
+	final int PUERTO2 = 40001;
 
 	ServerSocket sc2;
 
@@ -37,7 +37,7 @@ public class Agregador {
 	DataOutputStream salida2;
 
 	String mensajeRecibido2;
-	final int PUERTO3 = 80002;
+	final int PUERTO3 = 40002;
 
 	ServerSocket sc3;
 
@@ -46,6 +46,11 @@ public class Agregador {
 	DataOutputStream salida3;
 
 	String mensajeRecibido3;
+
+	@Override
+	public void run() {
+		initServer1();
+	}
 
 	// SERVIDOR1
 
@@ -78,8 +83,7 @@ public class Agregador {
 
 			// Canales de entrada y salida de datos
 
-			entrada = new BufferedReader(new InputStreamReader(
-					so1.getInputStream()));
+			entrada = new BufferedReader(new InputStreamReader(so1.getInputStream()));
 
 			salida1 = new DataOutputStream(so1.getOutputStream());
 
@@ -89,8 +93,7 @@ public class Agregador {
 
 			// Recepcion de mensaje
 
-			String result = (new JSONParser()).getJSONFromUrl(entrada
-					.readLine());
+			String result = (new JSONParser()).getJSONFromUrl(entrada.readLine());
 
 			MultiplicarConsumos(idconex, result);
 
@@ -137,8 +140,7 @@ public class Agregador {
 
 			// Canales de entrada y salida de datos
 
-			entrada = new BufferedReader(new InputStreamReader(
-					so2.getInputStream()));
+			entrada = new BufferedReader(new InputStreamReader(so2.getInputStream()));
 
 			salida2 = new DataOutputStream(so2.getOutputStream());
 
@@ -148,8 +150,7 @@ public class Agregador {
 
 			// Recepcion de mensaje
 
-			String result = (new JSONParser()).getJSONFromUrl(entrada
-					.readLine());
+			String result = (new JSONParser()).getJSONFromUrl(entrada.readLine());
 
 			MultiplicarConsumos(idconex, result);
 
@@ -196,8 +197,7 @@ public class Agregador {
 
 			// Canales de entrada y salida de datos
 
-			entrada = new BufferedReader(new InputStreamReader(
-					so3.getInputStream()));
+			entrada = new BufferedReader(new InputStreamReader(so3.getInputStream()));
 
 			salida3 = new DataOutputStream(so3.getOutputStream());
 
@@ -207,8 +207,7 @@ public class Agregador {
 
 			// Recepcion de mensaje
 
-			String result = (new JSONParser()).getJSONFromUrl(entrada
-					.readLine());
+			String result = (new JSONParser()).getJSONFromUrl(entrada.readLine());
 
 			MultiplicarConsumos(idconex, result);
 
@@ -228,8 +227,7 @@ public class Agregador {
 		BigInteger consum_enc = null;
 
 		try {
-			JSONArray resultsArray = (new JSONObject(result))
-					.getJSONArray("results");
+			JSONArray resultsArray = (new JSONObject(result)).getJSONArray("results");
 			JSONObject results = resultsArray.getJSONObject(0);
 			JSONArray myResults = results.getJSONArray("address_components");
 			String consum = myResults.getJSONObject(1).getString("consum");
@@ -246,10 +244,8 @@ public class Agregador {
 		else if (Consumos[idconex - 1] != null) {
 			Paillier p = new Paillier();
 
-			if (Consumos[0] != null && Consumos[1] != null
-					&& Consumos[2] != null) {
-				BigInteger agregadorResult = p.AgreggatorFunction(p.nsquare,
-						Consumos[0], Consumos[1], Consumos[2]);
+			if (Consumos[0] != null && Consumos[1] != null && Consumos[2] != null) {
+				BigInteger agregadorResult = p.AgreggatorFunction(p.nsquare, Consumos[0], Consumos[1], Consumos[2]);
 				Consumos[0] = null;
 				Consumos[1] = null;
 				Consumos[2] = null;
@@ -260,47 +256,38 @@ public class Agregador {
 				}
 
 			}
-			if (Consumos[0] != null && Consumos[1] != null
-					&& Consumos[2] == null) {
-				BigInteger agregadorResult = p.AgreggatorFunction(p.nsquare,
-						Consumos[0], Consumos[1]);
+			if (Consumos[0] != null && Consumos[1] != null && Consumos[2] == null) {
+				BigInteger agregadorResult = p.AgreggatorFunction(p.nsquare, Consumos[0], Consumos[1]);
 				Consumos[0] = null;
 				Consumos[1] = null;
 				Consumos[2] = null;
 			}
-			if (Consumos[0] != null && Consumos[1] == null
-					&& Consumos[2] != null) {
-				BigInteger agregadorResult = p.AgreggatorFunction(p.nsquare,
-						Consumos[0], Consumos[2]);
+			if (Consumos[0] != null && Consumos[1] == null && Consumos[2] != null) {
+				BigInteger agregadorResult = p.AgreggatorFunction(p.nsquare, Consumos[0], Consumos[2]);
 				Consumos[0] = null;
 				Consumos[1] = null;
 				Consumos[2] = null;
 			}
 
-			if (Consumos[0] == null && Consumos[1] == null
-					&& Consumos[2] == null) {
-				BigInteger agregadorResult = p.AgreggatorFunction(p.nsquare,
-						Consumos[1], Consumos[2]);
+			if (Consumos[0] == null && Consumos[1] == null && Consumos[2] == null) {
+				BigInteger agregadorResult = p.AgreggatorFunction(p.nsquare, Consumos[1], Consumos[2]);
 				Consumos[0] = null;
 				Consumos[1] = null;
 				Consumos[2] = null;
 			}
-			if (Consumos[0] != null && Consumos[1] == null
-					&& Consumos[2] == null) {
+			if (Consumos[0] != null && Consumos[1] == null && Consumos[2] == null) {
 				BigInteger agregadorResult = Consumos[0];
 				Consumos[0] = null;
 				Consumos[1] = null;
 				Consumos[2] = null;
 			}
-			if (Consumos[0] == null && Consumos[1] != null
-					&& Consumos[2] == null) {
+			if (Consumos[0] == null && Consumos[1] != null && Consumos[2] == null) {
 				BigInteger agregadorResult = Consumos[1];
 				Consumos[0] = null;
 				Consumos[1] = null;
 				Consumos[2] = null;
 			}
-			if (Consumos[0] == null && Consumos[1] == null
-					&& Consumos[2] != null) {
+			if (Consumos[0] == null && Consumos[1] == null && Consumos[2] != null) {
 				BigInteger agregadorResult = Consumos[2];
 				Consumos[0] = null;
 				Consumos[1] = null;
@@ -312,13 +299,12 @@ public class Agregador {
 	}
 
 	private Boolean SendAgregadorResult(BigInteger agregadorResult) {
-		String jsonMessage = "{ \"consum\": " + agregadorResult.toString()
-				+ ", \"zona\":" + zona + "}";
+		String jsonMessage = "{ \"consum\": " + agregadorResult.toString() + ", \"zona\":" + zona + "}";
 		Socket socket = null;
 		OutputStream outstream = null;
 		PrintWriter out = null;
 		try {
-			socket = new Socket("127.0.0.1", 90000 + zona);
+			socket = new Socket("127.0.0.1", 50000 /* + zona */);
 			outstream = socket.getOutputStream();
 			out = new PrintWriter(outstream);
 			out.print(jsonMessage);

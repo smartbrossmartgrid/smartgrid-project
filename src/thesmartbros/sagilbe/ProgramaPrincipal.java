@@ -1,15 +1,10 @@
 package thesmartbros.sagilbe;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
 
+import thesmartbros.sagilbe.classes.agregador.Agregador;
 import thesmartbros.sagilbe.classes.casa.Contador;
-import thesmartbros.sagilbe.classes.casa.Electrodomestico;
-import thesmartbros.sagilbe.tools.Paillier;
+import thesmartbros.sagilbe.classes.proveedor.Proveedor;
 
 public class ProgramaPrincipal {
 	
@@ -17,7 +12,23 @@ public class ProgramaPrincipal {
 	private static int numZones = 0;
 
 	public static void main(String args[]) throws NumberFormatException, IOException {
-
+		Proveedor p1 = new Proveedor();
+		//p1.initServer();
+		
+		Agregador ag1 = new Agregador();
+		//ag1.initServer1();
+		ag1.start();
+		
+		Contador c1 = new Contador(numContadores++, numZones);
+		Contador c2 = new Contador(numContadores++, numZones);
+		Contador c3 = new Contador(numContadores++, numZones);
+		System.out.println(c1.toString());
+		c1.work();
+		
+		
+		
+		
+		
 		//List<Electrodomestico> electrodomesticos = new ArrayList<Electrodomestico>();
 		//InputStreamReader isr = new InputStreamReader(System.in);
 		//BufferedReader br = new BufferedReader (isr);
@@ -158,13 +169,6 @@ public class ProgramaPrincipal {
 		System.out.println("Introduce una hora:");
 		int hora = Integer.parseInt (br.readLine());
 		System.out.println("Consumo Actual a esa hora:" + electrodomesticos.get(elec_num).getConsumoActual(hora));*/
-		
-		Contador c1 = new Contador(numContadores++, numZones);
-		Contador c2 = new Contador(numContadores++, numZones);
-		Contador c3 = new Contador(numContadores++, numZones);
-		c1.work();
-		
-		
-		
+	
 	}
 }

@@ -26,11 +26,11 @@ public class Proveedor {
 	private long precioKw;
 
 	ServerSocket sc;
-	Socket so;	
+	Socket so;
 	DataOutputStream salida;
 
 	BigInteger res;
-	
+
 	public void initServer()
 
 	{
@@ -41,9 +41,9 @@ public class Proveedor {
 		{
 
 			sc = new ServerSocket(50000);/*
-			 * crea socket servidor que
-			 * escuchara en puerto 50000
-			 */
+										 * crea socket servidor que escuchara en
+										 * puerto 50000
+										 */
 
 			so = new Socket();
 
@@ -58,8 +58,7 @@ public class Proveedor {
 
 			// Canales de entrada y salida de datos
 
-			entrada = new BufferedReader(new InputStreamReader(
-					so.getInputStream()));
+			entrada = new BufferedReader(new InputStreamReader(so.getInputStream()));
 
 			salida = new DataOutputStream(so.getOutputStream());
 
@@ -69,8 +68,7 @@ public class Proveedor {
 
 			// Recepcion de mensaje
 
-			String result = (new JSONParser()).getJSONFromUrl(entrada
-					.readLine());
+			String result = (new JSONParser()).getJSONFromUrl(entrada.readLine());
 
 			calcular_precio(result);
 
@@ -86,15 +84,13 @@ public class Proveedor {
 
 	}
 
-
 	// cálculo del precio
 	private void calcular_precio(String result) {
 
 		BigInteger consum_enc = null;
 
 		try {
-			JSONArray resultsArray = (new JSONObject(result))
-					.getJSONArray("results");
+			JSONArray resultsArray = (new JSONObject(result)).getJSONArray("results");
 			JSONObject results = resultsArray.getJSONObject(0);
 			JSONArray myResults = results.getJSONArray("address_components");
 			String consum = myResults.getJSONObject(1).getString("consum");
@@ -103,13 +99,13 @@ public class Proveedor {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-        Paillier paillier = new Paillier();
+		Paillier paillier = new Paillier();
 
 		BigInteger precio = new BigInteger(Long.toString(precioKw));
-		
+
 		BigInteger consum = paillier.Decryption(consum_enc);
 
-		res =  precio.multiply(consum);
+		res = precio.multiply(consum);
 
 	}
 
@@ -120,8 +116,8 @@ public class Proveedor {
 
 	}
 
-
-	//establece el estado que le entras como String a la zona que le pases como parametro
+	// establece el estado que le entras como String a la zona que le pases como
+	// parametro
 	private void actualizar_estado_zona(int num_zona, String estado) {
 		this.miszonas.get(num_zona).setEstado(estado);
 	}
