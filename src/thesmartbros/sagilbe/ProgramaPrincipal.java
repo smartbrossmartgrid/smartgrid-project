@@ -22,7 +22,7 @@ public class ProgramaPrincipal {
 		Contador c1 = new Contador(numContadores++, numZones);
 		Contador c2 = new Contador(numContadores++, numZones);
 		Contador c3 = new Contador(numContadores++, numZones);
-		System.out.println(c1.toString());
+		//System.out.println(c1.toString());
 		c1.work();
 		
 		
