@@ -136,7 +136,7 @@ public final class Paillier {
      * @param c ciphertext as a BigInteger
      * @return plaintext as a BigInteger
      */
-    private BigInteger Decryption(BigInteger c) {
+    public BigInteger Decryption(BigInteger c) {
         BigInteger u = g.modPow(lambda, nsquare).subtract(BigInteger.ONE).divide(n).modInverse(n);
         return c.modPow(lambda, nsquare).subtract(BigInteger.ONE).divide(n).multiply(u).mod(n);
     }
