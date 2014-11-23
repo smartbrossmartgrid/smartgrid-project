@@ -7,18 +7,22 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import thesmartbros.sagilbe.classes.casa.Contador;
 import thesmartbros.sagilbe.classes.casa.Electrodomestico;
 import thesmartbros.sagilbe.tools.Paillier;
 
 public class ProgramaPrincipal {
+	
+	private static int numContadores = 0;
+	private static int numZones = 0;
 
 	public static void main(String args[]) throws NumberFormatException, IOException {
 
-		List<Electrodomestico> electrodomesticos = new ArrayList<Electrodomestico>();
-		InputStreamReader isr = new InputStreamReader(System.in);
-		BufferedReader br = new BufferedReader (isr);
+		//List<Electrodomestico> electrodomesticos = new ArrayList<Electrodomestico>();
+		//InputStreamReader isr = new InputStreamReader(System.in);
+		//BufferedReader br = new BufferedReader (isr);
 		
-		
+		/*
 		// defino una serie de electrodomesticos
 		Electrodomestico elec = new Electrodomestico();
 		elec.setNombre("Tele");
@@ -153,6 +157,14 @@ public class ProgramaPrincipal {
 		
 		System.out.println("Introduce una hora:");
 		int hora = Integer.parseInt (br.readLine());
-		System.out.println("Consumo Actual a esa hora:" + electrodomesticos.get(elec_num).getConsumoActual(hora));
+		System.out.println("Consumo Actual a esa hora:" + electrodomesticos.get(elec_num).getConsumoActual(hora));*/
+		
+		Contador c1 = new Contador(numContadores++, numZones);
+		Contador c2 = new Contador(numContadores++, numZones);
+		Contador c3 = new Contador(numContadores++, numZones);
+		c1.work();
+		
+		
+		
 	}
 }

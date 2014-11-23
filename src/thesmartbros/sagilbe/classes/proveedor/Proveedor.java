@@ -40,9 +40,9 @@ public class Proveedor {
 
 		{
 
-			sc = new ServerSocket(90000);/*
+			sc = new ServerSocket(50000);/*
 			 * crea socket servidor que
-			 * escuchara en puerto 90000
+			 * escuchara en puerto 50000
 			 */
 
 			so = new Socket();

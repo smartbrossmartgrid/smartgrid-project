@@ -30,12 +30,12 @@ public class Electrodomestico {
 
 	// para obtener el consumo actual
 	public int getConsumoActual(int hora_actual) {
-
 		int i = 0;
-		// mientras el contador sea menor al número máximo de entradas de horas
+		// mientras el contador sea menor al número máximo de entradas de
+		// horas
 		while (i < max) {
-			System.out.println("hora inicial:" + this.tiempos[0][i]);
-			System.out.println("hora final:" + this.tiempos[1][i]);
+			//System.out.println("hora inicial:" + this.tiempos[0][i]);
+			//System.out.println("hora final:" + this.tiempos[1][i]);
 
 			// si la hora actual se encuetra entre los dos valores de hora
 			// inicial y final

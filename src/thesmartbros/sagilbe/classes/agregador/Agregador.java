@@ -16,9 +16,9 @@ public class Agregador {
 
 	BigInteger[] Consumos;
 
-	int zona=0;
+	int zona = 0;
 
-	final int PUERTO1 = 80000;
+	final int PUERTO1 = 40000;
 
 	ServerSocket sc1;
 
@@ -62,7 +62,7 @@ public class Agregador {
 
 			sc1 = new ServerSocket(PUERTO1);/*
 											 * crea socket servidor que
-											 * escuchara en puerto 80000
+											 * escuchara en puerto 40000
 											 */
 
 			so1 = new Socket();
@@ -121,7 +121,7 @@ public class Agregador {
 
 			sc2 = new ServerSocket(PUERTO2);/*
 											 * crea socket servidor que
-											 * escuchara en puerto 80000
+											 * escuchara en puerto 40000
 											 */
 
 			so2 = new Socket();
@@ -180,7 +180,7 @@ public class Agregador {
 
 			sc3 = new ServerSocket(PUERTO3);/*
 											 * crea socket servidor que
-											 * escuchara en puerto 80000
+											 * escuchara en puerto 40000
 											 */
 
 			so3 = new Socket();
@@ -253,12 +253,12 @@ public class Agregador {
 				Consumos[0] = null;
 				Consumos[1] = null;
 				Consumos[2] = null;
-				
-				Boolean res= SendAgregadorResult(agregadorResult);
-				if (res){
-					
+
+				Boolean res = SendAgregadorResult(agregadorResult);
+				if (res) {
+
 				}
-				
+
 			}
 			if (Consumos[0] != null && Consumos[1] != null
 					&& Consumos[2] == null) {
@@ -276,7 +276,7 @@ public class Agregador {
 				Consumos[1] = null;
 				Consumos[2] = null;
 			}
-			
+
 			if (Consumos[0] == null && Consumos[1] == null
 					&& Consumos[2] == null) {
 				BigInteger agregadorResult = p.AgreggatorFunction(p.nsquare,
@@ -299,20 +299,21 @@ public class Agregador {
 				Consumos[1] = null;
 				Consumos[2] = null;
 			}
-			if(Consumos[0]==null&&Consumos[1]==null&&Consumos[2]!=null){
-        		BigInteger agregadorResult = Consumos[2];
-            	Consumos[0]=null;
-            	Consumos[1]=null;
-            	Consumos[2]=null;
+			if (Consumos[0] == null && Consumos[1] == null
+					&& Consumos[2] != null) {
+				BigInteger agregadorResult = Consumos[2];
+				Consumos[0] = null;
+				Consumos[1] = null;
+				Consumos[2] = null;
+			}
+
 		}
 
 	}
 
-}
 	private Boolean SendAgregadorResult(BigInteger agregadorResult) {
-		String jsonMessage = "{ \"consum\": "
-				+ agregadorResult.toString() + ", \"zona\":"
-				+ zona + "}";
+		String jsonMessage = "{ \"consum\": " + agregadorResult.toString()
+				+ ", \"zona\":" + zona + "}";
 		Socket socket = null;
 		OutputStream outstream = null;
 		PrintWriter out = null;
@@ -348,4 +349,3 @@ public class Agregador {
 		return true;
 	}
 }
-	

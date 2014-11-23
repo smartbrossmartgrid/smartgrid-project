@@ -1,9 +1,6 @@
 package thesmartbros.sagilbe.classes.casa;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class ElectrodomesticoResource {
@@ -13,7 +10,6 @@ public class ElectrodomesticoResource {
 	// Electrodomestico electrodomestico = new Electrodomestico();
 
 	public ElectrodomesticoResource() {
-
 		this.electrodomesticos = new ArrayList<Electrodomestico>();
 
 		// defino una serie de electrodomesticos
@@ -34,7 +30,6 @@ public class ElectrodomesticoResource {
 
 		// elec.tiempos = {{16,18}, {8,12}}, {9,5}};
 		// elec.setTiempos();
-
 
 		electrodomesticos.add(elec);
 
@@ -81,23 +76,31 @@ public class ElectrodomesticoResource {
 		electrodomesticos.add(elec);
 
 	}
-	
-	public static void main(){
-		
-		
 
-		System.out.println("Nombre:" + electrodomesticos.get(1).getNombre());
-		System.out.println("Consumo" + electrodomesticos.get(1).getConsumo());
-		System.out.println("Estado:" + electrodomesticos.get(1).getEstado());
-		System.out.println("Tiempos:");
-		
+	public String toString() {
+		String result = "";
+		result += "Nombre:" + electrodomesticos.get(1).getNombre()+"\n";
+		result += "Consumo" + electrodomesticos.get(1).getConsumo()+"\n";
+		result += "Estado:" + electrodomesticos.get(1).getEstado()+"\n";
+		result += "Tiempos:"+"\n";
+
 		int i = 0;
 		while (i < electrodomesticos.get(1).max) {
-			System.out.print("hora inicio:"+electrodomesticos.get(1).tiempos[0][i]);
-			System.out.print("hora final:"+electrodomesticos.get(1).tiempos[1][i]);
+			result += "hora inicio:"
+					+ electrodomesticos.get(1).tiempos[0][i]+"\n";
+			result += "hora final:"
+					+ electrodomesticos.get(1).tiempos[1][i]+"\n";
 			i++;
 		}
-		
+		return result;
+	}
+
+	public int getConsumoTotal(int horaActual) {
+		int consumto_total = 0;
+		for (int i = 0; i < electrodomesticos.size(); i++)
+			consumto_total += electrodomesticos.get(i).getConsumoActual(
+					horaActual);
+		return consumto_total;
 	}
 
 }

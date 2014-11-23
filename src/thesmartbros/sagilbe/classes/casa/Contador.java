@@ -1,10 +1,13 @@
 package thesmartbros.sagilbe.classes.casa;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import thesmartbros.sagilbe.tools.Paillier;
 
@@ -14,38 +17,72 @@ public class Contador {
 	private float precio_actual;
 	private int energiaConsumidaMensual = 0;
 	private int contadorId = 0;
+	private int zonaId = 0;
 
 	/* map */
 	private float latitud;
 	private float longitud;
 
+	/* hour */
+	private int time = 0; /* from 0 to 23 */
+	private final int _THREAD_TIME_INTERVAL = 5000; /* ms */
+
 	private ElectrodomesticoResource casa = new ElectrodomesticoResource();
 
-	public void enviarConsumoInstantaneo() {
-		int consumoInstantaneo = casa.getConsumoTotal();
+	public Contador(int contadorId, int zonaId) {
+		this.contadorId = contadorId;
+		this.zonaId = zonaId;
+	}
+	
+	public void work() {
+		Timer timer = new Timer();
+		timer.schedule(new TimerTask() {
+			public void run() {
+				if (time < 0 || time > 23)
+					time = 0;
+				enviarConsumoInstantaneo(time++);
+			}
+		}, 0, _THREAD_TIME_INTERVAL);
+	}
+
+	public void enviarConsumoInstantaneo(int time) {
+		int consumoInstantaneo = casa.getConsumoTotal(time);
 		this.energiaConsumidaMensual += consumoInstantaneo;
 		BigInteger consumoInstantaneoPaillier = Paillier.getInstance()
 				.Encryption(BigInteger.valueOf(consumoInstantaneo));
 		String jsonMessage = "{ \"consum\": "
 				+ consumoInstantaneoPaillier.toString() + ", \"contadorId\":"
-				+ contadorId + "}";
+				+ this.contadorId + ", \"zonaId\":"
+				+ this.zonaId + "}";
 		Socket socket = null;
 		OutputStream outstream = null;
 		PrintWriter out = null;
 		try {
-			socket = new Socket("127.0.0.1", 80000 + contadorId);
+			socket = new Socket("127.0.0.1", 40000 + zonaId);
 			outstream = socket.getOutputStream();
 			out = new PrintWriter(outstream);
 			out.print(jsonMessage);
+			System.out.println("[Contador="+this.contadorId+" at zoneid="+this.zonaId+" sends data]");
 		} catch (UnknownHostException e) {
 			System.err.print(e);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} finally {
-			out.close();
-			outstream.close();
-			socket.close();
+			try {
+				out.close();
+				outstream.close();
+				socket.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
+	
+	/* POJO */
 	public float getPrecio_acumulado() {
 		return precio_acumulado;
 	}
