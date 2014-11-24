@@ -3,6 +3,7 @@ package thesmartbros.sagilbe.classes.agregador;
 import java.io.*;
 import java.math.BigInteger;
 import java.net.*;
+import java.util.ArrayList;
 
 import thesmartbros.sagilbe.tools.*;
 
@@ -10,43 +11,29 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import thesmartbros.sagilbe.classes.agregador.ConjuntoCasas;
 import thesmartbros.sagilbe.tools.JSONParser;
 
 public class Agregador extends Thread {
 
-	BigInteger[] Consumos;
-
 	int zona = 0;
-
 	final int PUERTO1 = 40000;
-
 	ServerSocket sc1;
-
 	Socket so1;
-
 	DataOutputStream salida1;
-
 	String mensajeRecibido1;
-
 	final int PUERTO2 = 40001;
+	public ArrayList<ConjuntoCasas> listacasas = null;  // Campo de la clase
 
-	ServerSocket sc2;
-
-	Socket so2;
-
-	DataOutputStream salida2;
-
-	String mensajeRecibido2;
-	final int PUERTO3 = 40002;
-
-	ServerSocket sc3;
-
-	Socket so3;
-
-	DataOutputStream salida3;
-
-	String mensajeRecibido3;
-
+	// ServerSocket sc2;
+	// Socket so2;
+	// DataOutputStream salida2;
+	// String mensajeRecibido2;
+	// final int PUERTO3 = 40002;
+	// ServerSocket sc3;
+	// Socket so3;
+	// DataOutputStream salida3;
+	// String mensajeRecibido3;
 	@Override
 	public void run() {
 		initServer1();
@@ -54,48 +41,39 @@ public class Agregador extends Thread {
 
 	// SERVIDOR1
 
-	public void initServer1()
-
-	{
-		int idconex = 1;
-
+	public void initServer1() {
 		BufferedReader entrada;
-
-		try
-
-		{
-
+		try {
 			sc1 = new ServerSocket(PUERTO1);/*
 											 * crea socket servidor que
 											 * escuchara en puerto 40000
 											 */
-
 			so1 = new Socket();
 
-			System.out.println("Esperando una conexión1:");
+			System.out.println("Esperando una conexión:");
 
 			so1 = sc1.accept();
 
 			// Inicia el socket, ahora esta esperando una conexión por parte del
 			// cliente
 
-			System.out.println("cliente 1 se ha conectado.");
+			System.out.println("cliente se ha conectado.");
 
 			// Canales de entrada y salida de datos
 
-			entrada = new BufferedReader(new InputStreamReader(so1.getInputStream()));
+			entrada = new BufferedReader(new InputStreamReader(
+					so1.getInputStream()));
 
-			salida1 = new DataOutputStream(so1.getOutputStream());
+			// salida1 = new DataOutputStream(so1.getOutputStream());
 
-			System.out.println("Confirmando conexion al cliente 1....");
+			System.out.println("Confirmando conexion al cliente....");
 
-			salida1.writeUTF("Conexión exitosa...1 envia un mensaje :D");
+			// salida1.writeUTF("Conexión exitosa...1 envia un mensaje :D");
 
 			// Recepcion de mensaje
 
-			String result = (new JSONParser()).getJSONFromUrl(entrada.readLine());
-
-			MultiplicarConsumos(idconex, result);
+			MandarConsumo(entrada.readLine());
+					
 
 			sc1.close();// Aqui se cierra la conexión con el cliente
 
@@ -109,197 +87,129 @@ public class Agregador extends Thread {
 
 	}
 
-	// SERVIDOR2
+	private void MandarConsumo(String entrada) {
 
-	public void initServer2()
+		String result = (new JSONParser()).getJSONFromUrl(entrada);
 
-	{
-
-		BufferedReader entrada;
-		int idconex = 2;
-
-		try
-
-		{
-
-			sc2 = new ServerSocket(PUERTO2);/*
-											 * crea socket servidor que
-											 * escuchara en puerto 40000
-											 */
-
-			so2 = new Socket();
-
-			System.out.println("Esperando una conexión 2:");
-
-			so2 = sc2.accept();
-
-			// Inicia el socket, ahora esta esperando una conexión por parte del
-			// cliente
-
-			System.out.println("cliente 2 se ha conectado.");
-
-			// Canales de entrada y salida de datos
-
-			entrada = new BufferedReader(new InputStreamReader(so2.getInputStream()));
-
-			salida2 = new DataOutputStream(so2.getOutputStream());
-
-			System.out.println("Confirmando conexion al cliente 2....");
-
-			salida2.writeUTF("Conexión exitosa...2 envia un mensaje :D");
-
-			// Recepcion de mensaje
-
-			String result = (new JSONParser()).getJSONFromUrl(entrada.readLine());
-
-			MultiplicarConsumos(idconex, result);
-
-			sc2.close();// Aqui se cierra la conexión con el cliente
-
-		} catch (Exception e)
-
-		{
-
-			System.out.println("Error: " + e.getMessage());
-
-		}
-
-	}
-
-	// SERVIDOR3
-
-	public void initServer3()
-
-	{
-
-		BufferedReader entrada;
-		int idconex = 3;
-
-		try
-
-		{
-
-			sc3 = new ServerSocket(PUERTO3);/*
-											 * crea socket servidor que
-											 * escuchara en puerto 40000
-											 */
-
-			so3 = new Socket();
-
-			System.out.println("Esperando una conexión 3:");
-
-			so3 = sc3.accept();
-
-			// Inicia el socket, ahora esta esperando una conexión por parte del
-			// cliente
-
-			System.out.println("cliente 3 se ha conectado.");
-
-			// Canales de entrada y salida de datos
-
-			entrada = new BufferedReader(new InputStreamReader(so3.getInputStream()));
-
-			salida3 = new DataOutputStream(so3.getOutputStream());
-
-			System.out.println("Confirmando conexion al cliente 3....");
-
-			salida3.writeUTF("Conexión exitosa...3 envia un mensaje :D");
-
-			// Recepcion de mensaje
-
-			String result = (new JSONParser()).getJSONFromUrl(entrada.readLine());
-
-			MultiplicarConsumos(idconex, result);
-
-			sc3.close();// Aqui se cierra la conexión con el cliente
-
-		} catch (Exception e)
-
-		{
-
-			System.out.println("Error: " + e.getMessage());
-
-		}
-
-	}
-
-	private void MultiplicarConsumos(int idconex, String result) {
-		BigInteger consum_enc = null;
-
+		JSONObject jsonObject = null;
 		try {
-			JSONArray resultsArray = (new JSONObject(result)).getJSONArray("results");
-			JSONObject results = resultsArray.getJSONObject(0);
-			JSONArray myResults = results.getJSONArray("address_components");
-			String consum = myResults.getJSONObject(1).getString("consum");
-			consum_enc = new BigInteger(consum.getBytes());
-
+			jsonObject = new JSONObject(result);
 		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			jsonObject = new JSONObject(result.toString());
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		if (Consumos[idconex - 1] == null) {
-			Consumos[idconex - 1] = consum_enc;
+		BigInteger consum_enc = null;
+		try {
+			consum_enc = new BigInteger(jsonObject.getString("consum")
+					.getBytes());
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		int idcasa = 0;
+		try {
+			idcasa = Integer.parseInt(jsonObject.getString("contadorId"));
+		} catch (NumberFormatException | JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		int idzona = 0;
+		try {
+			idzona = Integer.parseInt(jsonObject.getString("zonaId"));
+		} catch (NumberFormatException | JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		int position=0;
+		boolean encontrado=false;
+		boolean existe=false;
+		
+		while(position < listacasas.size() || !encontrado){
+			
+			if(idcasa==listacasas.get(position).getIdcasa()){
+				
+				encontrado=true;
+			}
+			else
+				position++;
 		}
 
-		else if (Consumos[idconex - 1] != null) {
-			Paillier p = new Paillier();
-
-			if (Consumos[0] != null && Consumos[1] != null && Consumos[2] != null) {
-				BigInteger agregadorResult = p.AgreggatorFunction(p.nsquare, Consumos[0], Consumos[1], Consumos[2]);
-				Consumos[0] = null;
-				Consumos[1] = null;
-				Consumos[2] = null;
-
-				Boolean res = SendAgregadorResult(agregadorResult);
-				if (res) {
-
-				}
-
+		if(existe){
+			
+			if(listacasas.get(position).isNuevo()==false){
+				BigInteger multiplicar = MultiplicarConsumos(idcasa);
+				SendAgregadorResult(multiplicar,idzona);
 			}
-			if (Consumos[0] != null && Consumos[1] != null && Consumos[2] == null) {
-				BigInteger agregadorResult = p.AgreggatorFunction(p.nsquare, Consumos[0], Consumos[1]);
-				Consumos[0] = null;
-				Consumos[1] = null;
-				Consumos[2] = null;
-			}
-			if (Consumos[0] != null && Consumos[1] == null && Consumos[2] != null) {
-				BigInteger agregadorResult = p.AgreggatorFunction(p.nsquare, Consumos[0], Consumos[2]);
-				Consumos[0] = null;
-				Consumos[1] = null;
-				Consumos[2] = null;
-			}
-
-			if (Consumos[0] == null && Consumos[1] == null && Consumos[2] == null) {
-				BigInteger agregadorResult = p.AgreggatorFunction(p.nsquare, Consumos[1], Consumos[2]);
-				Consumos[0] = null;
-				Consumos[1] = null;
-				Consumos[2] = null;
-			}
-			if (Consumos[0] != null && Consumos[1] == null && Consumos[2] == null) {
-				BigInteger agregadorResult = Consumos[0];
-				Consumos[0] = null;
-				Consumos[1] = null;
-				Consumos[2] = null;
-			}
-			if (Consumos[0] == null && Consumos[1] != null && Consumos[2] == null) {
-				BigInteger agregadorResult = Consumos[1];
-				Consumos[0] = null;
-				Consumos[1] = null;
-				Consumos[2] = null;
-			}
-			if (Consumos[0] == null && Consumos[1] == null && Consumos[2] != null) {
-				BigInteger agregadorResult = Consumos[2];
-				Consumos[0] = null;
-				Consumos[1] = null;
-				Consumos[2] = null;
-			}
-
+			
+			ConjuntoCasas conjunto = new ConjuntoCasas();
+			conjunto.setConsuma_enc(consum_enc);
+			conjunto.setIdcasa(idcasa);
+			conjunto.setZonaid(idzona);
+			conjunto.setNuevo(true);
+			listacasas.add(conjunto);
+			listacasas.add(position,conjunto);
+			
+		}
+		else {
+		ConjuntoCasas conjunto = new ConjuntoCasas();
+		conjunto.setConsuma_enc(consum_enc);
+		conjunto.setIdcasa(idcasa);
+		conjunto.setZonaid(idzona);
+		conjunto.setNuevo(true);
+		listacasas.add(conjunto);
 		}
 
 	}
 
-	private Boolean SendAgregadorResult(BigInteger agregadorResult) {
-		String jsonMessage = "{ \"consum\": " + agregadorResult.toString() + ", \"zona\":" + zona + "}";
+
+	private BigInteger MultiplicarConsumos(int idcasa) {
+		BigInteger consum_enc = null;
+		BigInteger agregadorResult=null;
+
+		int position=0;
+		boolean encontrado=false;
+		
+		while(position < listacasas.size() || !encontrado){
+			
+			if(idcasa==listacasas.get(position).getIdcasa()){
+				
+				encontrado=true;
+			}
+			else
+				position++;	
+		}
+		
+		if (listacasas.get(position).isNuevo()==false) {
+			Paillier p = new Paillier();
+			agregadorResult = p.AgreggatorFunction(p.nsquare,
+					listacasas.get(0).getConsuma_enc(), listacasas.get(1).getConsuma_enc(), listacasas.get(2).getConsuma_enc());
+		}
+		
+		
+		position=0;
+		
+		while(position < listacasas.size()){
+			
+			listacasas.get(position).setNuevo(false);
+
+			position++;	
+		}
+		
+		return agregadorResult;
+
+	}
+
+	private Boolean SendAgregadorResult(BigInteger agregadorResult, int idzona) {
+		String jsonMessage = "{ \"consum\": " + agregadorResult.toString()
+				+ ", \"zona\":" + idzona + "}";
 		Socket socket = null;
 		OutputStream outstream = null;
 		PrintWriter out = null;
