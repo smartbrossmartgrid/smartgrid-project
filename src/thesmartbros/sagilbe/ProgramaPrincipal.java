@@ -17,7 +17,7 @@ public class ProgramaPrincipal {
 		
 		Agregador ag1 = new Agregador();
 		//ag1.initServer1();
-		ag1.start();
+		ag1.start(null);
 		
 		Contador c1 = new Contador(numContadores++, numZones);
 		Contador c2 = new Contador(numContadores++, numZones);
