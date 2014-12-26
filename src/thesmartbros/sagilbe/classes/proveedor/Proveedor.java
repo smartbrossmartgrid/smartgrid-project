@@ -1,145 +1,71 @@
 package thesmartbros.sagilbe.classes.proveedor;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.List;
+import java.util.ArrayList;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import thesmartbros.sagilbe.tools.JSONParser;
-import thesmartbros.sagilbe.tools.Paillier;
+import thesmartbros.sagilbe.classes.agregador.ConjuntoCasas;
+import thesmartbros.sagilbe.tools.SocketTools;
 
 //clase perteneciente al objeto proveedor
 
 public class Proveedor {
 
-	// lista de zonas
-	private List<Zona> miszonas;
+	/* variables principales, de socket */
+	private ServerSocket serverSocket = null;
+	private final String _IP_AGREGADOR = "127.0.0.1";
+	private final int _DEFAULT_AGREGADOR_PORT = 40000;
+	private final int _DEFAULT_PROVIDER_PORT = 50000;
 
-	private int consumoTotal;
-	private long precioKw;
+	/* variables secundarias, de smart grid */
+	private int zona = 0;
+	private ArrayList<ConjuntoCasas> listacasas = new ArrayList<ConjuntoCasas>(); // Campo de la clase
 
-	ServerSocket sc;
-	Socket so;
-	DataOutputStream salida;
-
-	BigInteger res;
-
-	public void initServer()
-
-	{
-		BufferedReader entrada;
-
-		try
-
-		{
-
-			sc = new ServerSocket(50000);/*
-										 * crea socket servidor que escuchara en
-										 * puerto 50000
-										 */
-
-			so = new Socket();
-
-			System.out.println("Esperando una conexión:");
-
-			so = sc.accept();
-
-			// Inicia el socket, ahora esta esperando una conexión por parte del
-			// cliente
-
-			System.out.println("agregador se ha conectado.");
-
-			// Canales de entrada y salida de datos
-
-			entrada = new BufferedReader(new InputStreamReader(so.getInputStream()));
-
-			salida = new DataOutputStream(so.getOutputStream());
-
-			System.out.println("Confirmando conexion al agregador....");
-
-			salida.writeUTF("Conexión exitosa... envia un mensaje :D");
-
-			// Recepcion de mensaje
-
-			String result = (new JSONParser()).getJSONFromUrl(entrada.readLine());
-
-			calcular_precio(result);
-
-			sc.close();// Aqui se cierra la conexión con el cliente
-
-		} catch (Exception e)
-
-		{
-
-			System.out.println("Error: " + e.getMessage());
-
+	public void start() {
+		boolean listening = true;
+		try {
+			serverSocket = new ServerSocket(_DEFAULT_PROVIDER_PORT);
+		} catch (IOException e) {
+			System.err.println("Could not listen on port: " + _DEFAULT_PROVIDER_PORT);
+			System.exit(-1);
 		}
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				try {
+					while (listening && serverSocket != null)
+						startAgregadorFunctions(serverSocket.accept());
+					serverSocket.close();
+					serverSocket = null;
+				} catch (Exception e) {
+					System.err.println(e);
+				}
+			}
 
+			private void startAgregadorFunctions(Socket socket) {
+				System.out.println("Client connected to Provider... OK");
+				String jsonMessageFromAgregador = SocketTools.getJSON(socket); //desde el socket conseguir el JSON
+				System.out.println(jsonMessageFromAgregador);
+				//ConjuntoCasas casa = parseJSON(jsonMessageFromAgregador); //parsear el JSON
+			}
+		});
+		t.start();
 	}
 
-	// cálculo del precio
-	private void calcular_precio(String result) {
-
-		BigInteger consum_enc = null;
-
-		try {
-			JSONArray resultsArray = (new JSONObject(result)).getJSONArray("results");
-			JSONObject results = resultsArray.getJSONObject(0);
-			JSONArray myResults = results.getJSONArray("address_components");
-			String consum = myResults.getJSONObject(1).getString("consum");
-			consum_enc = new BigInteger(consum.getBytes());
-
-		} catch (JSONException e) {
+	private void parseJSON(String jsonMessage) {
+		ConjuntoCasas casa = new ConjuntoCasas();
+		JSONObject jsonObject = null;
+		try { // parsear los datos
+			jsonObject = new JSONObject(jsonMessage);
+			casa.setConsuma_enc(new BigInteger(jsonObject.getString("consum")));
+			casa.setZonaid(jsonObject.getInt("zonaId"));
+			casa.setTime(jsonObject.getInt("time"));
+		} catch (NumberFormatException | JSONException e) {
 			e.printStackTrace();
 		}
-		Paillier paillier = new Paillier();
-
-		BigInteger precio = new BigInteger(Long.toString(precioKw));
-
-		BigInteger consum = paillier.Decryption(consum_enc);
-
-		res = precio.multiply(consum);
-
 	}
-
-	// para enviar al tÃ©cnico
-	private void enviar_tecnico() {
-
-		System.out.println("Enviando tÃ©cnico");
-
-	}
-
-	// establece el estado que le entras como String a la zona que le pases como
-	// parametro
-	private void actualizar_estado_zona(int num_zona, String estado) {
-		this.miszonas.get(num_zona).setEstado(estado);
-	}
-
-	private void get_calle() {
-
-	}
-
-	public long getPrecioKw() {
-		return precioKw;
-	}
-
-	public void setPrecioKw(long precioKw) {
-		this.precioKw = precioKw;
-	}
-
-	public int getConsumoTotal() {
-		return consumoTotal;
-	}
-
-	public void setConsumoTotal(int consumoTotal) {
-		this.consumoTotal = consumoTotal;
-	}
-
 }

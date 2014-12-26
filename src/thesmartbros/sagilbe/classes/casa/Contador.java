@@ -1,15 +1,11 @@
 package thesmartbros.sagilbe.classes.casa;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.math.BigInteger;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import thesmartbros.sagilbe.tools.Paillier;
+import thesmartbros.sagilbe.tools.SocketTools;
 
 public class Contador {
 
@@ -26,6 +22,8 @@ public class Contador {
 	/* hour */
 	private int time = 0; /* from 0 to 23 */
 	private final int _THREAD_TIME_INTERVAL = 5000; /* ms */
+	private final String _IP_AGGREGADOR = "127.0.0.1";
+	private final int _DEFAULT_AGREGADOR_PORT = 40000;
 
 	private ElectrodomesticoResource casa;
 
@@ -48,78 +46,17 @@ public class Contador {
 
 	public void enviarConsumoInstantaneo(int time) {
 		int consumoInstantaneo = casa.getConsumoTotal(time);
+		int port = _DEFAULT_AGREGADOR_PORT + zonaId;
 		this.energiaConsumidaMensual += consumoInstantaneo;
 		BigInteger consumoInstantaneoPaillier = Paillier.getInstance().Encryption(BigInteger.valueOf(consumoInstantaneo));
-		String jsonMessage = "{ \"consum\": " + consumoInstantaneoPaillier.toString() + ", \"contadorId\":" + this.contadorId + ", \"zonaId\":" + this.zonaId + "}";
-		Socket socket = null;
-		OutputStream outstream = null;
-		PrintWriter out = null;
-		try {
-			socket = new Socket("127.0.0.1", 40000 + zonaId);
-			outstream = socket.getOutputStream();
-			out = new PrintWriter(outstream);
-			out.print(jsonMessage);
-			System.out.println("[Contador=" + this.contadorId + " at zoneid=" + this.zonaId + " sends data; time="+this.time+"]");
-		} catch (UnknownHostException e) {
-			System.err.print(e);
-		} catch (IOException e) {
-			System.err.print(e);
-		} finally {
-			try {
-				out.close();
-				outstream.close();
-				socket.close();
-			} catch (IOException e) {
-				System.err.print(e);
-			} catch (Exception e) {
-				System.err.print(e);
-			}
-		}
+		String jsonMessage = "{ \"consum\": \"" + consumoInstantaneoPaillier.toString() + "\", \"contadorId\":" + this.contadorId + ", \"zonaId\":" + this.zonaId + ", \"time\":" + this.time + "}";
+		if (SocketTools.send(_IP_AGGREGADOR, port, jsonMessage))
+			System.out.println("[Contador=" + this.contadorId + " at zoneid=" + this.zonaId + " sends data; time=" + this.time + " to " + _IP_AGGREGADOR + ":" + port + "]");
+		else
+			System.out.println("ERROR [Contador=" + this.contadorId + " at zoneid=" + this.zonaId + " sends data; time=" + this.time + " to " + _IP_AGGREGADOR + ":" + port + "]");
 	}
 
 	public String toString() {
 		return casa.toString();
 	}
-	
-	/* POJO */
-	public float getPrecio_acumulado() {
-		return precio_acumulado;
-	}
-
-	public void setPrecio_acumulado(float precio_acumulado) {
-		this.precio_acumulado = precio_acumulado;
-	}
-
-	public float getPrecio_actual() {
-		return precio_actual;
-	}
-
-	public void setPrecio_actual(float precio_actual) {
-		this.precio_actual = precio_actual;
-	}
-
-	public int getEnergiaConsumidaMensual() {
-		return energiaConsumidaMensual;
-	}
-
-	public void setEnergiaConsumidaMensual(int energiaConsumidaMensual) {
-		this.energiaConsumidaMensual = energiaConsumidaMensual;
-	}
-
-	public float getLatitud() {
-		return latitud;
-	}
-
-	public void setLatitud(float latitud) {
-		this.latitud = latitud;
-	}
-
-	public float getLongitud() {
-		return longitud;
-	}
-
-	public void setLongitud(float longitud) {
-		this.longitud = longitud;
-	}
-
 }
