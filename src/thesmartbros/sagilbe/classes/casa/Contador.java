@@ -34,6 +34,7 @@ public class Contador {
 	/* hour */
 	private int time = 0; /* from 0 to 23 */
 	public final static int _THREAD_TIME_INTERVAL = 10000; /* ms */
+	public final static int _DEFAULT_DELAY = 300; /* ms */
 
 	/* variables principales, de socket */
 	private ServerSocket serverSocket = null;
@@ -48,6 +49,7 @@ public class Contador {
 
 	public void work() {
 		startSocketServer();
+		waitSomeTime();
 		Timer timer = new Timer();
 		timer.schedule(new TimerTask() {
 			public void run() {
@@ -56,6 +58,14 @@ public class Contador {
 				enviarConsumoInstantaneo(time++);
 			}
 		}, 0, _THREAD_TIME_INTERVAL);
+	}
+
+	private void waitSomeTime() {
+		try {
+			Thread.sleep(_DEFAULT_DELAY * this.contadorId);                 //1000 milliseconds is one second.
+		} catch (InterruptedException ex) {
+			Thread.currentThread().interrupt();
+		}
 	}
 
 	private void startSocketServer() {
@@ -88,6 +98,8 @@ public class Contador {
 					Float preciokWh = (Float) c.objeto;
 					precio_actual = preciokWh.floatValue();
 				}
+				/* try { socket.close(); } catch (IOException e) {
+				 * e.printStackTrace(); } */
 			}
 		});
 		t.start();
@@ -100,15 +112,54 @@ public class Contador {
 		/* enviar */
 		int port = VariablesGlobales._DEFAULT_AGREGADOR_PORT + zonaId;
 		this.energiaConsumidaMensual += consumoInstantaneo;
-		BigInteger consumoInstantaneoPaillier = Paillier.getInstance().Encryption(BigInteger.valueOf(consumoInstantaneo));
+		BigInteger consumoInstantaneoPaillier;
+		do {
+			consumoInstantaneoPaillier = PaillierContador.getInstance().Encryption(BigInteger.valueOf(consumoInstantaneo));
+			if (consumoInstantaneoPaillier == BigInteger.ZERO)
+				retrievePaillierParameters();
+		} while (consumoInstantaneoPaillier == BigInteger.ZERO); //los parametros Paillier no estan disponibles
+
 		String jsonMessage = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO + ", \"consum\": \"" + consumoInstantaneoPaillier.toString() + "\", \"contadorId\":" + this.contadorId + ", \"zonaId\":" + this.zonaId + ", \"time\":" + this.time + "}";
 		PrinterTools.printJSON(jsonMessage);
-		if (SocketTools.send(VariablesGlobales._IP_AGREGADOR, port, jsonMessage))
+		if (SocketTools.send(VariablesGlobales._IP_AGREGADOR, port, jsonMessage)) {
 			PrinterTools.log("[Contador=" + this.contadorId + " at zoneid=" + this.zonaId + " sends data; time=" + this.time + " to " + VariablesGlobales._IP_AGREGADOR + ":" + port + "]");
-		else
+		} else
 			PrinterTools.log("ERROR [Contador=" + this.contadorId + " at zoneid=" + this.zonaId + " sends data; time=" + this.time + " to " + VariablesGlobales._IP_AGREGADOR + ":" + port + "]");
 	}
 
+	private void retrievePaillierParameters() {
+		int port = VariablesGlobales._DEFAULT_AGREGADOR_PORT + zonaId;
+		Socket connection = null;
+		Container result = null;
+		boolean boolResult = false;
+		do {
+			String jsonMessage = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS + ", \"contadorId\": " + this.contadorId + ", \"zonaId\": " + this.zonaId + "}";
+			PrinterTools.printJSON(jsonMessage);
+			connection = SocketTools.sendSynchronized(VariablesGlobales._IP_AGREGADOR, port, jsonMessage);
+			if (connection != null) {
+				PrinterTools.log("[Contador=" + this.contadorId + " at zoneid=" + this.zonaId + " asks for Paillier; time=" + this.time + " to " + VariablesGlobales._IP_AGREGADOR + ":" + port + "]");
+				if (!connection.isClosed()) {
+					jsonMessage = SocketTools.getJSON(connection);
+					result = parseJSON(jsonMessage);
+				}
+			} else
+				PrinterTools.log("ERROR [Contador=" + this.contadorId + " at zoneid=" + this.zonaId + " asks for Paillier; time=" + this.time + " to " + VariablesGlobales._IP_AGREGADOR + ":" + port + "]");
+			boolResult = result != null && result.type != VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR;
+			if (!boolResult)
+				try {
+					Thread.sleep(500000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+		} while (boolResult);
+		if (connection != null) {
+			try {
+				connection.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 	private Container parseJSON(String jsonMessage) {
 		Container c = new Container();
@@ -121,6 +172,9 @@ public class Contador {
 			if (type == VariablesGlobales._MESSAGE_TYPE_ENVIAR_PRECIO_CONTADOR) {
 				Float price = Float.parseFloat(jsonObject.getString("price"));
 				objeto = price;
+			} else if (type == VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR) {
+				PaillierContador.getInstance().g = new BigInteger(jsonObject.getString("g"));
+				PaillierContador.getInstance().n = new BigInteger(jsonObject.getString("n"));
 			}
 		} catch (NumberFormatException | JSONException e) {
 			e.printStackTrace();
@@ -133,7 +187,7 @@ public class Contador {
 	public String toString() {
 		return casa.toString();
 	}
-	
+
 	private class Container {
 		public int type = 0;
 		public Object objeto = null;

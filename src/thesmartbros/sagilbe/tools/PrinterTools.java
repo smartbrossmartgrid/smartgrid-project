@@ -2,7 +2,7 @@ package thesmartbros.sagilbe.tools;
 
 public class PrinterTools {
 	public static void printJSON(String json) {
-		//System.out.println(json);
+		System.out.println(json);
 	}
 	
 	public static void log(String log) {
@@ -10,6 +10,6 @@ public class PrinterTools {
 	}
 	
 	public static void socketLog(String socketLog) {
-		//System.out.println(socketLog);
+		System.out.println(socketLog);
 	}
 }

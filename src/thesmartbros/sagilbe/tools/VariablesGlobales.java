@@ -17,12 +17,15 @@ public class VariablesGlobales {
 	/* variables de mensaje de contador (100) */
 	public final static int _MESSAGE_TYPE_ENVIAR_CONSUMO = 100;
 	public final static int _MESSAGE_TYPE_ENVIAR_PRECIO_CONTADOR = 101;
+	public final static int _MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS = 102;
 
 	/* variable de mensajes de agregador (200) */
 	public final static int _MESSAGE_TYPE_ENVIAR_CONSUMO_AGREGADO = 200;
+	public final static int _MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR = 202;
 
 	/* variable de mensajes de proveedor (300) */
 	public final static int _MESSAGE_TYPE_ENVIAR_PRECIO_PROVIDER = 300;
+	public final static int _MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_PROVIDER = 302;
 
 	/* calculo del precio */
 	public final static float _MAX_PRICE = 0.12337f; /* euros/kWh */

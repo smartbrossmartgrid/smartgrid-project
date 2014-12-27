@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import thesmartbros.sagilbe.tools.Paillier;
 import thesmartbros.sagilbe.tools.PrinterTools;
 import thesmartbros.sagilbe.tools.SocketTools;
 import thesmartbros.sagilbe.tools.VariablesGlobales;
@@ -111,8 +110,12 @@ public class Agregador {
 				} else if (c.type == VariablesGlobales._MESSAGE_TYPE_ENVIAR_PRECIO_PROVIDER) {
 					Float preciokWh = (Float) c.objeto;
 					sendPrecioToContadores(preciokWh);
+				} else if (c.type == VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS) {
+					retrievePaillierParameters();
+					sendPaillierParameters(socket);
 				}
-
+				/* try { socket.close(); } catch (IOException e) {
+				 * e.printStackTrace(); } */
 			}
 		});
 		t.start();
@@ -134,6 +137,9 @@ public class Agregador {
 				((ConjuntoCasas) objeto).setTime(jsonObject.getInt("time"));
 			} else if (type == VariablesGlobales._MESSAGE_TYPE_ENVIAR_PRECIO_PROVIDER) {
 				objeto = Float.parseFloat(jsonObject.getString("price"));
+			} else if (type == VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_PROVIDER) {
+				PaillierAgregador.getInstance().g = new BigInteger(jsonObject.getString("g"));
+				PaillierAgregador.getInstance().n = new BigInteger(jsonObject.getString("n"));
 			}
 		} catch (NumberFormatException | JSONException e) {
 			e.printStackTrace();
@@ -155,7 +161,7 @@ public class Agregador {
 	}
 
 	private BigInteger calcularConsumoTotal() {
-		Paillier p = Paillier.getInstance();
+		PaillierAgregador p = PaillierAgregador.getInstance();
 		BigInteger[] consumosMatrix = new BigInteger[listaCasas.size()];
 		for (int i = 0; i < listaCasas.size(); i++) {
 			consumosMatrix[i] = listaCasas.get(i).getConsuma_enc();
@@ -177,6 +183,51 @@ public class Agregador {
 			else
 				PrinterTools.log("ERROR [Agregador sends data to " + VariablesGlobales._IP_CONTADOR + ":" + port + ": price is now " + Float.toString(preciokWh) + "]");
 		}
+	}
+
+	private void retrievePaillierParameters() {
+		int port = VariablesGlobales._DEFAULT_PROVIDER_PORT;
+		Container result = null;
+		Socket connection = null;
+		boolean boolResult = false;
+		do {
+			String jsonMessageToProvider = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR + ", \"zona\": " + zona + "}";
+			PrinterTools.printJSON(jsonMessageToProvider);
+			connection = SocketTools.sendSynchronized(VariablesGlobales._IP_PROVIDER, port, jsonMessageToProvider);
+			if (connection != null) {
+				PrinterTools.log("[ZonaAgregador= " + this.zona + " gets PAILLIER data from " + connection + "]");
+				String jsonMessage = SocketTools.getJSON(connection, false);
+				if (!connection.isClosed()) {
+					PrinterTools.printJSON(jsonMessage);
+					result = parseJSON(jsonMessage);
+				}
+			} else
+				PrinterTools.log("ERROR [ZonaAgregador= " + this.zona + " gets PAILLIER data from " + connection + "]");
+			boolResult = result != null && result.type != VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR;
+			if (!boolResult)
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+		} while (boolResult);
+		if (connection != null) {
+			try {
+				connection.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private void sendPaillierParameters(Socket socket) {
+		String jsonMessageToProvider = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR + ", \"g\": \"" + PaillierAgregador.getInstance().g.toString() + "\", \"n\": \"" + PaillierAgregador.getInstance().n.toString() + "\"}";
+		PrinterTools.printJSON(jsonMessageToProvider);
+		if (SocketTools.sendSynchronized(socket, jsonMessageToProvider)) {
+			PrinterTools.log("[ZonaAgregador= " + this.zona + " sends PAILLIER data to CONTADOR via established socket.");
+		} else
+			PrinterTools.log("ERROR [ZonaAgregador=" + this.zona + " sends PAILLIER data to CONTADOR via established socket.");
+
 	}
 
 	private class Container {

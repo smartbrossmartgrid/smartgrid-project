@@ -49,7 +49,7 @@ public final class Paillier {
     /**
      * a random integer in Z*_{n^2} where gcd (L(g^lambda mod n^2), n) = 1.
      */
-    private BigInteger g;
+    public BigInteger g;
     /**
      * number of bits of modulus
      */

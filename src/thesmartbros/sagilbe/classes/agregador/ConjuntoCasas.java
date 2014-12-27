@@ -2,7 +2,7 @@ package thesmartbros.sagilbe.classes.agregador;
 
 import java.math.BigInteger;
 
-public class ConjuntoCasas {
+class ConjuntoCasas {
 
 	private int idcasa; // ID Casa
 	private BigInteger consuma_enc; // Consumo encriptado con Paillier

@@ -59,7 +59,10 @@ public class Proveedor {
 						preciokWh = VariablesGlobales._MIN_PRICE + ((float) consumoTotal / VariablesGlobales._MAX_ENERGY_GENERATED) * (VariablesGlobales._MAX_PRICE - VariablesGlobales._MIN_PRICE);
 					}
 					sendPrecioToAgregadroes();
+				} else if (c.type == VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR) {
+					sendPaillierParameters(socket);
 				}
+				
 			}
 		});
 		t.start();
@@ -76,6 +79,16 @@ public class Proveedor {
 			else
 				PrinterTools.log("ERROR [Provider sends data to " + VariablesGlobales._IP_AGREGADOR + ":" + port + ": price is now " + Float.toString(preciokWh) + "]");
 		}
+	}
+
+	private void sendPaillierParameters(Socket socket) {
+		String jsonMessageToAgregador = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_PROVIDER + ", \"g\": \"" + Paillier.getInstance().g.toString() + "\", \"n\": \"" + Paillier.getInstance().n.toString() + "\"}";
+		PrinterTools.printJSON(jsonMessageToAgregador);
+		if (SocketTools.sendSynchronized(socket, jsonMessageToAgregador)) {
+			PrinterTools.log("[Provider sends PAILLIER data to AGREGADOR via established socket ("+socket+")]");
+		} else
+			PrinterTools.log("ERROR [Provider sends PAILLIER data to AGREGADOR via established socket]");
+
 	}
 
 	private Container parseJSON(String jsonMessage) {
@@ -107,6 +120,8 @@ public class Proveedor {
 				zonaActual.setId(zonaid);
 				zonaActual.setGasto_energetico((Paillier.getInstance().Decryption(new BigInteger(jsonObject.getString("consum"))).intValue()));
 				zonaActual.setNumero_viviendas(jsonObject.getInt("viviendas"));
+			} else if (type == VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR) {
+				objeto = jsonObject.getInt("zona");
 			}
 		} catch (NumberFormatException | JSONException e) {
 			e.printStackTrace();
@@ -115,7 +130,7 @@ public class Proveedor {
 		c.objeto = objeto;
 		return c;
 	}
-	
+
 	private class Container {
 		public int type = 0;
 		@SuppressWarnings("unused")

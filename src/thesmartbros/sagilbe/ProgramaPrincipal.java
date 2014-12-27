@@ -25,7 +25,7 @@ public class ProgramaPrincipal {
 		Contador c05 = new Contador(numContadores++, numZones);
 		Contador c06 = new Contador(numContadores++, numZones);
 		//System.out.println(c1.toString());
-		c01.work();
+		c01.work();/*
 		c02.work();
 		c03.work();
 		c04.work();
@@ -56,7 +56,7 @@ public class ProgramaPrincipal {
 		//System.out.println(c1.toString());
 		c21.work();
 		c22.work();
-		c23.work();
+		c23.work();*/
 
 		
 		

@@ -10,7 +10,7 @@ import java.net.UnknownHostException;
 
 public class SocketTools {
 
-	public static boolean send(String IP, int port, String message) {
+	public static synchronized boolean send(String IP, int port, String message) {
 		Socket socket = null;
 		OutputStream outstream = null;
 		PrintWriter out = null;
@@ -21,23 +21,67 @@ public class SocketTools {
 			out.print(message);
 			return true;
 		} catch (UnknownHostException e) {
-			System.err.print(e);
+			e.printStackTrace();
 		} catch (IOException e) {
-			System.err.print(e);
+			e.printStackTrace();
 		} finally {
 			try {
 				out.close();
 				outstream.close();
 				socket.close();
+				PrinterTools.socketLog("Socket " + socket + " has been closed");
 			} catch (IOException e) {
-				System.err.print(e);
+				e.printStackTrace();
 			} catch (Exception e) {
-				System.err.print(e);
+				e.printStackTrace();
 			}
 		}
 		return false;
 	}
-	
+
+	public static synchronized Socket sendSynchronized(String IP, int port, String message) {
+		Socket socket = null;
+		OutputStream outstream = null;
+		PrintWriter out = null;
+		try {
+			socket = new Socket(IP, port);
+			sendSynchronized(socket, message);
+			return socket;
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static synchronized boolean sendSynchronized(Socket socket, String message) {
+		OutputStream outstream = null;
+		PrintWriter out = null;
+		try {
+			outstream = socket.getOutputStream();
+			out = new PrintWriter(outstream);
+			out.print(message);
+			return true;
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (out != null)
+					out.close();
+				if (outstream != null)
+					outstream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+
 	public static String getJSON(Socket socket) {
 		StringBuilder sb = new StringBuilder();
 		String line;
@@ -45,10 +89,23 @@ public class SocketTools {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			while ((line = reader.readLine()) != null)
 				sb.append(line).append("\n");
-			socket.close();
+			//socket.close();
 		} catch (IOException e) {
-			System.err.println(e);
+			e.printStackTrace();
 		}
 		return sb.toString();
+	}
+
+	public static String getJSON(Socket socket, boolean close) {
+		String line = getJSON(socket);
+		try {
+			if (close) {
+				socket.close();
+				PrinterTools.socketLog("Socket " + socket + " has been closed");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return line;
 	}
 }
