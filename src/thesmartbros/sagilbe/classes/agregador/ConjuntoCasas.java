@@ -10,11 +10,29 @@ class ConjuntoCasas {
 	private int not_found = 0; // Veces que no ha enviado el consumo
 	private int time = 0; // Indica el tiempo en el que se recibio la medida
 	private boolean nuevo = true; // Valor viejo (false) o valor nuevo (true)
+	private float latitud = 0.0f;
+	private float longitud = 0.0f;
+
+	public float getLatitud() {
+		return latitud;
+	}
+
+	public void setLatitud(float latitud) {
+		this.latitud = latitud;
+	}
+
+	public float getLongitud() {
+		return longitud;
+	}
+
+	public void setLongitud(float longitud) {
+		this.longitud = longitud;
+	}
 
 	public void incrementarNotFound() {
 		this.not_found++;
 	}
-	
+
 	public boolean isNuevo() {
 		return nuevo;
 	}

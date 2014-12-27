@@ -57,6 +57,12 @@ public class Proveedor {
 						for (int i = 0; i < zonasList.size(); i++)
 							consumoTotal += zonasList.get(i).getGasto_energetico();
 						preciokWh = VariablesGlobales._MIN_PRICE + ((float) consumoTotal / VariablesGlobales._MAX_ENERGY_GENERATED) * (VariablesGlobales._MAX_PRICE - VariablesGlobales._MIN_PRICE);
+						PrinterTools.log("[-------------------------------------------------]");
+						PrinterTools.log("[--  PROVIDER received total consumption ---------]");
+						PrinterTools.log("[- Consumo: "+consumoTotal+"/"+ VariablesGlobales._MAX_ENERGY_GENERATED);
+						PrinterTools.log("[- Precio: "+Float.toString(preciokWh)+" EUR/kWh   ");
+						PrinterTools.log("[-------------------------------------------------]");
+						PrinterTools.log("[-------------------------------------------------]");
 					}
 					sendPrecioToAgregadroes();
 				} else if (c.type == VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR) {

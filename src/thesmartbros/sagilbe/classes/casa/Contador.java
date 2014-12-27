@@ -33,17 +33,20 @@ public class Contador {
 	/* hour */
 	private int time = 0; /* from 0 to 23 */
 	public final static int _THREAD_TIME_INTERVAL = 10000; /* ms */
-	public final static int _DEFAULT_DELAY = 300; /* ms */
+	public final static int _DEFAULT_DELAY = 100; /* ms */
 
 	/* variables principales, de socket */
 	private ServerSocket serverSocket = null;
 
 	private ElectrodomesticoResource casa;
+	private PaillierContador paillierContador = new PaillierContador();
 
-	public Contador(int contadorId, int zonaId) {
+	public Contador(int contadorId, int zonaId, float latitud, float longitud) {
 		this.contadorId = contadorId;
 		this.zonaId = zonaId;
-		this.casa = new ElectrodomesticoResource();
+		this.latitud = latitud;
+		this.longitud = longitud;
+		this.casa = new ElectrodomesticoResource(VariablesGlobales._PERFIL_DEFAULT);
 	}
 
 	public void work() {
@@ -106,6 +109,7 @@ public class Contador {
 
 	private void enviarConsumoInstantaneo(int time) {
 		int consumoInstantaneo = casa.getConsumoTotal(time);
+		System.out.println(consumoInstantaneo+" kWh @ contador"+contadorId+" t="+time+" h");
 		/* cargar precio */
 		precio_acumulado += consumoInstantaneo * precio_actual * VariablesGlobales._RATIO_TIME;
 		/* enviar */
@@ -113,7 +117,7 @@ public class Contador {
 		this.energiaConsumidaMensual += consumoInstantaneo;
 		BigInteger consumoInstantaneoPaillier;
 
-		consumoInstantaneoPaillier = PaillierContador.getInstance().Encryption(BigInteger.valueOf(consumoInstantaneo));
+		consumoInstantaneoPaillier = paillierContador.Encryption(BigInteger.valueOf(consumoInstantaneo));
 		if (consumoInstantaneoPaillier == BigInteger.ZERO)
 			requestPaillierParameters(); /* si no tiene Paillier, enviar request */
 		else {
@@ -126,9 +130,10 @@ public class Contador {
 		}
 	}
 
+	// cuando hace request de Paillier, tambien se identifica en el sistema.
 	private void requestPaillierParameters() {
 		int port = VariablesGlobales._DEFAULT_AGREGADOR_PORT + zonaId;
-		String jsonMessage = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS + ", \"contadorId\": " + this.contadorId + ", \"zonaId\": " + this.zonaId + "}";
+		String jsonMessage = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS + ", \"contadorId\": " + this.contadorId + ", \"zonaId\": " + this.zonaId + ", \"latitud\": \"" + Float.toString(this.latitud) + "\", \"longitud\": \"" + Float.toString(this.longitud) + "\"}";
 		PrinterTools.printJSON(jsonMessage);
 		if (SocketTools.send(VariablesGlobales._IP_AGREGADOR, port, jsonMessage)) {
 			PrinterTools.log("[Contador=" + this.contadorId + " at zoneid=" + this.zonaId + " asks for Paillier; time=" + this.time + " to " + VariablesGlobales._IP_AGREGADOR + ":" + port + "]");
@@ -148,8 +153,8 @@ public class Contador {
 				Float price = Float.parseFloat(jsonObject.getString("price"));
 				objeto = price;
 			} else if (type == VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR) {
-				PaillierContador.getInstance().g = new BigInteger(jsonObject.getString("g"));
-				PaillierContador.getInstance().n = new BigInteger(jsonObject.getString("n"));
+				paillierContador.g = new BigInteger(jsonObject.getString("g"));
+				paillierContador.n = new BigInteger(jsonObject.getString("n"));
 			}
 		} catch (NumberFormatException | JSONException e) {
 			e.printStackTrace();

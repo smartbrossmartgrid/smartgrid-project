@@ -17,7 +17,7 @@ package thesmartbros.sagilbe.classes.agregador;
 
 import java.math.BigInteger;
 
-final class PaillierAgregador {
+class PaillierAgregador {
 
 	public BigInteger n = null;
 	/**
@@ -29,31 +29,24 @@ final class PaillierAgregador {
 	 */
 	public BigInteger g = null;
 
-	private static PaillierAgregador INSTANCE = null;
-
-	private synchronized static void createInstance() {
-		if (INSTANCE == null) {
-			INSTANCE = new PaillierAgregador();
+	public BigInteger AgreggatorFunction(BigInteger nsquare, BigInteger... em) {
+		if (em == null)
+			return BigInteger.ZERO;
+		else if (n == null)
+			return BigInteger.ZERO;
+		else if (n != null)
+			nsquare = n.multiply(n);
+		if (em.length == 0)
+			return BigInteger.ZERO;
+		else if (em.length == 1)
+			return em[0].mod(nsquare);
+		else if (em.length == 2)
+			return em[0].multiply(em[1]).mod(nsquare);
+		else {
+			BigInteger result = em[0].multiply(em[1]).mod(nsquare);
+			for (int i = 2; i < em.length; i++)
+				result = result.multiply(em[i]).mod(nsquare);
+			return result;
 		}
 	}
-
-	public static PaillierAgregador getInstance() {
-		if (INSTANCE == null)
-			createInstance();
-		return INSTANCE;
-	}
-
-	public BigInteger AgreggatorFunction(BigInteger nsquare, BigInteger... em) {
-		if (nsquare == BigInteger.ZERO && n == null)
-			return BigInteger.ZERO;
-		else if (nsquare == BigInteger.ZERO && n != null)
-			nsquare = n.multiply(n);
-		if (em.length < 2)
-			return BigInteger.ZERO;
-		BigInteger result = em[0].multiply(em[1]).mod(nsquare);
-		for (int i = 2; i < em.length; i++)
-			result = result.multiply(em[i]).mod(nsquare);
-		return result;
-	}
-
 }

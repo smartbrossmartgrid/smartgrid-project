@@ -15,17 +15,18 @@ public class ProgramaPrincipal {
 		Proveedor provider = new Proveedor();
 		provider.start();
 
+		// Ciudad de Castelldefels
 		Agregador ag0 = new Agregador(numZones);
 		ag0.start();
 
-		Contador c01 = new Contador(numContadores++, numZones);
-		Contador c02 = new Contador(numContadores++, numZones);
-		Contador c03 = new Contador(numContadores++, numZones);
-		Contador c04 = new Contador(numContadores++, numZones);
-		Contador c05 = new Contador(numContadores++, numZones);
-		Contador c06 = new Contador(numContadores++, numZones);
+		Contador c01 = new Contador(numContadores++, numZones, 41.276808f, 1.966329f);
+		Contador c02 = new Contador(numContadores++, numZones, 41.278787f, 1.967584f);
+		Contador c03 = new Contador(numContadores++, numZones, 41.274869f, 1.973668f);
+		Contador c04 = new Contador(numContadores++, numZones, 41.276808f, 1.966329f);
+		Contador c05 = new Contador(numContadores++, numZones, 41.265896f, 1.953828f);
+		Contador c06 = new Contador(numContadores++, numZones, 41.266977f, 1.967604f);
 		//System.out.println(c1.toString());
-		c01.work();/*
+		c01.work();
 		c02.work();
 		c03.work();
 		c04.work();
@@ -33,13 +34,14 @@ public class ProgramaPrincipal {
 		c06.work();
 
 		numZones++;
-
+/*
+		// Ciudad de Gava
 		Agregador ag1 = new Agregador(numZones);
 		ag1.start();
 
-		Contador c11 = new Contador(numContadores++, numZones);
-		Contador c12 = new Contador(numContadores++, numZones);
-		Contador c13 = new Contador(numContadores++, numZones);
+		Contador c11 = new Contador(numContadores++, numZones, 41.301757f, 2.001421f);
+		Contador c12 = new Contador(numContadores++, numZones, 41.304303f, 2.003546f);
+		Contador c13 = new Contador(numContadores++, numZones, 41.306286f, 2.004576f);
 		//System.out.println(c1.toString());
 		c11.work();
 		c12.work();
@@ -47,18 +49,19 @@ public class ProgramaPrincipal {
 
 		numZones++;
 
+		// Ciudad de Viladecans
 		Agregador ag2 = new Agregador(numZones);
 		ag2.start();
 
-		Contador c21 = new Contador(numContadores++, numZones);
-		Contador c22 = new Contador(numContadores++, numZones);
-		Contador c23 = new Contador(numContadores++, numZones);
+		Contador c21 = new Contador(numContadores++, numZones, 41.316037f, 2.015090f);
+		Contador c22 = new Contador(numContadores++, numZones, 41.317262f, 2.017386f);
+		Contador c23 = new Contador(numContadores++, numZones, 41.315699f, 2.025261f);
 		//System.out.println(c1.toString());
 		c21.work();
 		c22.work();
-		c23.work();*/
+		c23.work();
 
-		
+		*/
 		
 		
 		//List<Electrodomestico> electrodomesticos = new ArrayList<Electrodomestico>();

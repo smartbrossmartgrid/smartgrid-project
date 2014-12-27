@@ -3,15 +3,40 @@ package thesmartbros.sagilbe.classes.casa;
 import java.util.ArrayList;
 import java.util.List;
 
+import thesmartbros.sagilbe.tools.VariablesGlobales;
+
 public class ElectrodomesticoResource {
 
 	public List<Electrodomestico> electrodomesticos;
 
 	// Electrodomestico electrodomestico = new Electrodomestico();
 
-	public ElectrodomesticoResource() {
+	public ElectrodomesticoResource(int perfil) {
 		this.electrodomesticos = new ArrayList<Electrodomestico>();
 
+		switch (perfil) {
+			case VariablesGlobales._PERFIL_BAJO_CONSUMO:
+				break;
+	
+			case VariablesGlobales._PERFIL_4PERSONAS:
+				break;
+	
+			case VariablesGlobales._PERFIL_ALTO_CONSUMO:
+				break;
+	
+			case VariablesGlobales._PERFIL_MEDIO_CONSUMO:
+				break;
+	
+			case VariablesGlobales._PERFIL_SOLTERO:
+				break;
+	
+			case VariablesGlobales._PERFIL_TRABAJO_MANANA:
+				break;
+	
+			case VariablesGlobales._PERFIL_TRABAJO_TARDE:
+				break;
+
+		}
 		// defino una serie de electrodomesticos
 		Electrodomestico elec = new Electrodomestico();
 		elec.setNombre("Tele");

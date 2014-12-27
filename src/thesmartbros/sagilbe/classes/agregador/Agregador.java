@@ -31,6 +31,7 @@ public class Agregador {
 	private int zona = 0;
 	private int time = 0;
 	private ArrayList<ConjuntoCasas> listaCasas = new ArrayList<ConjuntoCasas>(); // Campo de la clase
+	private PaillierAgregador paillierAgregador = new PaillierAgregador();
 
 	public Agregador(int zonaId) {
 		this.zona = zonaId;
@@ -114,11 +115,13 @@ public class Agregador {
 					// anadir la casa a la lista de casas disponibles con datos a 0 y marcados como viejos
 					ConjuntoCasas casa = new ConjuntoCasas();
 					casa.setNuevo(false);
-					casa.setIdcasa(Integer.valueOf((Integer) c.objeto));
+					casa.setIdcasa(((requestPaillierObject) c.objeto).contadorId);
+					casa.setLatitud(((requestPaillierObject) c.objeto).latitud);
+					casa.setLongitud(((requestPaillierObject) c.objeto).longitud);
 					listaCasas.add(casa);
-					if (PaillierAgregador.getInstance().g == null) //no tengo los parametros, los pido
+					if (paillierAgregador.g == null) {//no tengo los parametros, los pido
 						requestPaillierParameters();
-					else
+					} else
 						// si los tengo, se los mando
 						sendPaillieParameters(casa.getIdcasa());
 				}
@@ -146,11 +149,14 @@ public class Agregador {
 			} else if (type == VariablesGlobales._MESSAGE_TYPE_ENVIAR_PRECIO_PROVIDER) {
 				objeto = Float.parseFloat(jsonObject.getString("price"));
 			} else if (type == VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_PROVIDER) {
-				PaillierAgregador.getInstance().g = new BigInteger(jsonObject.getString("g"));
-				PaillierAgregador.getInstance().n = new BigInteger(jsonObject.getString("n"));
+				paillierAgregador.g = new BigInteger(jsonObject.getString("g"));
+				paillierAgregador.n = new BigInteger(jsonObject.getString("n"));
 				sendPaillierParameters(); //a todos los contadores
 			} else if (type == VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS) {
-				objeto = jsonObject.getInt("contadorId");
+				objeto = new requestPaillierObject();
+				((requestPaillierObject) objeto).contadorId = jsonObject.getInt("contadorId");
+				((requestPaillierObject) objeto).latitud = Float.parseFloat(jsonObject.getString("latitud"));
+				((requestPaillierObject) objeto).longitud = Float.parseFloat(jsonObject.getString("longitud"));
 			}
 		} catch (NumberFormatException | JSONException e) {
 			e.printStackTrace();
@@ -172,7 +178,6 @@ public class Agregador {
 	}
 
 	private BigInteger calcularConsumoTotal() {
-		PaillierAgregador p = PaillierAgregador.getInstance();
 		BigInteger[] consumosMatrix = new BigInteger[listaCasas.size()];
 		for (int i = 0; i < listaCasas.size(); i++) {
 			consumosMatrix[i] = listaCasas.get(i).getConsuma_enc();
@@ -180,7 +185,7 @@ public class Agregador {
 				listaCasas.get(i).incrementarNotFound();
 			listaCasas.get(i).setNuevo(false); // los valores usados son viejos
 		}
-		return p.AgreggatorFunction(p.nsquare, consumosMatrix);
+		return paillierAgregador.AgreggatorFunction(paillierAgregador.nsquare, consumosMatrix);
 	}
 
 	private void sendPrecioToContadores(Float preciokWh) {
@@ -213,7 +218,7 @@ public class Agregador {
 	}
 
 	private void sendPaillieParameters(int contadorId) {
-		String jsonMessageToContador = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR + ", \"g\": \"" + PaillierAgregador.getInstance().g.toString() + "\", \"n\": \"" + PaillierAgregador.getInstance().n.toString() + "\"}";
+		String jsonMessageToContador = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR + ", \"g\": \"" + paillierAgregador.g.toString() + "\", \"n\": \"" + paillierAgregador.n.toString() + "\"}";
 		int port = VariablesGlobales._DEFAULT_CONTADOR_PORT + contadorId;
 		PrinterTools.printJSON(jsonMessageToContador);
 		if (SocketTools.send(VariablesGlobales._IP_CONTADOR, port, jsonMessageToContador)) {
@@ -225,6 +230,12 @@ public class Agregador {
 	private class Container {
 		public int type = 0;
 		public Object objeto = null;
+	}
+
+	private class requestPaillierObject {
+		public int contadorId = 0;
+		public float latitud = 0.0f;
+		public float longitud = 0.0f;
 	}
 
 }

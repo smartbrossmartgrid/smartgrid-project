@@ -18,7 +18,7 @@ package thesmartbros.sagilbe.classes.casa;
 import java.math.*;
 import java.util.*;
 
-final class PaillierContador {
+class PaillierContador {
 
 	public BigInteger n = null;
 	/**
@@ -33,20 +33,6 @@ final class PaillierContador {
 	 * number of bits of modulus
 	 */
 	private int bitLength = 512; //512
-
-	private static PaillierContador INSTANCE = null;
-
-	private synchronized static void createInstance() {
-		if (INSTANCE == null) {
-			INSTANCE = new PaillierContador();
-		}
-	}
-
-	public static PaillierContador getInstance() {
-		if (INSTANCE == null)
-			createInstance();
-		return INSTANCE;
-	}
 
 	public BigInteger Encryption(BigInteger m) {
 		if (g == null || n == null)

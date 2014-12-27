@@ -30,7 +30,17 @@ public class VariablesGlobales {
 	/* calculo del precio */
 	public final static float _MAX_PRICE = 0.12337f; /* euros/kWh */
 	public final static float _MIN_PRICE = 0.09292f; /* euros/kWh */
-	public final static float _MAX_ENERGY_GENERATED = 500000.0f; /* kWh */
+	public final static float _MAX_ENERGY_GENERATED = 5000.0f; /* kWh */
 	public final static float _RATIO_TIME = Contador._THREAD_TIME_INTERVAL/10000; /* 1h son 10 s */
+	
+	/* perfiles de consumo */
+	public final static int _PERFIL_DEFAULT = -1;
+	public final static int _PERFIL_BAJO_CONSUMO = 1;
+	public final static int _PERFIL_MEDIO_CONSUMO = 2;
+	public final static int _PERFIL_ALTO_CONSUMO = 3;
+	public final static int _PERFIL_TRABAJO_MANANA = 4;
+	public final static int _PERFIL_TRABAJO_TARDE = 5;
+	public final static int _PERFIL_4PERSONAS = 6;
+	public final static int _PERFIL_SOLTERO = 7;
 
 }
