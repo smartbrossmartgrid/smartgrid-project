@@ -10,36 +10,41 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import thesmartbros.sagilbe.tools.Paillier;
+import thesmartbros.sagilbe.tools.PrinterTools;
 import thesmartbros.sagilbe.tools.SocketTools;
+import thesmartbros.sagilbe.tools.VariablesGlobales;
 
 public class Agregador {
+	/* Esta funcion hace de agregador en un entorno de Smart Grid. Las
+	 * caracteristicas del agregador son: 1. El mismo detecta cuantos contadores
+	 * sirve. Para ello, cuando se inicia espera a que todos los contadores
+	 * envien su informacion. En la primera ronda pone que todos los valores son
+	 * viejos (para no enviar datos equivocos al proveedor). Para cuando reciba
+	 * una nueva muestra, todos los demas contadores tendran que haber enviado
+	 * sus consumos. Entonces sera cuando ya actue de forma normal y ya sepa a
+	 * cuantos contadores sirve. */
 
 	/* variables principales, de socket */
-	public int _CONTADORES_EN_CIUDAD = 3;
+	public int _CONTADORES_EN_CIUDAD = 1;
 	private ServerSocket serverSocket = null;
-	private final String _IP_PROVIDER = "127.0.0.1";
-	private final int _DEFAULT_PROVIDER_PORT = 50000;
-	private final int _DEFAULT_AGREGADOR_PORT = 40000;
-	private final String _IP_CONTADOR = "127.0.0.1";
-	private final int _DEFAULT_CONTADOR_PORT = 30000;
 
 	/* variables secundarias, de smart grid */
 	private int zona = 0;
 	private int time = 0;
-	private ArrayList<ConjuntoCasas> listacasas = new ArrayList<ConjuntoCasas>(); // Campo de la clase
+	private ArrayList<ConjuntoCasas> listaCasas = new ArrayList<ConjuntoCasas>(); // Campo de la clase
 
-	public Agregador(int zonaId, int contadores) {
+	public Agregador(int zonaId) {
 		this.zona = zonaId;
-		this._CONTADORES_EN_CIUDAD = contadores;
 	}
 
 	public void start() {
 		boolean listening = true;
-		int port = _DEFAULT_AGREGADOR_PORT + zona;
+		int port = VariablesGlobales._DEFAULT_AGREGADOR_PORT + zona;
 		try {
 			serverSocket = new ServerSocket(port);
 		} catch (IOException e) {
 			System.err.println("Could not listen on port: " + port);
+			e.printStackTrace();
 			System.exit(-1);
 		}
 		Thread t = new Thread(new Runnable() {
@@ -50,47 +55,62 @@ public class Agregador {
 					serverSocket.close();
 					serverSocket = null;
 				} catch (Exception e) {
-					System.err.println(e);
+					e.printStackTrace();
 				}
 			}
 
 			private void startAgregadorFunctions(Socket socket) {
-				System.out.println("Client connected to Agregador... OK");
+				PrinterTools.socketLog("Client connected to Agregador... OK");
 				String jsonMessageFromContador = SocketTools.getJSON(socket); //desde el socket conseguir el JSON
 				//System.out.println(jsonMessageFromContador);
-				ConjuntoCasas casa = parseJSON(jsonMessageFromContador); //parsear el JSON
+				Container c = parseJSON(jsonMessageFromContador); //parsear el JSON
+				if (c.type == VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO) {
+					ConjuntoCasas casa = (ConjuntoCasas) c.objeto;
+					/* comprobar que los valores del contador recibido no
+					 * existen ya */
 
-				/* comprobar que los valores del contador recibido no existen ya */
+					int position = 0;
+					boolean existe = false, nuevo = false;
+					while (position < listaCasas.size() && !existe && listaCasas.size() != 0) { // buscar contador
+						if (casa.getIdcasa() == listaCasas.get(position).getIdcasa()) {
+							existe = true;
+							nuevo = listaCasas.get(position).isNuevo();
+						} else
+							position++;
+					}
+					/* si es la primera vez que la casa entra en la lista,
+					 * ponemos isNuevo = false para que no envie nada, ya que el
+					 * sistema no estara en regimen permanente */
+					if (existe)
+						listaCasas.remove(position);
+					else
+						casa.setNuevo(false);
+					listaCasas.add(casa);
 
-				int position = 0;
-				boolean existe = false, nuevo = false;
-				while (position < listacasas.size() && !existe && listacasas.size() != 0) { // buscar contador
-					if (casa.getIdcasa() == listacasas.get(position).getIdcasa()) {
-						existe = true;
-						nuevo = listacasas.get(position).isNuevo();
-					} else
-						position++;
-				}
-				if (existe) /* colocamos la casa */
-					listacasas.remove(position);
-				listacasas.add(casa);
+					/* comprobamos cuantos contadores tenemos en la zona */
+					if (_CONTADORES_EN_CIUDAD < listaCasas.size())
+						_CONTADORES_EN_CIUDAD = listaCasas.size();
 
-				/* comprobamos que si estan todos, el estado de todos debe ser
-				 * nuevo */
-				int size = 0;
-				for (int i = 0; i < listacasas.size(); i++) {
-					if (listacasas.get(i).isNuevo())
-						size++;
-					if (listacasas.get(i).getTime() > time)
-						time = listacasas.get(i).getTime();
-				}
-				if (size == _CONTADORES_EN_CIUDAD) { //si todos son nuevos, enviamos consumos
-					enviarConsumosAlProvider();
-				} else { // no todos son nuevos, pero... puede que algun contador no funcione...
-					// 1. averiguar si mi contador tenia datos nuevos
-					if (nuevo) // tenia datos nuevos
+					/* comprobamos que si estan todos, el estado de todos debe
+					 * ser nuevo */
+					int size = 0;
+					for (int i = 0; i < listaCasas.size(); i++) {
+						if (listaCasas.get(i).isNuevo())
+							size++;
+						if (listaCasas.get(i).getTime() > time)
+							time = listaCasas.get(i).getTime();
+					}
+					if (size == _CONTADORES_EN_CIUDAD) { //si todos son nuevos, enviamos consumos
 						enviarConsumosAlProvider();
-					// si tenia datos viejos, ya he hecho antes lo que debia (sustituir valores)
+					} else { // no todos son nuevos, pero... puede que algun contador no funcione...
+						// 1. averiguar si mi contador tenia datos nuevos
+						if (nuevo) // tenia datos nuevos
+							enviarConsumosAlProvider();
+						// si tenia datos viejos, ya he hecho antes lo que debia (sustituir valores)
+					}
+				} else if (c.type == VariablesGlobales._MESSAGE_TYPE_ENVIAR_PRECIO_PROVIDER) {
+					Float preciokWh = (Float) c.objeto;
+					sendPrecioToContadores(preciokWh);
 				}
 
 			}
@@ -98,41 +118,70 @@ public class Agregador {
 		t.start();
 	}
 
-	private ConjuntoCasas parseJSON(String jsonMessage) {
-		ConjuntoCasas casa = new ConjuntoCasas();
+	private Container parseJSON(String jsonMessage) {
+		Container c = new Container();
+		Object objeto = null;
 		JSONObject jsonObject = null;
+		int type = -1;
 		try { // parsear los datos
 			jsonObject = new JSONObject(jsonMessage);
-			casa.setConsuma_enc(new BigInteger(jsonObject.getString("consum")));
-			casa.setIdcasa(jsonObject.getInt("contadorId"));
-			casa.setZonaid(jsonObject.getInt("zonaId"));
-			casa.setTime(jsonObject.getInt("time"));
+			type = jsonObject.getInt("messageType");
+			if (type == VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO) {
+				objeto = new ConjuntoCasas();
+				((ConjuntoCasas) objeto).setConsuma_enc(new BigInteger(jsonObject.getString("consum")));
+				((ConjuntoCasas) objeto).setIdcasa(jsonObject.getInt("contadorId"));
+				((ConjuntoCasas) objeto).setZonaid(jsonObject.getInt("zonaId"));
+				((ConjuntoCasas) objeto).setTime(jsonObject.getInt("time"));
+			} else if (type == VariablesGlobales._MESSAGE_TYPE_ENVIAR_PRECIO_PROVIDER) {
+				objeto = Float.parseFloat(jsonObject.getString("price"));
+			}
 		} catch (NumberFormatException | JSONException e) {
 			e.printStackTrace();
 		}
-		return casa;
+		c.type = type;
+		c.objeto = objeto;
+		return c;
 	}
 
 	private void enviarConsumosAlProvider() {
-		int port = _DEFAULT_PROVIDER_PORT;
+		int port = VariablesGlobales._DEFAULT_PROVIDER_PORT;
 		BigInteger consumoTotal = calcularConsumoTotal();
-		String jsonMessageToProvider = "{ \"consum\": \"" + consumoTotal.toString() + "\", \"zona\":" + zona + ", \"time\":" + time + "}";
-		if (SocketTools.send(_IP_PROVIDER, port, jsonMessageToProvider))
-			System.out.println("[ZonaAgregador= " + this.zona + " sends data to " + _IP_PROVIDER + ":" + port + "]");
+		String jsonMessageToProvider = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO_AGREGADO + ", \"consum\": \"" + consumoTotal.toString() + "\", \"zona\":" + zona + ", \"viviendas\":" + _CONTADORES_EN_CIUDAD + ", \"time\":" + time + "}";
+		PrinterTools.printJSON(jsonMessageToProvider);
+		if (SocketTools.send(VariablesGlobales._IP_PROVIDER, port, jsonMessageToProvider))
+			PrinterTools.log("[ZonaAgregador= " + this.zona + " sends data to " + VariablesGlobales._IP_PROVIDER + ":" + port + "]");
 		else
-			System.out.println("ERROR [ZonaAgregador=" + this.zona + "sends data to " + _IP_PROVIDER + ":" + port + "]");
+			PrinterTools.log("ERROR [ZonaAgregador=" + this.zona + "sends data to " + VariablesGlobales._IP_PROVIDER + ":" + port + "]");
 	}
 
 	private BigInteger calcularConsumoTotal() {
 		Paillier p = Paillier.getInstance();
-		BigInteger[] consumosMatrix = new BigInteger[listacasas.size()];
-		for (int i = 0; i < listacasas.size(); i++) {
-			consumosMatrix[i] = listacasas.get(i).getConsuma_enc();
-			if (!listacasas.get(i).isNuevo()) // si es viejo, significa que no ha enviado el suyo
-				listacasas.get(i).incrementarNotFound();
-			listacasas.get(i).setNuevo(false); // los valores usados son viejos
+		BigInteger[] consumosMatrix = new BigInteger[listaCasas.size()];
+		for (int i = 0; i < listaCasas.size(); i++) {
+			consumosMatrix[i] = listaCasas.get(i).getConsuma_enc();
+			if (!listaCasas.get(i).isNuevo()) // si es viejo, significa que no ha enviado el suyo
+				listaCasas.get(i).incrementarNotFound();
+			listaCasas.get(i).setNuevo(false); // los valores usados son viejos
 		}
 		return p.AgreggatorFunction(p.nsquare, consumosMatrix);
+	}
+
+	private void sendPrecioToContadores(Float preciokWh) {
+		String jsonMessage = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_ENVIAR_PRECIO_CONTADOR + ", \"price\": \"" + Float.toString(preciokWh) + "\"}";
+		PrinterTools.printJSON(jsonMessage);
+		for (int i = 0; i < listaCasas.size(); i++) {
+			int contadorId = listaCasas.get(i).getIdcasa();
+			int port = VariablesGlobales._DEFAULT_CONTADOR_PORT + contadorId;
+			if (SocketTools.send(VariablesGlobales._IP_CONTADOR, port, jsonMessage))
+				PrinterTools.log("[Agregador sends data to " + VariablesGlobales._IP_CONTADOR + ":" + port + ": price is now " + Float.toString(preciokWh) + "]");
+			else
+				PrinterTools.log("ERROR [Agregador sends data to " + VariablesGlobales._IP_CONTADOR + ":" + port + ": price is now " + Float.toString(preciokWh) + "]");
+		}
+	}
+
+	private class Container {
+		public int type = 0;
+		public Object objeto = null;
 	}
 
 }

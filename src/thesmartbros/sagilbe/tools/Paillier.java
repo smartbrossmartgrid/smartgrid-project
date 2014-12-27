@@ -116,7 +116,8 @@ public final class Paillier {
      * @param r random plaintext to help with encryption
      * @return ciphertext as a BigInteger
      */
-    private BigInteger Encryption(BigInteger m, BigInteger r) {
+    @SuppressWarnings("unused")
+	private BigInteger Encryption(BigInteger m, BigInteger r) {
         return g.modPow(m, nsquare).multiply(r.modPow(n, nsquare)).mod(nsquare);
     }
 

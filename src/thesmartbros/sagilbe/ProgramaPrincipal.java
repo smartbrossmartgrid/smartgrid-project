@@ -15,7 +15,7 @@ public class ProgramaPrincipal {
 		Proveedor provider = new Proveedor();
 		provider.start();
 
-		Agregador ag0 = new Agregador(numZones,6);
+		Agregador ag0 = new Agregador(numZones);
 		ag0.start();
 
 		Contador c01 = new Contador(numContadores++, numZones);
@@ -34,7 +34,7 @@ public class ProgramaPrincipal {
 
 		numZones++;
 
-		Agregador ag1 = new Agregador(numZones,3);
+		Agregador ag1 = new Agregador(numZones);
 		ag1.start();
 
 		Contador c11 = new Contador(numContadores++, numZones);
@@ -47,7 +47,7 @@ public class ProgramaPrincipal {
 
 		numZones++;
 
-		Agregador ag2 = new Agregador(numZones,3);
+		Agregador ag2 = new Agregador(numZones);
 		ag2.start();
 
 		Contador c21 = new Contador(numContadores++, numZones);
