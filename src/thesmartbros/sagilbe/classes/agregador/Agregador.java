@@ -59,7 +59,7 @@ public class Agregador {
 			}
 
 			private void startAgregadorFunctions(Socket socket) {
-				PrinterTools.socketLog("Client connected to Agregador... OK");
+				PrinterTools.socketLog("Client connected to Agregador... OK (" + socket + ")");
 				String jsonMessageFromContador = SocketTools.getJSON(socket); //desde el socket conseguir el JSON
 				//System.out.println(jsonMessageFromContador);
 				Container c = parseJSON(jsonMessageFromContador); //parsear el JSON
@@ -111,8 +111,16 @@ public class Agregador {
 					Float preciokWh = (Float) c.objeto;
 					sendPrecioToContadores(preciokWh);
 				} else if (c.type == VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS) {
-					retrievePaillierParameters();
-					sendPaillierParameters(socket);
+					// anadir la casa a la lista de casas disponibles con datos a 0 y marcados como viejos
+					ConjuntoCasas casa = new ConjuntoCasas();
+					casa.setNuevo(false);
+					casa.setIdcasa(Integer.valueOf((Integer) c.objeto));
+					listaCasas.add(casa);
+					if (PaillierAgregador.getInstance().g == null) //no tengo los parametros, los pido
+						requestPaillierParameters();
+					else
+						// si los tengo, se los mando
+						sendPaillieParameters(casa.getIdcasa());
 				}
 				/* try { socket.close(); } catch (IOException e) {
 				 * e.printStackTrace(); } */
@@ -140,6 +148,9 @@ public class Agregador {
 			} else if (type == VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_PROVIDER) {
 				PaillierAgregador.getInstance().g = new BigInteger(jsonObject.getString("g"));
 				PaillierAgregador.getInstance().n = new BigInteger(jsonObject.getString("n"));
+				sendPaillierParameters(); //a todos los contadores
+			} else if (type == VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS) {
+				objeto = jsonObject.getInt("contadorId");
 			}
 		} catch (NumberFormatException | JSONException e) {
 			e.printStackTrace();
@@ -185,49 +196,30 @@ public class Agregador {
 		}
 	}
 
-	private void retrievePaillierParameters() {
+	private void requestPaillierParameters() {
 		int port = VariablesGlobales._DEFAULT_PROVIDER_PORT;
-		Container result = null;
-		Socket connection = null;
-		boolean boolResult = false;
-		do {
-			String jsonMessageToProvider = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR + ", \"zona\": " + zona + "}";
-			PrinterTools.printJSON(jsonMessageToProvider);
-			connection = SocketTools.sendSynchronized(VariablesGlobales._IP_PROVIDER, port, jsonMessageToProvider);
-			if (connection != null) {
-				PrinterTools.log("[ZonaAgregador= " + this.zona + " gets PAILLIER data from " + connection + "]");
-				String jsonMessage = SocketTools.getJSON(connection, false);
-				if (!connection.isClosed()) {
-					PrinterTools.printJSON(jsonMessage);
-					result = parseJSON(jsonMessage);
-				}
-			} else
-				PrinterTools.log("ERROR [ZonaAgregador= " + this.zona + " gets PAILLIER data from " + connection + "]");
-			boolResult = result != null && result.type != VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR;
-			if (!boolResult)
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-		} while (boolResult);
-		if (connection != null) {
-			try {
-				connection.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		String jsonMessage = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR + ", \"zona\": " + zona + "}";
+		PrinterTools.printJSON(jsonMessage);
+		if (SocketTools.send(VariablesGlobales._IP_PROVIDER, port, jsonMessage)) {
+			PrinterTools.log("[ZonaAgregador= " + this.zona + " requests PAILLIER data to PROVIDER]");
+		} else
+			PrinterTools.log("ERROR [ZonaAgregador= " + this.zona + " requests PAILLIER data to PROVIDER]");
+	}
+
+	private void sendPaillierParameters() {
+		for (int i = 0; i < listaCasas.size(); i++) {
+			sendPaillieParameters(listaCasas.get(i).getIdcasa());
 		}
 	}
 
-	private void sendPaillierParameters(Socket socket) {
-		String jsonMessageToProvider = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR + ", \"g\": \"" + PaillierAgregador.getInstance().g.toString() + "\", \"n\": \"" + PaillierAgregador.getInstance().n.toString() + "\"}";
-		PrinterTools.printJSON(jsonMessageToProvider);
-		if (SocketTools.sendSynchronized(socket, jsonMessageToProvider)) {
-			PrinterTools.log("[ZonaAgregador= " + this.zona + " sends PAILLIER data to CONTADOR via established socket.");
+	private void sendPaillieParameters(int contadorId) {
+		String jsonMessageToContador = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR + ", \"g\": \"" + PaillierAgregador.getInstance().g.toString() + "\", \"n\": \"" + PaillierAgregador.getInstance().n.toString() + "\"}";
+		int port = VariablesGlobales._DEFAULT_CONTADOR_PORT + contadorId;
+		PrinterTools.printJSON(jsonMessageToContador);
+		if (SocketTools.send(VariablesGlobales._IP_CONTADOR, port, jsonMessageToContador)) {
+			PrinterTools.log("[ZonaAgregador= " + this.zona + " sends PAILLIER data to CONTADOR " + VariablesGlobales._IP_CONTADOR + ":" + port + "]");
 		} else
 			PrinterTools.log("ERROR [ZonaAgregador=" + this.zona + " sends PAILLIER data to CONTADOR via established socket.");
-
 	}
 
 	private class Container {

@@ -48,7 +48,7 @@ public class Proveedor {
 			}
 
 			private void startProviderFunctions(Socket socket) {
-				PrinterTools.socketLog("Client connected to Provider... OK");
+				PrinterTools.socketLog("Client connected to Provider... OK (" + socket + ")");
 				String jsonMessageFromAgregador = SocketTools.getJSON(socket); // desde el socket conseguir el JSON
 				Container c = parseJSON(jsonMessageFromAgregador); //parsear el JSON
 				if (c.type == VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO_AGREGADO) {
@@ -60,9 +60,9 @@ public class Proveedor {
 					}
 					sendPrecioToAgregadroes();
 				} else if (c.type == VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR) {
-					sendPaillierParameters(socket);
+					sendPaillierParameters(Integer.valueOf((Integer) c.objeto));
 				}
-				
+
 			}
 		});
 		t.start();
@@ -81,13 +81,14 @@ public class Proveedor {
 		}
 	}
 
-	private void sendPaillierParameters(Socket socket) {
+	private void sendPaillierParameters(int zona) {
+		int port = VariablesGlobales._DEFAULT_AGREGADOR_PORT + zona;
 		String jsonMessageToAgregador = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_PROVIDER + ", \"g\": \"" + Paillier.getInstance().g.toString() + "\", \"n\": \"" + Paillier.getInstance().n.toString() + "\"}";
 		PrinterTools.printJSON(jsonMessageToAgregador);
-		if (SocketTools.sendSynchronized(socket, jsonMessageToAgregador)) {
-			PrinterTools.log("[Provider sends PAILLIER data to AGREGADOR via established socket ("+socket+")]");
+		if (SocketTools.send(VariablesGlobales._IP_AGREGADOR, port, jsonMessageToAgregador)) {
+			PrinterTools.log("[Provider sends PAILLIER data to AGREGADOR " + VariablesGlobales._IP_AGREGADOR + ":" + port + "]");
 		} else
-			PrinterTools.log("ERROR [Provider sends PAILLIER data to AGREGADOR via established socket]");
+			PrinterTools.log("ERROR [Provider sends PAILLIER data to AGREGADOR " + VariablesGlobales._IP_AGREGADOR + ":" + port + "]");
 
 	}
 

@@ -16,6 +16,8 @@ public class SocketTools {
 		PrintWriter out = null;
 		try {
 			socket = new Socket(IP, port);
+			if (socket.isClosed())
+				return false;
 			outstream = socket.getOutputStream();
 			out = new PrintWriter(outstream);
 			out.print(message);
@@ -29,7 +31,7 @@ public class SocketTools {
 				out.close();
 				outstream.close();
 				socket.close();
-				PrinterTools.socketLog("Socket " + socket + " has been closed");
+				PrinterTools.socketLog(socket + " has been closed");
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (Exception e) {
@@ -41,8 +43,6 @@ public class SocketTools {
 
 	public static synchronized Socket sendSynchronized(String IP, int port, String message) {
 		Socket socket = null;
-		OutputStream outstream = null;
-		PrintWriter out = null;
 		try {
 			socket = new Socket(IP, port);
 			sendSynchronized(socket, message);
@@ -62,6 +62,8 @@ public class SocketTools {
 			outstream = socket.getOutputStream();
 			out = new PrintWriter(outstream);
 			out.print(message);
+			if (socket.isClosed())
+				PrinterTools.socketLog(socket + " has closed");
 			return true;
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
@@ -69,10 +71,9 @@ public class SocketTools {
 			e.printStackTrace();
 		} finally {
 			try {
-				if (out != null)
-					out.close();
-				if (outstream != null)
-					outstream.close();
+				out.close();
+				outstream.close();
+				PrinterTools.socketLog(socket + " has been closed");
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (Exception e) {
@@ -86,6 +87,8 @@ public class SocketTools {
 		StringBuilder sb = new StringBuilder();
 		String line;
 		try {
+			if (socket.isClosed())
+				return "";
 			BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			while ((line = reader.readLine()) != null)
 				sb.append(line).append("\n");
@@ -101,7 +104,7 @@ public class SocketTools {
 		try {
 			if (close) {
 				socket.close();
-				PrinterTools.socketLog("Socket " + socket + " has been closed");
+				PrinterTools.socketLog(socket + " has been closed");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
