@@ -176,6 +176,16 @@ public class Agregador {
 		else
 			PrinterTools.log("ERROR [ZonaAgregador=" + this.zona + "sends data to " + VariablesGlobales._IP_PROVIDER + ":" + port + "]");
 	}
+	
+	private void pedirTecnico(int casa) {
+		int port = VariablesGlobales._DEFAULT_PROVIDER_PORT;
+		String jsonMessageToProvider = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_TECNICO + ", \"casa\": \"" + casa + "\"}";
+		PrinterTools.printJSON(jsonMessageToProvider);
+		if (SocketTools.send(VariablesGlobales._IP_PROVIDER, port, jsonMessageToProvider))
+			PrinterTools.log("[ZonaAgregador= " + this.zona + " sends an alert to " + VariablesGlobales._IP_PROVIDER + ":" + port + "]");
+		else
+			PrinterTools.log("ERROR [ZonaAgregador=" + this.zona + "sends an alert to " + VariablesGlobales._IP_PROVIDER + ":" + port + "]");
+	}
 
 	private BigInteger calcularConsumoTotal() {
 		BigInteger[] consumosMatrix = new BigInteger[listaCasas.size()];

@@ -64,17 +64,20 @@ public class Proveedor {
 						PrinterTools.log("[-------------------------------------------------]");
 						PrinterTools.log("[-------------------------------------------------]");
 					}
-					sendPrecioToAgregadroes();
+					sendPrecioToAgregadores();
 				} else if (c.type == VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR) {
 					sendPaillierParameters(Integer.valueOf((Integer) c.objeto));
+					
+				} else if (c.type == VariablesGlobales._MESSAGE_TYPE_REQUEST_TECNICO) {
+					PrinterTools.log("[---------Enviar técnico a casa "+c.casa+"--------]");
 				}
 
 			}
 		});
 		t.start();
 	}
-
-	private void sendPrecioToAgregadroes() {
+		
+	private void sendPrecioToAgregadores() {
 		String jsonMessage = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_ENVIAR_PRECIO_PROVIDER + ", \"price\": \"" + Float.toString(preciokWh) + "\"}";
 		PrinterTools.printJSON(jsonMessage);
 		for (int i = 0; i < zonasList.size(); i++) {
@@ -101,6 +104,7 @@ public class Proveedor {
 	private Container parseJSON(String jsonMessage) {
 		Container c = new Container();
 		Object objeto = null;
+		Object casa = null;
 		JSONObject jsonObject = null;
 		int type = -1;
 		try { // parsear los datos
@@ -129,18 +133,23 @@ public class Proveedor {
 				zonaActual.setNumero_viviendas(jsonObject.getInt("viviendas"));
 			} else if (type == VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR) {
 				objeto = jsonObject.getInt("zona");
-			}
+			} else if (type == VariablesGlobales._MESSAGE_TYPE_REQUEST_TECNICO) {
+			casa = jsonObject.getInt("casa");
+		}
 		} catch (NumberFormatException | JSONException e) {
 			e.printStackTrace();
 		}
 		c.type = type;
 		c.objeto = objeto;
+		c.casa = casa;
 		return c;
 	}
 
 	private class Container {
 		public int type = 0;
-		@SuppressWarnings("unused")
+		public Object casa = null;
 		public Object objeto = null;
+
+
 	}
 }
