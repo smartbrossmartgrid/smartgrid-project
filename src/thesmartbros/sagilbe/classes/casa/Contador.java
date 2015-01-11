@@ -71,7 +71,7 @@ public class Contador {
 	}
 
 	private void startSocketServer() {
-		boolean listening = true;
+		final boolean listening = true;
 		int port = VariablesGlobales._DEFAULT_CONTADOR_PORT + contadorId;
 		try {
 			serverSocket = new ServerSocket(port);

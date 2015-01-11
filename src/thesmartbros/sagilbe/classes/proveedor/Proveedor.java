@@ -27,7 +27,7 @@ public class Proveedor {
 	private float preciokWh = 0.09f;
 
 	public void start() {
-		boolean listening = true;
+		final boolean listening = true;
 		try {
 			serverSocket = new ServerSocket(VariablesGlobales._DEFAULT_PROVIDER_PORT);
 		} catch (IOException e) {
@@ -69,7 +69,7 @@ public class Proveedor {
 					sendPaillierParameters(Integer.valueOf((Integer) c.objeto));
 					
 				} else if (c.type == VariablesGlobales._MESSAGE_TYPE_REQUEST_TECNICO) {
-					PrinterTools.log("[---------Enviar técnico a casa "+c.casa+"--------]");
+					PrinterTools.log("[---------Enviar tï¿½cnico a casa "+c.casa+"--------]");
 				}
 
 			}
