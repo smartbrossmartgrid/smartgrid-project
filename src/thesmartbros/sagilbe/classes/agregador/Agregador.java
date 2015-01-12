@@ -38,7 +38,7 @@ public class Agregador {
 	}
 
 	public void start() {
-		boolean listening = true;
+		final boolean listening = true;
 		int port = VariablesGlobales._DEFAULT_AGREGADOR_PORT + zona;
 		try {
 			serverSocket = new ServerSocket(port);
