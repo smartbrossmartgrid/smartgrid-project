@@ -13,10 +13,6 @@ public class ProgramaPrincipal {
 	private static int numZones = 0;
 
 	public static void main(String args[]) throws NumberFormatException, IOException {
-		String res = ToolsMap.getLocationFromName(41.276808f, 1.966329f);
-		System.out.println(res);
-		
-		
 		Proveedor provider = new Proveedor();
 		provider.start();
 

@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import thesmartbros.sagilbe.tools.Paillier;
 import thesmartbros.sagilbe.tools.PrinterTools;
 import thesmartbros.sagilbe.tools.SocketTools;
+import thesmartbros.sagilbe.tools.ToolsMap;
 import thesmartbros.sagilbe.tools.VariablesGlobales;
 
 //clase perteneciente al objeto proveedor
@@ -59,24 +60,24 @@ public class Proveedor {
 						preciokWh = VariablesGlobales._MIN_PRICE + ((float) consumoTotal / VariablesGlobales._MAX_ENERGY_GENERATED) * (VariablesGlobales._MAX_PRICE - VariablesGlobales._MIN_PRICE);
 						PrinterTools.log("[-------------------------------------------------]");
 						PrinterTools.log("[--  PROVIDER received total consumption ---------]");
-						PrinterTools.log("[- Consumo: "+consumoTotal+"/"+ VariablesGlobales._MAX_ENERGY_GENERATED);
-						PrinterTools.log("[- Precio: "+Float.toString(preciokWh)+" EUR/kWh   ");
+						PrinterTools.log("[- Consumo: " + consumoTotal + "/" + VariablesGlobales._MAX_ENERGY_GENERATED);
+						PrinterTools.log("[- Precio: " + Float.toString(preciokWh) + " EUR/kWh   ");
 						PrinterTools.log("[-------------------------------------------------]");
 						PrinterTools.log("[-------------------------------------------------]");
 					}
 					sendPrecioToAgregadores();
 				} else if (c.type == VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR) {
 					sendPaillierParameters(Integer.valueOf((Integer) c.objeto));
-					
+
 				} else if (c.type == VariablesGlobales._MESSAGE_TYPE_REQUEST_TECNICO) {
-					PrinterTools.log("[---------Enviar técnico a casa "+c.casa+"--------]");
+					PrinterTools.log("[---------Enviar técnico a casa " + c.casa + "--------]");
 				}
 
 			}
 		});
 		t.start();
 	}
-		
+
 	private void sendPrecioToAgregadores() {
 		String jsonMessage = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_ENVIAR_PRECIO_PROVIDER + ", \"price\": \"" + Float.toString(preciokWh) + "\"}";
 		PrinterTools.printJSON(jsonMessage);
@@ -134,8 +135,8 @@ public class Proveedor {
 			} else if (type == VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR) {
 				objeto = jsonObject.getInt("zona");
 			} else if (type == VariablesGlobales._MESSAGE_TYPE_REQUEST_TECNICO) {
-			casa = jsonObject.getInt("casa");
-		}
+				casa = jsonObject.getInt("casa");
+			}
 		} catch (NumberFormatException | JSONException e) {
 			e.printStackTrace();
 		}
@@ -145,11 +146,13 @@ public class Proveedor {
 		return c;
 	}
 
+	private String getStreet(float latitud, float longitud) {
+		return ToolsMap.getLocationFromName(latitud, longitud);
+	}
+
 	private class Container {
 		public int type = 0;
 		public Object casa = null;
 		public Object objeto = null;
-
-
 	}
 }
