@@ -9,7 +9,10 @@ public class ToolsMap {
 
 	public static String getLocationFromName(double latitude, double longitude) {
 		String URL = makeURLforRouteName(latitude, longitude);
-		String result = (new JSONParser()).getJSONFromUrl(URL);
+		JSONParser jsonParse = new JSONParser();
+		String result = jsonParse.getJSONFromUrl(URL);
+		System.out.println(result);
+		//String result = (new JSONParser()).getJSONFromUrl(URL);
 		String[] results = retrieveNameGeo(result);
 		if (results == null)
 			return latitude+","+longitude;
@@ -19,12 +22,14 @@ public class ToolsMap {
 	
 	private static String makeURLforRouteName(double latitude, double longitude) {
         StringBuilder urlString = new StringBuilder();
-        urlString.append("http://maps.googleapis.com/maps/api/geocode/json");
+        urlString.append("https://maps.googleapis.com/maps/api/geocode/json");
         urlString.append("?latlng=");// from
         urlString.append(latitude);
         urlString.append(",");
         urlString.append(longitude);
         urlString.append("&sensor=false");
+        urlString.append("&key=");
+        urlString.append(VariablesGlobales._GOOGLE_MAPS_API_KEY);
         return urlString.toString();
     }
 

@@ -46,5 +46,8 @@ public class VariablesGlobales {
 	public final static int _PERFIL_TRABAJO_TARDE = 5;
 	public final static int _PERFIL_4PERSONAS = 6;
 	public final static int _PERFIL_SOLTERO = 7;
+	
+	/* API KEY Google Maps */ /* This key might expire */
+	public final static String _GOOGLE_MAPS_API_KEY = "AIzaSyDI6RylZ2isNWF9byvDdEg--jJXFMYHnq4";
 
 }
