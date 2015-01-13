@@ -5,6 +5,8 @@ import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,6 +29,8 @@ public class Proveedor {
 	private int consumoTotal = 0;
 	private float preciokWh = 0.09f;
 
+	int tecnicos = 10;
+	
 	public void start() {
 		final boolean listening = true;
 		try {
@@ -70,7 +74,16 @@ public class Proveedor {
 					sendPaillierParameters(Integer.valueOf((Integer) c.objeto));
 
 				} else if (c.type == VariablesGlobales._MESSAGE_TYPE_REQUEST_TECNICO) {
-					PrinterTools.log("[---------Enviar tecnico a casa " + c.casa + "--------]");
+					Tiempo tiempo = new Tiempo();
+					if (tecnicos == 0){
+						PrinterTools.log("[---------No tenemos técnicos disponibles--------]");
+					}
+					else{
+			        System.out.println ("Quedan " + tecnicos + " tecnicos, te enviamos uno");
+					tecnicos--;
+			        tiempo.Contar();
+			        String calle = getStreet(c.latitud, c.longitud);
+					PrinterTools.log("[---------Enviar tecnico a: " + calle + "--------]");}
 				}
 
 			}
@@ -105,7 +118,8 @@ public class Proveedor {
 	private Container parseJSON(String jsonMessage) {
 		Container c = new Container();
 		Object objeto = null;
-		Object casa = null;
+		float longitud = 0;
+		float latitud = 0;
 		JSONObject jsonObject = null;
 		int type = -1;
 		try { // parsear los datos
@@ -135,14 +149,17 @@ public class Proveedor {
 			} else if (type == VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR) {
 				objeto = jsonObject.getInt("zona");
 			} else if (type == VariablesGlobales._MESSAGE_TYPE_REQUEST_TECNICO) {
-				casa = jsonObject.getInt("casa");
+				longitud = Float.parseFloat(jsonObject.getString("longitud"));
+				latitud = Float.parseFloat(jsonObject.getString("latitud"));
+
 			}
 		} catch (NumberFormatException | JSONException e) {
 			e.printStackTrace();
 		}
 		c.type = type;
 		c.objeto = objeto;
-		c.casa = casa;
+		c.longitud = longitud;
+		c.latitud = latitud;
 		return c;
 	}
 
@@ -152,7 +169,33 @@ public class Proveedor {
 
 	private class Container {
 		public int type = 0;
-		public Object casa = null;
 		public Object objeto = null;
+		public float longitud = 0;
+		public float latitud = 0;
 	}
+	
+	public class Tiempo  {
+	    private Timer timer = new Timer(); 
+	    private int segundos=0;
+
+	    //Clase interna que funciona como contador
+	    class Contador extends TimerTask {
+	        public void run() {
+	            segundos++;
+	            if(segundos == 60){
+	     tecnicos++;
+	     timer.cancel();
+	     }
+	        }
+	    }
+	    //Crea un timer, inicia segundos a 0 y comienza a contar
+	    public void Contar()
+	    {
+	        this.segundos=0;
+	        timer = new Timer();
+	        timer.schedule(new Contador(), 0, 1000);
+	    }
+	   
+	}
+	
 }

@@ -38,7 +38,7 @@ public class Agregador {
 	}
 
 	public void start() {
-		final boolean listening = true;
+		boolean listening = true;
 		int port = VariablesGlobales._DEFAULT_AGREGADOR_PORT + zona;
 		try {
 			serverSocket = new ServerSocket(port);
@@ -174,17 +174,17 @@ public class Agregador {
 		if (SocketTools.send(VariablesGlobales._IP_PROVIDER, port, jsonMessageToProvider))
 			PrinterTools.log("[ZonaAgregador= " + this.zona + " sends data to " + VariablesGlobales._IP_PROVIDER + ":" + port + "]");
 		else
-			PrinterTools.log("ERROR [ZonaAgregador=" + this.zona + "sends data to " + VariablesGlobales._IP_PROVIDER + ":" + port + "]");
+			PrinterTools.log("ERROR [ZonaAgregador=" + this.zona + " sends data to " + VariablesGlobales._IP_PROVIDER + ":" + port + "]");
 	}
 	
-	private void pedirTecnico(int casa) {
+	private void pedirTecnico(float longitud, float latitud) {
 		int port = VariablesGlobales._DEFAULT_PROVIDER_PORT;
-		String jsonMessageToProvider = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_TECNICO + ", \"casa\": \"" + casa + "\"}";
+		String jsonMessageToProvider = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_TECNICO + ", \"longitud\": \"" + Float.toString(longitud) + "\", \"latitud\":" + Float.toString(latitud) + "}";
 		PrinterTools.printJSON(jsonMessageToProvider);
 		if (SocketTools.send(VariablesGlobales._IP_PROVIDER, port, jsonMessageToProvider))
 			PrinterTools.log("[ZonaAgregador= " + this.zona + " sends an alert to " + VariablesGlobales._IP_PROVIDER + ":" + port + "]");
 		else
-			PrinterTools.log("ERROR [ZonaAgregador=" + this.zona + "sends an alert to " + VariablesGlobales._IP_PROVIDER + ":" + port + "]");
+			PrinterTools.log("ERROR [ZonaAgregador=" + this.zona + " sends an alert to " + VariablesGlobales._IP_PROVIDER + ":" + port + "]");
 	}
 
 	private BigInteger calcularConsumoTotal() {
