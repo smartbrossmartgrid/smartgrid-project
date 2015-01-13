@@ -156,7 +156,7 @@ public class ElectrodomesticoResource {
 
 	public int getConsumoTotal(int horaActual) {
 		int consumto_total = 0;
-		for (int i = 0; i < electrodomesticos.size(); i++)
+		for (int i = 0; i < electrodomesticos.size(); i++) {
 			consumto_total += electrodomesticos.get(i).getConsumoActual(
 					horaActual);
 		return consumto_total;

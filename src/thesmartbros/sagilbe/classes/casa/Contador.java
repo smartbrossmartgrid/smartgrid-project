@@ -41,12 +41,12 @@ public class Contador {
 	private ElectrodomesticoResource casa;
 	private PaillierContador paillierContador = new PaillierContador();
 
-	public Contador(int contadorId, int zonaId, float latitud, float longitud) {
+	public Contador(int contadorId, int zonaId, float latitud, float longitud, int perfil) {
 		this.contadorId = contadorId;
 		this.zonaId = zonaId;
 		this.latitud = latitud;
 		this.longitud = longitud;
-		this.casa = new ElectrodomesticoResource(VariablesGlobales._PERFIL_DEFAULT);
+		this.casa = new ElectrodomesticoResource(perfil);
 	}
 
 	public void work() {

@@ -6,6 +6,7 @@ import thesmartbros.sagilbe.classes.agregador.Agregador;
 import thesmartbros.sagilbe.classes.casa.Contador;
 import thesmartbros.sagilbe.classes.proveedor.Proveedor;
 import thesmartbros.sagilbe.tools.ToolsMap;
+import thesmartbros.sagilbe.tools.VariablesGlobales;
 
 public class ProgramaPrincipal {
 
@@ -20,12 +21,12 @@ public class ProgramaPrincipal {
 		Agregador ag0 = new Agregador(numZones);
 		ag0.start();
 
-		Contador c01 = new Contador(numContadores++, numZones, 41.276808f, 1.966329f);
-		Contador c02 = new Contador(numContadores++, numZones, 41.278787f, 1.967584f);
-		Contador c03 = new Contador(numContadores++, numZones, 41.274869f, 1.973668f);
-		Contador c04 = new Contador(numContadores++, numZones, 41.276808f, 1.966329f);
-		Contador c05 = new Contador(numContadores++, numZones, 41.265896f, 1.953828f);
-		Contador c06 = new Contador(numContadores++, numZones, 41.266977f, 1.967604f);
+		Contador c01 = new Contador(numContadores++, numZones, 41.276808f, 1.966329f, VariablesGlobales._PERFIL_ALTO_CONSUMO);
+		Contador c02 = new Contador(numContadores++, numZones, 41.278787f, 1.967584f, VariablesGlobales._PERFIL_ALTO_CONSUMO);
+		Contador c03 = new Contador(numContadores++, numZones, 41.274869f, 1.973668f, VariablesGlobales._PERFIL_TRABAJO_MANANA);
+		Contador c04 = new Contador(numContadores++, numZones, 41.276808f, 1.966329f, VariablesGlobales._PERFIL_TRABAJO_MANANA);
+		Contador c05 = new Contador(numContadores++, numZones, 41.265896f, 1.953828f, VariablesGlobales._PERFIL_SOLTERO);
+		Contador c06 = new Contador(numContadores++, numZones, 41.266977f, 1.967604f, VariablesGlobales._PERFIL_SOLTERO);
 		//System.out.println(c1.toString());
 		c01.work();
 		c02.work();
