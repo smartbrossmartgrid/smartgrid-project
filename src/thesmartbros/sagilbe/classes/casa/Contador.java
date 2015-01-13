@@ -121,7 +121,7 @@ public class Contador {
 		if (consumoInstantaneoPaillier == BigInteger.ZERO)
 			requestPaillierParameters(); /* si no tiene Paillier, enviar request */
 		else {
-			String jsonMessage = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO + ", \"consum\": \"" + consumoInstantaneoPaillier.toString() + "\", \"contadorId\":" + this.contadorId + ", \"zonaId\":" + this.zonaId + ", \"time\":" + this.time + "}";
+			String jsonMessage = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO + ", \"consum\": \"" + consumoInstantaneoPaillier.toString() + "\", \"contadorId\":" + this.contadorId + ", \"zonaId\":" + this.zonaId + ", \"time\":" + this.time + ", \"longitud\": \"" + Float.toString(longitud) + "\", \"latitud\":" + Float.toString(latitud) + "}";
 			PrinterTools.printJSON(jsonMessage);
 			if (SocketTools.send(VariablesGlobales._IP_AGREGADOR, port, jsonMessage)) {
 				PrinterTools.log("[Contador=" + this.contadorId + " at zoneid=" + this.zonaId + " sends data; time=" + this.time + " to " + VariablesGlobales._IP_AGREGADOR + ":" + port + "]");
