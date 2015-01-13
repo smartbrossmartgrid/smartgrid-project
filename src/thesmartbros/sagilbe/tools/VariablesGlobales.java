@@ -35,7 +35,7 @@ public class VariablesGlobales {
 	public final static float _MAX_PRICE = 0.12337f; /* euros/kWh */
 	public final static float _MIN_PRICE = 0.09292f; /* euros/kWh */
 	public final static float _MAX_ENERGY_GENERATED = 5000.0f; /* kWh */
-	public final static float _RATIO_TIME = Contador._THREAD_TIME_INTERVAL/10000; /* 1h son 10 s */
+	public final static float _RATIO_TIME = Contador._THREAD_TIME_INTERVAL/Contador._THREAD_TIME_INTERVAL; /* nada */
 	
 	/* perfiles de consumo */
 	public final static int _PERFIL_DEFAULT = -1;

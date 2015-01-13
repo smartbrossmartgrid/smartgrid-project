@@ -6,10 +6,14 @@ public class PrinterTools {
 	}
 
 	public static void log(String log) {
-		//System.out.println(log);
+		System.out.println(log);
 	}
 
 	public static void socketLog(String socketLog) {
 		//System.out.println(socketLog);
+	}
+	
+	public static void contadorLog(String log) {
+		//System.out.println(log);
 	}
 }

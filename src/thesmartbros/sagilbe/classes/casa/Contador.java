@@ -21,7 +21,7 @@ public class Contador {
 	 * contador y su identificacion */
 
 	private float precio_acumulado = 0.0f;
-	private float precio_actual;
+	private float precio_actual = 0.0f;
 	private int energiaConsumidaMensual = 0;
 	private int contadorId = 0;
 	private int zonaId = 0;
@@ -32,6 +32,8 @@ public class Contador {
 
 	/* hour */
 	private int time = 0; /* from 0 to 23 */
+	private int day = 1;  /* from 1 to 365 */
+	private int year = 2015; /* from 2015 */
 	public final static int _THREAD_TIME_INTERVAL = 5000; /* ms */
 	public final static int _DEFAULT_DELAY = 100; /* ms */
 
@@ -55,9 +57,22 @@ public class Contador {
 		Timer timer = new Timer();
 		timer.schedule(new TimerTask() {
 			public void run() {
-				if (time < 0 || time > 23)
+				if (time < 0 || time > 23) {
 					time = 0;
-				enviarConsumoInstantaneo(time++);
+					day++;
+					PrinterTools.log("[  ***************************************** ]");
+					PrinterTools.log("[    FACTURA ACUMULADA CONTADOR"+contadorId+": "+precio_acumulado+" EUR ]");
+					PrinterTools.log("[  ***************************************** ]");
+					PrinterTools.log("[    TODAY IS A NEW DAY! THIS IS day "+day+" month "+day/365+" year "+year+"    ]");
+					PrinterTools.log("[  ***************************************** ]");
+				}
+				if (day < 1 || day > 365) {
+					day = 1;
+					year++;
+					PrinterTools.log("[    HAPPY NEW YEAR "+year+" ;)   ]");
+				}
+				enviarConsumoInstantaneo(time);
+				time++;
 			}
 		}, 0, _THREAD_TIME_INTERVAL);
 	}
@@ -99,6 +114,7 @@ public class Contador {
 				if (c.type == VariablesGlobales._MESSAGE_TYPE_ENVIAR_PRECIO_CONTADOR) {
 					Float preciokWh = (Float) c.objeto;
 					precio_actual = preciokWh.floatValue();
+					PrinterTools.log("[contador"+contadorId+" stores new price: "+precio_actual+" EUR/kWh]");
 				} else if (c.type == VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR) {
 					enviarConsumoInstantaneo(time); //envio lo que no habia podido enviar por no tener pallier
 				}
@@ -107,11 +123,12 @@ public class Contador {
 		t.start();
 	}
 
-	private void enviarConsumoInstantaneo(int time) {
-		int consumoInstantaneo = casa.getConsumoTotal(time);
-		System.out.println(consumoInstantaneo+" kWh @ contador"+contadorId+" t="+time+" h");
+	private void enviarConsumoInstantaneo(int tiempo) {
+		int consumoInstantaneo = casa.getConsumoTotal(tiempo);
+		PrinterTools.contadorLog(consumoInstantaneo+" Wh @ contador"+contadorId+" t="+tiempo+" h");
 		/* cargar precio */
-		precio_acumulado += consumoInstantaneo * precio_actual * VariablesGlobales._RATIO_TIME;
+		precio_acumulado += (float)consumoInstantaneo * precio_actual * VariablesGlobales._RATIO_TIME / 1000; /* to be considered in kW */
+		PrinterTools.contadorLog("Factura es ahora de: "+this.precio_acumulado+" EUR");
 		/* enviar */
 		int port = VariablesGlobales._DEFAULT_AGREGADOR_PORT + zonaId;
 		this.energiaConsumidaMensual += consumoInstantaneo;
@@ -121,12 +138,12 @@ public class Contador {
 		if (consumoInstantaneoPaillier == BigInteger.ZERO)
 			requestPaillierParameters(); /* si no tiene Paillier, enviar request */
 		else {
-			String jsonMessage = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO + ", \"consum\": \"" + consumoInstantaneoPaillier.toString() + "\", \"contadorId\":" + this.contadorId + ", \"zonaId\":" + this.zonaId + ", \"time\":" + this.time + "}";
+			String jsonMessage = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO + ", \"consum\": \"" + consumoInstantaneoPaillier.toString() + "\", \"contadorId\":" + this.contadorId + ", \"zonaId\":" + this.zonaId + ", \"time\":" + tiempo + "}";
 			PrinterTools.printJSON(jsonMessage);
 			if (SocketTools.send(VariablesGlobales._IP_AGREGADOR, port, jsonMessage)) {
-				PrinterTools.log("[Contador=" + this.contadorId + " at zoneid=" + this.zonaId + " sends data; time=" + this.time + " to " + VariablesGlobales._IP_AGREGADOR + ":" + port + "]");
+				PrinterTools.log("[Contador=" + this.contadorId + " at zoneid=" + this.zonaId + " sends data; time=" + tiempo + " to " + VariablesGlobales._IP_AGREGADOR + ":" + port + "]");
 			} else
-				PrinterTools.log("ERROR [Contador=" + this.contadorId + " at zoneid=" + this.zonaId + " sends data; time=" + this.time + " to " + VariablesGlobales._IP_AGREGADOR + ":" + port + "]");
+				PrinterTools.log("ERROR [Contador=" + this.contadorId + " at zoneid=" + this.zonaId + " sends data; time=" + tiempo + " to " + VariablesGlobales._IP_AGREGADOR + ":" + port + "]");
 		}
 	}
 

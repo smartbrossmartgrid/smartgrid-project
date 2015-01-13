@@ -22,7 +22,7 @@ public class ElectrodomesticoResource {
 
 		//constructor de electrodomestico
 
-		// Nombre del electrodoméstico
+		// Nombre del electrodomestico
 		// Cuanto Gasta
 		// tiempo1 inicio, tiempo1 final
 		// tiempo2 inicio tiempo2 final
