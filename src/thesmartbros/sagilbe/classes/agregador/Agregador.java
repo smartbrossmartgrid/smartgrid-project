@@ -81,12 +81,14 @@ public class Agregador {
 					/* si es la primera vez que la casa entra en la lista,
 					 * ponemos isNuevo = false para que no envie nada, ya que el
 					 * sistema no estara en regimen permanente */
-					if (existe)
-						listaCasas.remove(position);
-					else
-						casa.setNuevo(false);
-					listaCasas.add(casa);
-
+					if (existe) {
+						listaCasas.get(position).setConsuma_enc(casa.getConsuma_enc());
+						listaCasas.get(position).setZonaid(casa.getZonaid());
+						listaCasas.get(position).setTime(casa.getTime());
+						listaCasas.get(position).setNuevo(true);
+					} else
+						listaCasas.add(casa);
+					
 					/* comprobamos cuantos contadores tenemos en la zona */
 					if (_CONTADORES_EN_CIUDAD < listaCasas.size())
 						_CONTADORES_EN_CIUDAD = listaCasas.size();
@@ -94,10 +96,16 @@ public class Agregador {
 					/* funcion de deteccion de que no envia el consumo --> mas
 					 * adelante la explicacion */
 					for (int i = 0; i < listaCasas.size(); i++) {
-						if (casa.getIdcasa() == listaCasas.get(position).getIdcasa())
-							listaCasas.get(position).setNot_found(0);
+						if (casa.getIdcasa() == listaCasas.get(i).getIdcasa())
+							listaCasas.get(i).setNot_found(0);
 						else
-							listaCasas.get(position).incrementarNotFound();
+							listaCasas.get(i).incrementarNotFound();
+						
+						/*if (listaCasas.get(position).getIdcasa() == 5) {
+							System.out.print("ID:"+listaCasas.get(i).getIdcasa()+" --> "+listaCasas.get(i).getLongitud()+" ..");
+							System.out.println("NOT_FOUND="+listaCasas.get(i).getNot_found());
+						}*/
+							
 					}
 					/* comprobamos que si estan todos, el estado de todos debe
 					 * ser nuevo si queremos enviar datos */
@@ -113,9 +121,10 @@ public class Agregador {
 						 * el NUM_CONTADORES, significa que ese no ha enviado.
 						 * Es la unica manera que he encontrado para que
 						 * funcione */
-						if (listaCasas.get(i).getNot_found() >= _CONTADORES_EN_CIUDAD * VariablesGlobales._TIEMPO_ESPERA_PARA_ENVIAR_TECNICO) {
+						if (listaCasas.get(i).getNot_found() >= _CONTADORES_EN_CIUDAD * VariablesGlobales._TIEMPO_ESPERA_PARA_ENVIAR_TECNICO && !listaCasas.get(i).isReparando()) {
 							ConjuntoCasas contadorAveriado = listaCasas.get(i);
 							pedirTecnico(contadorAveriado.getLongitud(), contadorAveriado.getLatitud());
+							listaCasas.get(i).setReparando(true);
 						}
 					}
 					if (size_nuevos == _CONTADORES_EN_CIUDAD) { //si todos son nuevos, enviamos consumos
@@ -196,10 +205,10 @@ public class Agregador {
 	private void pedirTecnico(float longitud, float latitud) {
 		//enviar mensaje de quiero un tecnico para contador
 		int port = VariablesGlobales._DEFAULT_PROVIDER_PORT;
-		String jsonMessageToProvider = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_TECNICO + ", \"longitud\": \"" + Float.toString(longitud) + "\", \"latitud\":" + Float.toString(latitud) + "}";
+		String jsonMessageToProvider = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_TECNICO + ", \"longitud\": \"" + Float.toString(longitud) + "\", \"latitud\": \"" + Float.toString(latitud) + "\"}";
 		PrinterTools.printJSON(jsonMessageToProvider);
 		if (SocketTools.send(VariablesGlobales._IP_PROVIDER, port, jsonMessageToProvider))
-			PrinterTools.log("[ZonaAgregador= " + this.zona + " sends an alert to " + VariablesGlobales._IP_PROVIDER + ":" + port + "]");
+			PrinterTools.log("[ !!!! ZonaAgregador= " + this.zona + " sends an alert to " + VariablesGlobales._IP_PROVIDER + ":" + port + "]");
 		else
 			PrinterTools.log("ERROR [ZonaAgregador=" + this.zona + " sends an alert to " + VariablesGlobales._IP_PROVIDER + ":" + port + "]");
 	}

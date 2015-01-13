@@ -26,7 +26,7 @@ public class ProgramaPrincipal {
 		Contador c03 = new Contador(numContadores++, numZones, 41.274869f, 1.973668f, VariablesGlobales._PERFIL_TRABAJO_MANANA);
 		Contador c04 = new Contador(numContadores++, numZones, 41.276808f, 1.966329f, VariablesGlobales._PERFIL_TRABAJO_MANANA);
 		Contador c05 = new Contador(numContadores++, numZones, 41.265896f, 1.953828f, VariablesGlobales._PERFIL_SOLTERO);
-		Contador c06 = new Contador(numContadores++, numZones, 41.266977f, 1.967604f, VariablesGlobales._PERFIL_SOLTERO);
+		Contador c06 = new Contador(numContadores++, numZones, 41.266977f, 1.967604f, VariablesGlobales._PERFIL_SOLTERO, 3);
 		//System.out.println(c1.toString());
 		c01.work();
 		c02.work();

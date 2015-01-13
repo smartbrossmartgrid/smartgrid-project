@@ -30,7 +30,7 @@ public class Proveedor {
 	private float preciokWh = 0.09f;
 
 	int tecnicos = 10;
-	
+
 	public void start() {
 		final boolean listening = true;
 		try {
@@ -75,15 +75,15 @@ public class Proveedor {
 
 				} else if (c.type == VariablesGlobales._MESSAGE_TYPE_REQUEST_TECNICO) {
 					Tiempo tiempo = new Tiempo();
-					if (tecnicos == 0){
-						PrinterTools.log("[---------No tenemos técnicos disponibles--------]");
+					if (tecnicos == 0) {
+						PrinterTools.log("[---------No tenemos tecnicos disponibles--------]");
+					} else {
+						PrinterTools.log("[Quedan " + tecnicos + " tecnicos, te enviamos uno :) ]");
+						tecnicos--;
+						tiempo.Contar();
+						String calle = getStreet(c.latitud, c.longitud);
+						PrinterTools.log("[---------Enviar tecnico a: " + calle + "--------]");
 					}
-					else{
-			        System.out.println ("Quedan " + tecnicos + " tecnicos, te enviamos uno");
-					tecnicos--;
-			        tiempo.Contar();
-			        String calle = getStreet(c.latitud, c.longitud);
-					PrinterTools.log("[---------Enviar tecnico a: " + calle + "--------]");}
 				}
 
 			}
@@ -173,29 +173,29 @@ public class Proveedor {
 		public float longitud = 0;
 		public float latitud = 0;
 	}
-	
-	public class Tiempo  {
-	    private Timer timer = new Timer(); 
-	    private int segundos=0;
 
-	    //Clase interna que funciona como contador
-	    class Contador extends TimerTask {
-	        public void run() {
-	            segundos++;
-	            if(segundos == 60){
-	     tecnicos++;
-	     timer.cancel();
-	     }
-	        }
-	    }
-	    //Crea un timer, inicia segundos a 0 y comienza a contar
-	    public void Contar()
-	    {
-	        this.segundos=0;
-	        timer = new Timer();
-	        timer.schedule(new Contador(), 0, 1000);
-	    }
-	   
+	public class Tiempo {
+		private Timer timer = new Timer();
+		private int segundos = 0;
+
+		//Clase interna que funciona como contador
+		class Contador extends TimerTask {
+			public void run() {
+				segundos++;
+				if (segundos == 60) {
+					tecnicos++;
+					timer.cancel();
+				}
+			}
+		}
+
+		//Crea un timer, inicia segundos a 0 y comienza a contar
+		public void Contar() {
+			this.segundos = 0;
+			timer = new Timer();
+			timer.schedule(new Contador(), 0, 1000);
+		}
+
 	}
-	
+
 }

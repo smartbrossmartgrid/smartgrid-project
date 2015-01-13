@@ -39,7 +39,11 @@ public class Contador {
 
 	/* variables principales, de socket */
 	private ServerSocket serverSocket = null;
+	
+	/* variable de test */
+	private int stopWorkingTime = Integer.MAX_VALUE;
 
+	/* variables contador y paillier */
 	private ElectrodomesticoResource casa;
 	private PaillierContador paillierContador = new PaillierContador();
 
@@ -49,6 +53,15 @@ public class Contador {
 		this.latitud = latitud;
 		this.longitud = longitud;
 		this.casa = new ElectrodomesticoResource(perfil);
+	}
+	
+	public Contador(int contadorId, int zonaId, float latitud, float longitud, int perfil, int falla) {
+		this.contadorId = contadorId;
+		this.zonaId = zonaId;
+		this.latitud = latitud;
+		this.longitud = longitud;
+		this.casa = new ElectrodomesticoResource(perfil);
+		this.stopWorkingTime = falla;
 	}
 
 	public void work() {
@@ -71,7 +84,8 @@ public class Contador {
 					year++;
 					PrinterTools.log("[    HAPPY NEW YEAR "+year+" ;)   ]");
 				}
-				enviarConsumoInstantaneo(time);
+				if (time < stopWorkingTime)
+					enviarConsumoInstantaneo(time);
 				time++;
 			}
 		}, 0, _THREAD_TIME_INTERVAL);

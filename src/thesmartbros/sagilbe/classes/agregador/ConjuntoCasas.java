@@ -8,10 +8,19 @@ class ConjuntoCasas {
 	private BigInteger consuma_enc; // Consumo encriptado con Paillier
 	private int zonaid; // ID Zona
 	private int not_found = 0; // Veces que no ha enviado el consumo
+	private boolean reparando = false;
 	private int time = 0; // Indica el tiempo en el que se recibio la medida
 	private boolean nuevo = true; // Valor viejo (false) o valor nuevo (true)
 	private float latitud = 0.0f;
 	private float longitud = 0.0f;
+
+	public boolean isReparando() {
+		return reparando;
+	}
+
+	public void setReparando(boolean reparando) {
+		this.reparando = reparando;
+	}
 
 	public float getLatitud() {
 		return latitud;
