@@ -159,7 +159,7 @@ public class ElectrodomesticoResource {
 		for (int i = 0; i < electrodomesticos.size(); i++) {
 			consumto_total += electrodomesticos.get(i).getConsumoActual(
 					horaActual);
+		}
 		return consumto_total;
 	}
-
 }
