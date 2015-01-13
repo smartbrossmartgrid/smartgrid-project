@@ -27,6 +27,33 @@ public class Electrodomestico {
 
 	// el consumo fijo del electrodoméstico
 	private int consumo;
+	
+	
+	
+	
+	public Electrodomestico(String n, int c, int t1_i, int t1_f, int t2_i, int t2_f){
+		
+		
+		
+		this.setNombre(n);
+		this.setConsumo(c);
+		this.setEstado("encendido");
+		this.setForzar_apagado(false);
+		this.setForzar_encendido(false);
+		this.tiempos[0][0] = 10;
+		this.tiempos[1][0] = 11;
+		this.tiempos[0][1] = 12;
+		this.tiempos[1][1] = 14;
+		
+	}
+	
+	
+
+	public Electrodomestico() {
+		// TODO Auto-generated constructor stub
+	}
+
+
 
 	// para obtener el consumo actual
 	public int getConsumoActual(int hora_actual) {
@@ -79,6 +106,10 @@ public class Electrodomestico {
 		return forzar_encendido;
 
 	}
+	
+
+	
+	
 
 	// //////// GETTERS Y SETTERS ////////////////
 	public String getNombre() {
