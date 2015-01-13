@@ -15,10 +15,56 @@ public class ElectrodomesticoResource {
 		this.electrodomesticos = new ArrayList<Electrodomestico>();
 
 		switch (perfil) {
+		
+		//perfiles con electrodomesticos dentro con diferentes tipos de consumo cada uno
+		
 			case VariablesGlobales._PERFIL_BAJO_CONSUMO:
+				
+				// ej electrodomestico nevera
+				
 				break;
 	
 			case VariablesGlobales._PERFIL_4PERSONAS:
+				
+				
+				// defino una serie de electrodomesticos
+				Electrodomestico elec = new Electrodomestico();
+				elec.setNombre("Tele");
+				elec.setConsumo(120);
+				elec.setEstado("encendido");
+				elec.setForzar_apagado(false);
+				elec.setForzar_encendido(false);
+				elec.tiempos[0][0] = 8;
+				elec.tiempos[1][0] = 10;
+				elec.tiempos[0][1] = 12;
+				elec.tiempos[1][1] = 14;
+				electrodomesticos.add(elec);
+
+				
+				elec = new Electrodomestico();
+				elec.setNombre("PC");
+				elec.setConsumo(50);
+				elec.setEstado("encendido");
+				elec.setForzar_apagado(false);
+				elec.setForzar_encendido(false);
+				elec.tiempos[0][0] = 8;
+				elec.tiempos[1][0] = 10;
+				elec.tiempos[0][1] = 12;
+				elec.tiempos[1][1] = 23;
+				electrodomesticos.add(elec);
+
+				elec = new Electrodomestico();
+				elec.setNombre("Luces");
+				elec.setConsumo(200);
+				elec.setEstado("encendido");
+				elec.setForzar_apagado(false);
+				elec.setForzar_encendido(false);
+				elec.tiempos[0][0] = 10;
+				elec.tiempos[1][0] = 11;
+				elec.tiempos[0][1] = 12;
+				elec.tiempos[1][1] = 14;
+				electrodomesticos.add(elec);
+				
 				break;
 	
 			case VariablesGlobales._PERFIL_ALTO_CONSUMO:
