@@ -12,7 +12,7 @@ public class PrinterTools {
 	public static void socketLog(String socketLog) {
 		//System.out.println(socketLog);
 	}
-	
+
 	public static void contadorLog(String log) {
 		//System.out.println(log);
 	}

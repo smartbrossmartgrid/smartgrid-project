@@ -29,7 +29,7 @@ public class Agregador {
 
 	/* variables secundarias, de smart grid */
 	private int zona = 0;
-	private int time = 0;
+	private int time = 0; //time mas actualizado
 	private ArrayList<ConjuntoCasas> listaCasas = new ArrayList<ConjuntoCasas>(); // Campo de la clase
 	private PaillierAgregador paillierAgregador = new PaillierAgregador();
 
@@ -91,16 +91,34 @@ public class Agregador {
 					if (_CONTADORES_EN_CIUDAD < listaCasas.size())
 						_CONTADORES_EN_CIUDAD = listaCasas.size();
 
-					/* comprobamos que si estan todos, el estado de todos debe
-					 * ser nuevo */
-					int size = 0;
+					/* funcion de deteccion de que no envia el consumo --> mas
+					 * adelante la explicacion */
 					for (int i = 0; i < listaCasas.size(); i++) {
-						if (listaCasas.get(i).isNuevo())
-							size++;
-						if (listaCasas.get(i).getTime() > time)
-							time = listaCasas.get(i).getTime();
+						if (casa.getIdcasa() == listaCasas.get(position).getIdcasa())
+							listaCasas.get(position).setNot_found(0);
+						else
+							listaCasas.get(position).incrementarNotFound();
 					}
-					if (size == _CONTADORES_EN_CIUDAD) { //si todos son nuevos, enviamos consumos
+					/* comprobamos que si estan todos, el estado de todos debe
+					 * ser nuevo si queremos enviar datos */
+					int size_nuevos = 0;
+					for (int i = 0; i < listaCasas.size(); i++) {
+						if (listaCasas.get(i).isNuevo()) {
+							size_nuevos++;
+							time = listaCasas.get(i).getTime();
+						}
+						/* deteccion de que no envia el consumo: Cuando llega
+						 * hasta aqui (ha llegado un consumo), a las demas casas
+						 * se les sube +1 en not_found. Si el not_found supera
+						 * el NUM_CONTADORES, significa que ese no ha enviado.
+						 * Es la unica manera que he encontrado para que
+						 * funcione */
+						if (listaCasas.get(i).getNot_found() >= _CONTADORES_EN_CIUDAD * VariablesGlobales._TIEMPO_ESPERA_PARA_ENVIAR_TECNICO) {
+							ConjuntoCasas contadorAveriado = listaCasas.get(i);
+							pedirTecnico(contadorAveriado.getLongitud(), contadorAveriado.getLatitud());
+						}
+					}
+					if (size_nuevos == _CONTADORES_EN_CIUDAD) { //si todos son nuevos, enviamos consumos
 						enviarConsumosAlProvider();
 					} else { // no todos son nuevos, pero... puede que algun contador no funcione...
 						// 1. averiguar si mi contador tenia datos nuevos
@@ -125,8 +143,6 @@ public class Agregador {
 						// si los tengo, se los mando
 						sendPaillieParameters(casa.getIdcasa());
 				}
-				/* try { socket.close(); } catch (IOException e) {
-				 * e.printStackTrace(); } */
 			}
 		});
 		t.start();
@@ -176,8 +192,9 @@ public class Agregador {
 		else
 			PrinterTools.log("ERROR [ZonaAgregador=" + this.zona + " sends data to " + VariablesGlobales._IP_PROVIDER + ":" + port + "]");
 	}
-	
+
 	private void pedirTecnico(float longitud, float latitud) {
+		//enviar mensaje de quiero un tecnico para contador
 		int port = VariablesGlobales._DEFAULT_PROVIDER_PORT;
 		String jsonMessageToProvider = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_TECNICO + ", \"longitud\": \"" + Float.toString(longitud) + "\", \"latitud\":" + Float.toString(latitud) + "}";
 		PrinterTools.printJSON(jsonMessageToProvider);
