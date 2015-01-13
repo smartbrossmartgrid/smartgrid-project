@@ -27,33 +27,23 @@ public class Electrodomestico {
 
 	// el consumo fijo del electrodoméstico
 	private int consumo;
-	
-	
-	
-	
-	public Electrodomestico(String n, int c, int t1_i, int t1_f, int t2_i, int t2_f){
-		
-		
-		
+
+	public Electrodomestico(String n, int c, int t1_i, int t1_f, int t2_i, int t2_f) {
 		this.setNombre(n);
 		this.setConsumo(c);
 		this.setEstado("encendido");
 		this.setForzar_apagado(false);
 		this.setForzar_encendido(false);
-		this.tiempos[0][0] = 10;
-		this.tiempos[1][0] = 11;
-		this.tiempos[0][1] = 12;
-		this.tiempos[1][1] = 14;
-		
+		this.tiempos[0][0] = t1_i;
+		this.tiempos[1][0] = t1_f;
+		this.tiempos[0][1] = t2_i;
+		this.tiempos[1][1] = t2_f;
+
 	}
-	
-	
 
 	public Electrodomestico() {
 		// TODO Auto-generated constructor stub
 	}
-
-
 
 	// para obtener el consumo actual
 	public int getConsumoActual(int hora_actual) {
@@ -66,8 +56,7 @@ public class Electrodomestico {
 
 			// si la hora actual se encuetra entre los dos valores de hora
 			// inicial y final
-			if ((this.tiempos[0][i] <= hora_actual)
-					&& (hora_actual <= this.tiempos[1][i])) {
+			if ((this.tiempos[0][i] <= hora_actual) && (hora_actual <= this.tiempos[1][i])) {
 				// devuelves el consumo de ese electrodomestico en particular
 				return consumo;
 			}
@@ -93,7 +82,7 @@ public class Electrodomestico {
 
 		this.forzar_apagado = true;
 
-		System.out.println("Apagando electrodoméstico");
+		System.out.println("Apagando electrodomestico");
 		return forzar_apagado;
 
 	}
@@ -102,14 +91,10 @@ public class Electrodomestico {
 	public boolean forzarencender() {
 		this.forzar_encendido = true;
 
-		System.out.println("Electrodoméstico encendido");
+		System.out.println("Electrodomestico encendido");
 		return forzar_encendido;
 
 	}
-	
-
-	
-	
 
 	// //////// GETTERS Y SETTERS ////////////////
 	public String getNombre() {
@@ -194,7 +179,5 @@ public class Electrodomestico {
 	public int[][] getTiempos() {
 		return tiempos;
 	}
-	
-	
 
 }

@@ -20,15 +20,13 @@ public class ElectrodomesticoResource {
 		// perfiles con electrodomesticos dentro con diferentes tipos de consumo
 		// cada uno
 
-		
 		//constructor de electrodomestico
-		
+
 		// Nombre del electrodoméstico
 		// Cuanto Gasta
 		// tiempo1 inicio, tiempo1 final
 		// tiempo2 inicio tiempo2 final
-		
-		
+
 		case VariablesGlobales._PERFIL_BAJO_CONSUMO:
 
 			elec = new Electrodomestico("Nevera", 60, 0, 12, 12, 23);
@@ -138,8 +136,7 @@ public class ElectrodomesticoResource {
 		String result = "";
 		for (int j = 0; j < electrodomesticos.size(); j++) {
 			result += "Nombre: " + electrodomesticos.get(j).getNombre() + "\n";
-			result += "Consumo: " + electrodomesticos.get(j).getConsumo()
-					+ "\n";
+			result += "Consumo: " + electrodomesticos.get(j).getConsumo() + "\n";
 			result += "Estado: " + electrodomesticos.get(j).getEstado() + "\n";
 			result += "Tiempos: ";
 
@@ -157,8 +154,7 @@ public class ElectrodomesticoResource {
 	public int getConsumoTotal(int horaActual) {
 		int consumto_total = 0;
 		for (int i = 0; i < electrodomesticos.size(); i++) {
-			consumto_total += electrodomesticos.get(i).getConsumoActual(
-					horaActual);
+			consumto_total += electrodomesticos.get(i).getConsumoActual(horaActual);
 		}
 		return consumto_total;
 	}

@@ -32,7 +32,7 @@ public class Contador {
 
 	/* hour */
 	private int time = 0; /* from 0 to 23 */
-	public final static int _THREAD_TIME_INTERVAL = 10000; /* ms */
+	public final static int _THREAD_TIME_INTERVAL = 5000; /* ms */
 	public final static int _DEFAULT_DELAY = 100; /* ms */
 
 	/* variables principales, de socket */
