@@ -31,7 +31,7 @@ public class ElectrodomesticoResource {
 		
 		case VariablesGlobales._PERFIL_BAJO_CONSUMO:
 
-			elec = new Electrodomestico("Nevera", 60, 0, 12, 12, 24);
+			elec = new Electrodomestico("Nevera", 60, 0, 12, 12, 23);
 			electrodomesticos.add(elec);
 			elec = new Electrodomestico("Luces", 100, 10, 11, 12, 14);
 			electrodomesticos.add(elec);
@@ -40,7 +40,7 @@ public class ElectrodomesticoResource {
 
 		case VariablesGlobales._PERFIL_4PERSONAS:
 
-			elec = new Electrodomestico("Nevera", 160, 0, 12, 12, 24);
+			elec = new Electrodomestico("Nevera", 160, 0, 12, 12, 23);
 			electrodomesticos.add(elec);
 
 			elec = new Electrodomestico("PC", 500, 8, 10, 11, 13);
@@ -59,7 +59,7 @@ public class ElectrodomesticoResource {
 
 		case VariablesGlobales._PERFIL_ALTO_CONSUMO:
 
-			elec = new Electrodomestico("Nevera", 160, 0, 12, 12, 24);
+			elec = new Electrodomestico("Nevera", 160, 0, 12, 12, 23);
 			electrodomesticos.add(elec);
 
 			elec = new Electrodomestico("PC", 500, 8, 10, 11, 13);
@@ -74,7 +74,7 @@ public class ElectrodomesticoResource {
 			electrodomesticos.add(elec);
 			elec = new Electrodomestico("Tele", 500, 10, 11, 12, 14);
 			electrodomesticos.add(elec);
-			elec = new Electrodomestico("Calefacción", 700, 10, 13, 15, 20);
+			elec = new Electrodomestico("Calefaccion", 700, 10, 13, 15, 20);
 			electrodomesticos.add(elec);
 
 			break;
@@ -83,7 +83,7 @@ public class ElectrodomesticoResource {
 			elec = new Electrodomestico("Horno", 500, 10, 11, 12, 14);
 			electrodomesticos.add(elec);
 
-			elec = new Electrodomestico("Nevera", 160, 0, 12, 12, 24);
+			elec = new Electrodomestico("Nevera", 160, 0, 12, 12, 23);
 			electrodomesticos.add(elec);
 
 			elec = new Electrodomestico("PC", 500, 8, 10, 11, 13);
@@ -96,7 +96,7 @@ public class ElectrodomesticoResource {
 
 		case VariablesGlobales._PERFIL_SOLTERO:
 
-			elec = new Electrodomestico("Nevera", 60, 0, 12, 12, 24);
+			elec = new Electrodomestico("Nevera", 60, 0, 12, 12, 23);
 			electrodomesticos.add(elec);
 
 			elec = new Electrodomestico("PC", 200, 8, 10, 11, 13);
@@ -108,7 +108,7 @@ public class ElectrodomesticoResource {
 
 		case VariablesGlobales._PERFIL_TRABAJO_MANANA:
 
-			elec = new Electrodomestico("Nevera", 160, 0, 12, 12, 24);
+			elec = new Electrodomestico("Nevera", 160, 0, 12, 12, 23);
 			electrodomesticos.add(elec);
 
 			elec = new Electrodomestico("PC", 300, 15, 16, 19, 23);
@@ -120,7 +120,7 @@ public class ElectrodomesticoResource {
 
 		case VariablesGlobales._PERFIL_TRABAJO_TARDE:
 
-			elec = new Electrodomestico("Nevera", 160, 0, 12, 12, 24);
+			elec = new Electrodomestico("Nevera", 160, 0, 12, 12, 23);
 			electrodomesticos.add(elec);
 
 			elec = new Electrodomestico("PC", 500, 8, 10, 11, 13);
