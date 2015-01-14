@@ -191,6 +191,7 @@ public class Contador {
 		Object objeto = null;
 		JSONObject jsonObject = null;
 		int type = -1;
+		jsonMessage = Encrip_Decrip.getInstance().decrypt(jsonMessage);
 		try { // parsear los datos
 			jsonObject = new JSONObject(jsonMessage);
 			type = jsonObject.getInt("messageType");
