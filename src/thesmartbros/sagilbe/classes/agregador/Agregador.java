@@ -13,6 +13,7 @@ import thesmartbros.sagilbe.tools.PrinterTools;
 import thesmartbros.sagilbe.tools.Sign;
 import thesmartbros.sagilbe.tools.SocketTools;
 import thesmartbros.sagilbe.tools.VariablesGlobales;
+import thesmartbros.sagilbe.tools.Encrip_Decrip;
 
 public class Agregador {
 	/* Esta funcion hace de agregador en un entorno de Smart Grid. Las
@@ -160,11 +161,12 @@ public class Agregador {
 		t.start();
 	}
 
-	private Container parseJSON(String jsonMessage) {
+	private Container parseJSON(String jsonMessage1) {
 		Container c = new Container();
 		Object objeto = null;
 		JSONObject jsonObject = null;
 		int type = -1;
+		String jsonMessage = Encrip_Decrip.getInstance().decrypt(jsonMessage1);
 		try { // parsear los datos
 			jsonObject = new JSONObject(jsonMessage);
 			type = jsonObject.getInt("messageType");
