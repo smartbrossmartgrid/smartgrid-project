@@ -34,14 +34,14 @@ public class Contador {
 
 	/* hour */
 	private int time = 0; /* from 0 to 23 */
-	private int day = 1;  /* from 1 to 365 */
+	private int day = 1; /* from 1 to 365 */
 	private int year = 2015; /* from 2015 */
 	public final static int _THREAD_TIME_INTERVAL = 5000; /* ms */
 	public final static int _DEFAULT_DELAY = 100; /* ms */
 
 	/* variables principales, de socket */
 	private ServerSocket serverSocket = null;
-	
+
 	/* variable de test */
 	private int stopWorkingTime = Integer.MAX_VALUE;
 
@@ -56,7 +56,7 @@ public class Contador {
 		this.longitud = longitud;
 		this.casa = new ElectrodomesticoResource(perfil);
 	}
-	
+
 	public Contador(int contadorId, int zonaId, float latitud, float longitud, int perfil, int falla) {
 		this.contadorId = contadorId;
 		this.zonaId = zonaId;
@@ -76,15 +76,15 @@ public class Contador {
 					time = 0;
 					day++;
 					PrinterTools.log("[  ***************************************** ]");
-					PrinterTools.log("[    FACTURA ACUMULADA CONTADOR"+contadorId+": "+precio_acumulado+" EUR ]");
+					PrinterTools.log("[    FACTURA ACUMULADA CONTADOR" + contadorId + ": " + precio_acumulado + " EUR ]");
 					PrinterTools.log("[  ***************************************** ]");
-					PrinterTools.log("[    TODAY IS A NEW DAY! THIS IS day "+day+" month "+day/365+" year "+year+"    ]");
+					PrinterTools.log("[    TODAY IS A NEW DAY! THIS IS day " + day + " month " + day / 365 + " year " + year + "    ]");
 					PrinterTools.log("[  ***************************************** ]");
 				}
 				if (day < 1 || day > 365) {
 					day = 1;
 					year++;
-					PrinterTools.log("[    HAPPY NEW YEAR "+year+" ;)   ]");
+					PrinterTools.log("[    HAPPY NEW YEAR " + year + " ;)   ]");
 				}
 				if (time < stopWorkingTime)
 					enviarConsumoInstantaneo(time);
@@ -130,7 +130,7 @@ public class Contador {
 				if (c.type == VariablesGlobales._MESSAGE_TYPE_ENVIAR_PRECIO_CONTADOR) {
 					Float preciokWh = (Float) c.objeto;
 					precio_actual = preciokWh.floatValue();
-					PrinterTools.log("[contador"+contadorId+" stores new price: "+precio_actual+" EUR/kWh]");
+					PrinterTools.log("[contador" + contadorId + " stores new price: " + precio_actual + " EUR/kWh]");
 				} else if (c.type == VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR) {
 					enviarConsumoInstantaneo(time); //envio lo que no habia podido enviar por no tener pallier
 				}
@@ -141,10 +141,14 @@ public class Contador {
 
 	private void enviarConsumoInstantaneo(int tiempo) {
 		int consumoInstantaneo = casa.getConsumoTotal(tiempo);
-		PrinterTools.contadorLog(consumoInstantaneo+" Wh @ contador"+contadorId+" t="+tiempo+" h");
+		PrinterTools.contadorLog(consumoInstantaneo + " Wh @ contador" + contadorId + " t=" + tiempo + " h");
 		/* cargar precio */
-		precio_acumulado += (float)consumoInstantaneo * precio_actual * VariablesGlobales._RATIO_TIME / 1000; /* to be considered in kW */
-		PrinterTools.contadorLog("Factura es ahora de: "+this.precio_acumulado+" EUR");
+		precio_acumulado += (float) consumoInstantaneo * precio_actual * VariablesGlobales._RATIO_TIME / 1000; /* to
+																												 * be
+																												 * considered
+																												 * in
+																												 * kW */
+		PrinterTools.contadorLog("Factura es ahora de: " + this.precio_acumulado + " EUR");
 		/* enviar */
 		int port = VariablesGlobales._DEFAULT_AGREGADOR_PORT + zonaId;
 		this.energiaConsumidaMensual += consumoInstantaneo;
@@ -156,9 +160,9 @@ public class Contador {
 		else {
 			String Message = "\"messageType\": " + VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO + ", \"consum\": \"" + consumoInstantaneoPaillier.toString() + "\", \"contadorId\":" + this.contadorId + ", \"zonaId\":" + this.zonaId + ", \"time\":" + tiempo;
 			String[] args = new String[1];
-			args[0]=Message;
-			String signature=Sign.getInstance().GenSig(args);
-			String jsonMessage = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO + ", \"consum\": \"" + consumoInstantaneoPaillier.toString() + "\", \"contadorId\":" + this.contadorId + ", \"zonaId\":" + this.zonaId + ", \"time\":" + tiempo + ", \"signature\":" +signature+ "}";
+			args[0] = Message;
+			String signature = Sign.getInstance().GenSig(args);
+			String jsonMessage = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO + ", \"consum\": \"" + consumoInstantaneoPaillier.toString() + "\", \"contadorId\":" + this.contadorId + ", \"zonaId\":" + this.zonaId + ", \"time\":" + tiempo + ", \"signature\": \"" + signature + "\"}";
 			PrinterTools.printJSON(jsonMessage);
 			if (SocketTools.send(VariablesGlobales._IP_AGREGADOR, port, jsonMessage)) {
 				PrinterTools.log("[Contador=" + this.contadorId + " at zoneid=" + this.zonaId + " sends data; time=" + tiempo + " to " + VariablesGlobales._IP_AGREGADOR + ":" + port + "]");
@@ -170,13 +174,13 @@ public class Contador {
 	// cuando hace request de Paillier, tambien se identifica en el sistema.
 	private void requestPaillierParameters() {
 		int port = VariablesGlobales._DEFAULT_AGREGADOR_PORT + zonaId;
-		String Message = "\"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS + ", \"contadorId\": " + this.contadorId + ", \"zonaId\": " + this.zonaId + ", \"latitud\": \"" + Float.toString(this.latitud) + "\", \"longitud\": \"" + Float.toString(this.longitud);
+		String message = "\"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS + ", \"contadorId\": " + this.contadorId + ", \"zonaId\": " + this.zonaId + ", \"latitud\": \"" + Float.toString(this.latitud) + "\", \"longitud\": \"" + Float.toString(this.longitud) +"\"";
 		String[] args = new String[1];
-		args[0]=Message;
-		String signature=Sign.getInstance().GenSig(args);
-		String jsonMessage1 = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS + ", \"contadorId\": " + this.contadorId + ", \"zonaId\": " + this.zonaId + ", \"latitud\": \"" + Float.toString(this.latitud) + "\", \"longitud\": \"" + Float.toString(this.longitud) + "\", \"signature\": \"" + signature + "\"}";
-		PrinterTools.printJSON(jsonMessage1);
-		String jsonMessage=Encrip_Decrip.getInstance().encrypt(jsonMessage1);
+		args[0] = message;
+		String signature = Sign.getInstance().GenSig(args);
+		String jsonMessage = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS + ", \"contadorId\": " + this.contadorId + ", \"zonaId\": " + this.zonaId + ", \"latitud\": \"" + Float.toString(this.latitud) + "\", \"longitud\": \"" + Float.toString(this.longitud) + "\", \"signature\": \"" + signature + "\" }";
+		PrinterTools.printJSON(jsonMessage);
+		//jsonMessage = Encrip_Decrip.getInstance().encrypt(jsonMessage);
 		if (SocketTools.send(VariablesGlobales._IP_AGREGADOR, port, jsonMessage)) {
 			PrinterTools.log("[Contador=" + this.contadorId + " at zoneid=" + this.zonaId + " asks for Paillier; time=" + this.time + " to " + VariablesGlobales._IP_AGREGADOR + ":" + port + "]");
 		} else

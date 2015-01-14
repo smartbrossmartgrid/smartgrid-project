@@ -11,9 +11,9 @@ import org.apache.commons.codec.binary.Base64;
 
 public class Sign {
 
-	static KeyPair pair;
-	static PrivateKey priv;
-	static PublicKey pub;
+	private static KeyPair pair;
+	private static PrivateKey _PRIVATE_KEY;
+	private static PublicKey _PUBLIC_KEY;
 
 	private static Sign INSTANCE = null;
 
@@ -21,16 +21,14 @@ public class Sign {
 		if (INSTANCE == null) {
 			INSTANCE = new Sign();
 			try {
-				KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA",
-						"SUN");
-				SecureRandom random = SecureRandom.getInstance("SHA1PRNG",
-						"SUN");
+				KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA", "SUN");
+				SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
 
 				keyGen.initialize(1024, random);
 
 				pair = keyGen.generateKeyPair();
-				priv = pair.getPrivate();
-				pub = pair.getPublic();
+				_PRIVATE_KEY = pair.getPrivate();
+				_PUBLIC_KEY = pair.getPublic();
 			} catch (Exception e) {
 				System.err.println("Caught exception " + e.toString());
 			}
@@ -45,59 +43,47 @@ public class Sign {
 
 	public String GenSig(String[] args) {
 		byte[] realSig = null;
+		byte[] buffer = null;
 
 		/* Generate a DSA signature */
 
 		if (args.length != 1) {
 			System.out.println("Usage: GenSig nameOfFileToSign");
-		} else
+		} else {
+			buffer = args[0].getBytes(Charset.forName("UTF-8"));
 			try {
 				Signature dsa = Signature.getInstance("SHA1withDSA", "SUN");
-
-				dsa.initSign(priv);
-
-				byte[] buffer = new byte[1024];
-				buffer = args[0].getBytes(Charset.forName("UTF-8"));
+				dsa.initSign(_PRIVATE_KEY);
 				dsa.update(buffer);
-
 				realSig = dsa.sign();
-
 			} catch (Exception e) {
 				System.err.println("Caught exception " + e.toString());
 			}
-		 String base64String = Base64.encodeBase64String(realSig);
-		 return base64String;
-
-	};
+		}
+		return Base64.encodeBase64String(realSig);
+	}
 
 	public boolean VerSig(String[] args) {
-
 		boolean verifies = false;
-
+		byte[] message = null;
+		byte[] signatureToVerify = null;
 		/* Verify a DSA signature */
-
 		if (args.length != 2) {
-			System.out
-					.println("Usage: VerSig publickeyfile signaturefile datafile");
-		} else
+			System.out.println("Usage: VerSig publickeyfile signaturefile datafile");
+		} else {
 			try {
-				PublicKey pubKey = pub;
-
+				message = args[0].getBytes(Charset.forName("UTF-8"));
+				signatureToVerify = Base64.decodeBase64(args[1]);
+				
 				Signature sig = Signature.getInstance("SHA1withDSA", "SUN");
-				sig.initVerify(pubKey);
-				
-				sig.update(args[0].getBytes(Charset.forName("UTF-8")));
-				
-				byte[] sigToVerify= Base64.decodeBase64(args[1]);
-
-				verifies = sig.verify(sigToVerify);
-
+				sig.initVerify(_PUBLIC_KEY);
+				sig.update(message);		
+				verifies = sig.verify(signatureToVerify);
 				System.out.println("signature verifies: " + verifies);
-
 			} catch (Exception e) {
 				System.err.println("Caught exception " + e.toString());
 			}
-		;
+		}
 		return verifies;
 
 	}

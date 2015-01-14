@@ -66,9 +66,9 @@ public class Agregador {
 				String jsonMessageFromContador = SocketTools.getJSON(socket); //desde el socket conseguir el JSON
 				//System.out.println(jsonMessageFromContador);
 				Container c = parseJSON(jsonMessageFromContador); //parsear el JSON
-				
+
 				if (c.type == VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO) {
-					
+
 					ConjuntoCasas casa = (ConjuntoCasas) c.objeto;
 					/* comprobar que los valores del contador recibido no
 					 * existen ya */
@@ -92,7 +92,7 @@ public class Agregador {
 						listaCasas.get(position).setNuevo(true);
 					} else
 						listaCasas.add(casa);
-					
+
 					/* comprobamos cuantos contadores tenemos en la zona */
 					if (_CONTADORES_EN_CIUDAD < listaCasas.size())
 						_CONTADORES_EN_CIUDAD = listaCasas.size();
@@ -104,12 +104,14 @@ public class Agregador {
 							listaCasas.get(i).setNot_found(0);
 						else
 							listaCasas.get(i).incrementarNotFound();
-						
-						/*if (listaCasas.get(position).getIdcasa() == 5) {
-							System.out.print("ID:"+listaCasas.get(i).getIdcasa()+" --> "+listaCasas.get(i).getLongitud()+" ..");
-							System.out.println("NOT_FOUND="+listaCasas.get(i).getNot_found());
-						}*/
-							
+
+						/* if (listaCasas.get(position).getIdcasa() == 5) {
+						 * System
+						 * .out.print("ID:"+listaCasas.get(i).getIdcasa()+" --> "
+						 * +listaCasas.get(i).getLongitud()+" ..");
+						 * System.out.println
+						 * ("NOT_FOUND="+listaCasas.get(i).getNot_found()); } */
+
 					}
 					/* comprobamos que si estan todos, el estado de todos debe
 					 * ser nuevo si queremos enviar datos */
@@ -161,12 +163,12 @@ public class Agregador {
 		t.start();
 	}
 
-	private Container parseJSON(String jsonMessage1) {
+	private Container parseJSON(String jsonMessage) {
 		Container c = new Container();
 		Object objeto = null;
 		JSONObject jsonObject = null;
 		int type = -1;
-		String jsonMessage = Encrip_Decrip.getInstance().decrypt(jsonMessage1);
+		//String jsonMessage = Encrip_Decrip.getInstance().decrypt(jsonMessage1);
 		try { // parsear los datos
 			jsonObject = new JSONObject(jsonMessage);
 			type = jsonObject.getInt("messageType");
@@ -176,12 +178,12 @@ public class Agregador {
 				((ConjuntoCasas) objeto).setIdcasa(jsonObject.getInt("contadorId"));
 				((ConjuntoCasas) objeto).setZonaid(jsonObject.getInt("zonaId"));
 				((ConjuntoCasas) objeto).setTime(jsonObject.getInt("time"));
-				
+
 				//Comprobar firma
 				String signature = jsonObject.getString("signature");
 				String[] args = new String[2];
-				args[0]= "\"messageType\": " + VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO + ", \"consum\": \"" + (jsonObject.getString("consum")) + "\", \"contadorId\":" + (jsonObject.getInt("contadorId")) + ", \"zonaId\":" + (jsonObject.getInt("zonaId")) + ", \"time\":" + (jsonObject.getInt("time"));
-				args[1]= signature;		
+				args[0] = "\"messageType\": " + VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO + ", \"consum\": \"" + (jsonObject.getString("consum")) + "\", \"contadorId\":" + (jsonObject.getInt("contadorId")) + ", \"zonaId\":" + (jsonObject.getInt("zonaId")) + ", \"time\":" + (jsonObject.getInt("time"));
+				args[1] = signature;
 				Sign.getInstance().VerSig(args);
 			} else if (type == VariablesGlobales._MESSAGE_TYPE_ENVIAR_PRECIO_PROVIDER) {
 				objeto = Float.parseFloat(jsonObject.getString("price"));
@@ -195,12 +197,12 @@ public class Agregador {
 				((requestPaillierObject) objeto).zonaid = jsonObject.getInt("zonaId");
 				((requestPaillierObject) objeto).latitud = Float.parseFloat(jsonObject.getString("latitud"));
 				((requestPaillierObject) objeto).longitud = Float.parseFloat(jsonObject.getString("longitud"));
-				
+
 				//Comprobar firma
 				String signature = jsonObject.getString("signature");
 				String[] args = new String[2];
-				args[0]= "\"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS + ", \"contadorId\": \"" + (jsonObject.getInt("contadorId")) + ", \"zonaId\":" + (jsonObject.getInt("zonaId")) + ", \"latitud\": \"" + Float.parseFloat(jsonObject.getString("latitud")) + "\", \"longitud\": \"" + Float.parseFloat(jsonObject.getString("longitud"));
-				args[1]= signature;		
+				args[0] = "\"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS + ", \"contadorId\": " + (jsonObject.getInt("contadorId")) + ", \"zonaId\": " + (jsonObject.getInt("zonaId")) + ", \"latitud\": \"" + Float.parseFloat(jsonObject.getString("latitud")) + "\", \"longitud\": \"" + Float.parseFloat(jsonObject.getString("longitud")) + "\"";
+				args[1] = signature;
 				Sign.getInstance().VerSig(args);
 			}
 		} catch (NumberFormatException | JSONException e) {
