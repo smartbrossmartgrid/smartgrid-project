@@ -10,17 +10,17 @@ import javax.crypto.Cipher;
 
 import org.apache.commons.codec.binary.Base64;
 
-public final class Encrip_Decrip {
+public final class SecurityTools {
 	static KeyPair pair;
 	static PrivateKey priv;
 	static PublicKey pub;
 	public static final String ALGORITHM = "RSA";
 
-	private static Encrip_Decrip INSTANCE = null;
+	private static SecurityTools INSTANCE = null;
 
 	private synchronized static void createInstance() {
 		if (INSTANCE == null) {
-			INSTANCE = new Encrip_Decrip();
+			INSTANCE = new SecurityTools();
 			KeyPairGenerator keyGen;
 			try {
 				keyGen = KeyPairGenerator.getInstance(ALGORITHM);
@@ -36,13 +36,13 @@ public final class Encrip_Decrip {
 		}
 	}
 
-	public static Encrip_Decrip getInstance() {
+	public static SecurityTools getInstance() {
 		if (INSTANCE == null)
 			createInstance();
 		return INSTANCE;
 	}
 
-	public static String encrypt(String text) {
+	public String encrypt(String text) {
 		byte[] cipherText = null;
 		try {
 			// get an RSA cipher object and print the provider
@@ -58,21 +58,18 @@ public final class Encrip_Decrip {
 		return base64String;
 	}
 
-	public static String decrypt(String message) {
+	public String decrypt(String message) {
 		byte[] dectyptedText = null;
 		byte[] text = Base64.decodeBase64(message);
 		try {
 			// get an RSA cipher object and print the provider
 			final Cipher cipher = Cipher.getInstance(ALGORITHM);
-			PublicKey pub1=pub;
 			// decrypt the text using the private key
 			cipher.init(Cipher.DECRYPT_MODE, priv);
 			dectyptedText = cipher.doFinal(text);
-
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-
 		return new String(dectyptedText);
 	}
 }

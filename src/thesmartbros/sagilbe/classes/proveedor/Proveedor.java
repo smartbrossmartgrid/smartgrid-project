@@ -11,10 +11,10 @@ import java.util.TimerTask;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import thesmartbros.sagilbe.tools.Encrip_Decrip;
+import thesmartbros.sagilbe.tools.SecurityTools;
 import thesmartbros.sagilbe.tools.Paillier;
 import thesmartbros.sagilbe.tools.PrinterTools;
-import thesmartbros.sagilbe.tools.Sign;
+import thesmartbros.sagilbe.tools.SignatureSAGILBE;
 import thesmartbros.sagilbe.tools.SocketTools;
 import thesmartbros.sagilbe.tools.ToolsMap;
 import thesmartbros.sagilbe.tools.VariablesGlobales;
@@ -95,7 +95,6 @@ public class Proveedor {
 
 	private void sendPrecioToAgregadores() {
 		String jsonMessage = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_ENVIAR_PRECIO_PROVIDER + ", \"price\": \"" + Float.toString(preciokWh) + "\"}";
-		PrinterTools.printJSON(jsonMessage);
 		for (int i = 0; i < zonasList.size(); i++) {
 			int zonaId = zonasList.get(i).getId();
 			int port = VariablesGlobales._DEFAULT_AGREGADOR_PORT + zonaId;
@@ -109,7 +108,6 @@ public class Proveedor {
 	private void sendPaillierParameters(int zona) {
 		int port = VariablesGlobales._DEFAULT_AGREGADOR_PORT + zona;
 		String jsonMessageToAgregador = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_PROVIDER + ", \"g\": \"" + Paillier.getInstance().g.toString() + "\", \"n\": \"" + Paillier.getInstance().n.toString() + "\"}";
-		PrinterTools.printJSON(jsonMessageToAgregador);
 		if (SocketTools.send(VariablesGlobales._IP_AGREGADOR, port, jsonMessageToAgregador)) {
 			PrinterTools.log("[Provider sends PAILLIER data to AGREGADOR " + VariablesGlobales._IP_AGREGADOR + ":" + port + "]");
 		} else
@@ -124,14 +122,14 @@ public class Proveedor {
 		float latitud = 0;
 		JSONObject jsonObject = null;
 		int type = -1;
-		jsonMessage = Encrip_Decrip.getInstance().decrypt(jsonMessage);
+		jsonMessage = SecurityTools.getInstance().decrypt(jsonMessage);
 		try { // parsear los datos
 			jsonObject = new JSONObject(jsonMessage);
 			type = jsonObject.getInt("messageType");
 
 			//Comprobar firma
 			String signature = jsonObject.getString("signature");
-			Sign.getInstance().VerSig(jsonMessage, signature);
+			SignatureSAGILBE.getInstance().VerSig(jsonMessage, signature);
 
 			if (type == VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO_AGREGADO) {
 				int zonaid = jsonObject.getInt("zona");

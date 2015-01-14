@@ -10,10 +10,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import thesmartbros.sagilbe.tools.PrinterTools;
-import thesmartbros.sagilbe.tools.Sign;
+import thesmartbros.sagilbe.tools.SignatureSAGILBE;
 import thesmartbros.sagilbe.tools.SocketTools;
 import thesmartbros.sagilbe.tools.VariablesGlobales;
-import thesmartbros.sagilbe.tools.Encrip_Decrip;
+import thesmartbros.sagilbe.tools.SecurityTools;
 
 public class Agregador {
 	/* Esta funcion hace de agregador en un entorno de Smart Grid. Las
@@ -107,8 +107,8 @@ public class Agregador {
 
 						/* if (listaCasas.get(position).getIdcasa() == 5) {
 						 * System
-						 * .out.print("ID:"+listaCasas.get(i).getIdcasa()+" --> "
-						 * +listaCasas.get(i).getLongitud()+" ..");
+						 * .out.print("ID:"+listaCasas.get(i).getIdcasa()+
+						 * " --> " +listaCasas.get(i).getLongitud()+" ..");
 						 * System.out.println
 						 * ("NOT_FOUND="+listaCasas.get(i).getNot_found()); } */
 
@@ -168,15 +168,15 @@ public class Agregador {
 		Object objeto = null;
 		JSONObject jsonObject = null;
 		int type = -1;
-		jsonMessage = Encrip_Decrip.getInstance().decrypt(jsonMessage);
+		jsonMessage = SecurityTools.getInstance().decrypt(jsonMessage);
 		try { // parsear los datos
 			jsonObject = new JSONObject(jsonMessage);
 			type = jsonObject.getInt("messageType");
-			
+
 			//Comprobar firma
 			String signature = jsonObject.getString("signature");
-			Sign.getInstance().VerSig(jsonMessage, signature);
-			
+			SignatureSAGILBE.getInstance().VerSig(jsonMessage, signature);
+
 			if (type == VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO) {
 				objeto = new ConjuntoCasas();
 				((ConjuntoCasas) objeto).setConsuma_enc(new BigInteger(jsonObject.getString("consum")));
@@ -208,7 +208,6 @@ public class Agregador {
 		int port = VariablesGlobales._DEFAULT_PROVIDER_PORT;
 		BigInteger consumoTotal = calcularConsumoTotal();
 		String jsonMessageToProvider = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO_AGREGADO + ", \"consum\": \"" + consumoTotal.toString() + "\", \"zona\":" + zona + ", \"viviendas\":" + _CONTADORES_EN_CIUDAD + ", \"time\":" + time + "}";
-		PrinterTools.printJSON(jsonMessageToProvider);
 		if (SocketTools.send(VariablesGlobales._IP_PROVIDER, port, jsonMessageToProvider))
 			PrinterTools.log("[ZonaAgregador= " + this.zona + " sends data to " + VariablesGlobales._IP_PROVIDER + ":" + port + "]");
 		else
@@ -219,7 +218,6 @@ public class Agregador {
 		//enviar mensaje de quiero un tecnico para contador
 		int port = VariablesGlobales._DEFAULT_PROVIDER_PORT;
 		String jsonMessageToProvider = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_TECNICO + ", \"longitud\": \"" + Float.toString(longitud) + "\", \"latitud\": \"" + Float.toString(latitud) + "\"}";
-		PrinterTools.printJSON(jsonMessageToProvider);
 		if (SocketTools.send(VariablesGlobales._IP_PROVIDER, port, jsonMessageToProvider))
 			PrinterTools.log("[ !!!! ZonaAgregador= " + this.zona + " sends an alert to " + VariablesGlobales._IP_PROVIDER + ":" + port + "]");
 		else
@@ -239,7 +237,6 @@ public class Agregador {
 
 	private void sendPrecioToContadores(Float preciokWh) {
 		String jsonMessage = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_ENVIAR_PRECIO_CONTADOR + ", \"price\": \"" + Float.toString(preciokWh) + "\"}";
-		PrinterTools.printJSON(jsonMessage);
 		for (int i = 0; i < listaCasas.size(); i++) {
 			int contadorId = listaCasas.get(i).getIdcasa();
 			int port = VariablesGlobales._DEFAULT_CONTADOR_PORT + contadorId;
@@ -253,7 +250,6 @@ public class Agregador {
 	private void requestPaillierParameters() {
 		int port = VariablesGlobales._DEFAULT_PROVIDER_PORT;
 		String jsonMessage = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR + ", \"zona\": " + zona + "}";
-		PrinterTools.printJSON(jsonMessage);
 		if (SocketTools.send(VariablesGlobales._IP_PROVIDER, port, jsonMessage)) {
 			PrinterTools.log("[ZonaAgregador= " + this.zona + " requests PAILLIER data to PROVIDER]");
 		} else
@@ -269,7 +265,6 @@ public class Agregador {
 	private void sendPaillieParameters(int contadorId) {
 		String jsonMessageToContador = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR + ", \"g\": \"" + paillierAgregador.g.toString() + "\", \"n\": \"" + paillierAgregador.n.toString() + "\"}";
 		int port = VariablesGlobales._DEFAULT_CONTADOR_PORT + contadorId;
-		PrinterTools.printJSON(jsonMessageToContador);
 		if (SocketTools.send(VariablesGlobales._IP_CONTADOR, port, jsonMessageToContador)) {
 			PrinterTools.log("[ZonaAgregador= " + this.zona + " sends PAILLIER data to CONTADOR " + VariablesGlobales._IP_CONTADOR + ":" + port + "]");
 		} else

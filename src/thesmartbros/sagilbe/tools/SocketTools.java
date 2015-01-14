@@ -20,8 +20,9 @@ public class SocketTools {
 				return false;
 			outstream = socket.getOutputStream();
 			out = new PrintWriter(outstream);
-			message = Sign.getInstance().GenSig(message);
-			message = Encrip_Decrip.getInstance().encrypt(message);
+			message = SignatureSAGILBE.getInstance().GenSig(message);
+			PrinterTools.printJSON(message);
+			message = SecurityTools.getInstance().encrypt(message);
 			out.print(message);
 			return true;
 		} catch (UnknownHostException e) {

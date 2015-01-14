@@ -7,19 +7,20 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Signature;
+
 import org.apache.commons.codec.binary.Base64;
 
-public class Sign {
+public class SignatureSAGILBE {
 
 	private static KeyPair pair;
 	private static PrivateKey _PRIVATE_KEY;
 	private static PublicKey _PUBLIC_KEY;
 
-	private static Sign INSTANCE = null;
+	private static SignatureSAGILBE INSTANCE = null;
 
 	private synchronized static void createInstance() {
 		if (INSTANCE == null) {
-			INSTANCE = new Sign();
+			INSTANCE = new SignatureSAGILBE();
 			try {
 				KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA", "SUN");
 				SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
@@ -35,7 +36,7 @@ public class Sign {
 		}
 	}
 
-	public static Sign getInstance() {
+	public static SignatureSAGILBE getInstance() {
 		if (INSTANCE == null)
 			createInstance();
 		return INSTANCE;
