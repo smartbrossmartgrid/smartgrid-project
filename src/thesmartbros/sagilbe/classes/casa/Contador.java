@@ -158,11 +158,7 @@ public class Contador {
 		if (consumoInstantaneoPaillier == BigInteger.ZERO)
 			requestPaillierParameters(); /* si no tiene Paillier, enviar request */
 		else {
-			String Message = "\"messageType\": " + VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO + ", \"consum\": \"" + consumoInstantaneoPaillier.toString() + "\", \"contadorId\":" + this.contadorId + ", \"zonaId\":" + this.zonaId + ", \"time\":" + tiempo;
-			String[] args = new String[1];
-			args[0] = Message;
-			String signature = Sign.getInstance().GenSig(args);
-			String jsonMessage = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO + ", \"consum\": \"" + consumoInstantaneoPaillier.toString() + "\", \"contadorId\":" + this.contadorId + ", \"zonaId\":" + this.zonaId + ", \"time\":" + tiempo + ", \"signature\": \"" + signature + "\"}";
+			String jsonMessage = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO + ", \"consum\": \"" + consumoInstantaneoPaillier.toString() + "\", \"contadorId\":" + this.contadorId + ", \"zonaId\":" + this.zonaId + ", \"time\":" + tiempo + "}";
 			PrinterTools.printJSON(jsonMessage);
 			if (SocketTools.send(VariablesGlobales._IP_AGREGADOR, port, jsonMessage)) {
 				PrinterTools.log("[Contador=" + this.contadorId + " at zoneid=" + this.zonaId + " sends data; time=" + tiempo + " to " + VariablesGlobales._IP_AGREGADOR + ":" + port + "]");
@@ -174,11 +170,7 @@ public class Contador {
 	// cuando hace request de Paillier, tambien se identifica en el sistema.
 	private void requestPaillierParameters() {
 		int port = VariablesGlobales._DEFAULT_AGREGADOR_PORT + zonaId;
-		String message = "\"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS + ", \"contadorId\": " + this.contadorId + ", \"zonaId\": " + this.zonaId + ", \"latitud\": \"" + Float.toString(this.latitud) + "\", \"longitud\": \"" + Float.toString(this.longitud) +"\"";
-		String[] args = new String[1];
-		args[0] = message;
-		String signature = Sign.getInstance().GenSig(args);
-		String jsonMessage = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS + ", \"contadorId\": " + this.contadorId + ", \"zonaId\": " + this.zonaId + ", \"latitud\": \"" + Float.toString(this.latitud) + "\", \"longitud\": \"" + Float.toString(this.longitud) + "\", \"signature\": \"" + signature + "\" }";
+		String jsonMessage = "{\"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS + ", \"contadorId\": " + this.contadorId + ", \"zonaId\": " + this.zonaId + ", \"latitud\": \"" + Float.toString(this.latitud) + "\", \"longitud\": \"" + Float.toString(this.longitud) + "\"}";
 		PrinterTools.printJSON(jsonMessage);
 		if (SocketTools.send(VariablesGlobales._IP_AGREGADOR, port, jsonMessage)) {
 			PrinterTools.log("[Contador=" + this.contadorId + " at zoneid=" + this.zonaId + " asks for Paillier; time=" + this.time + " to " + VariablesGlobales._IP_AGREGADOR + ":" + port + "]");
@@ -195,6 +187,11 @@ public class Contador {
 		try { // parsear los datos
 			jsonObject = new JSONObject(jsonMessage);
 			type = jsonObject.getInt("messageType");
+			
+			//Comprobar firma
+			String signature = jsonObject.getString("signature");
+			Sign.getInstance().VerSig(jsonMessage, signature);
+			
 			if (type == VariablesGlobales._MESSAGE_TYPE_ENVIAR_PRECIO_CONTADOR) {
 				Float price = Float.parseFloat(jsonObject.getString("price"));
 				objeto = price;

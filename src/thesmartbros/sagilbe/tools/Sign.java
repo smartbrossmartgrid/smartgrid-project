@@ -41,16 +41,19 @@ public class Sign {
 		return INSTANCE;
 	}
 
-	public String GenSig(String[] args) {
+	public String GenSig(String... args) {
 		byte[] realSig = null;
 		byte[] buffer = null;
+		String mensaje;
 
 		/* Generate a DSA signature */
 
 		if (args.length != 1) {
 			System.out.println("Usage: GenSig nameOfFileToSign");
 		} else {
-			buffer = args[0].getBytes(Charset.forName("UTF-8"));
+			mensaje = args[0];
+			String mensajeAFirmar = removeLastChar(mensaje); // last char es el "}"
+			buffer = mensajeAFirmar.getBytes(Charset.forName("UTF-8"));
 			try {
 				Signature dsa = Signature.getInstance("SHA1withDSA", "SUN");
 				dsa.initSign(_PRIVATE_KEY);
@@ -59,11 +62,14 @@ public class Sign {
 			} catch (Exception e) {
 				System.err.println("Caught exception " + e.toString());
 			}
+			String signature = Base64.encodeBase64String(realSig);
+			mensaje = mensajeAFirmar + ", signature: \"" + signature + "\"}";
+			return mensaje;
 		}
-		return Base64.encodeBase64String(realSig);
+		return null;
 	}
 
-	public boolean VerSig(String[] args) {
+	public boolean VerSig(String... args) {
 		boolean verifies = false;
 		byte[] message = null;
 		byte[] signatureToVerify = null;
@@ -72,12 +78,13 @@ public class Sign {
 			System.out.println("Usage: VerSig publickeyfile signaturefile datafile");
 		} else {
 			try {
-				message = args[0].getBytes(Charset.forName("UTF-8"));
+				String messageToVerify = removeSignature(args[0]);
+				message = messageToVerify.getBytes(Charset.forName("UTF-8"));
 				signatureToVerify = Base64.decodeBase64(args[1]);
-				
+
 				Signature sig = Signature.getInstance("SHA1withDSA", "SUN");
 				sig.initVerify(_PUBLIC_KEY);
-				sig.update(message);		
+				sig.update(message);
 				verifies = sig.verify(signatureToVerify);
 				System.out.println("signature verifies: " + verifies);
 			} catch (Exception e) {
@@ -86,6 +93,17 @@ public class Sign {
 		}
 		return verifies;
 
+	}
+
+	private String removeLastChar(String str) {
+		if (str.length() > 0 && str.charAt(str.length() - 1) == '}') {
+			str = str.substring(0, str.length() - 1);
+		}
+		return str;
+	}
+
+	private String removeSignature(String str) {
+		return str.substring(0, str.indexOf(", signature: \""));
 	}
 
 }

@@ -172,19 +172,17 @@ public class Agregador {
 		try { // parsear los datos
 			jsonObject = new JSONObject(jsonMessage);
 			type = jsonObject.getInt("messageType");
+			
+			//Comprobar firma
+			String signature = jsonObject.getString("signature");
+			Sign.getInstance().VerSig(jsonMessage, signature);
+			
 			if (type == VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO) {
 				objeto = new ConjuntoCasas();
 				((ConjuntoCasas) objeto).setConsuma_enc(new BigInteger(jsonObject.getString("consum")));
 				((ConjuntoCasas) objeto).setIdcasa(jsonObject.getInt("contadorId"));
 				((ConjuntoCasas) objeto).setZonaid(jsonObject.getInt("zonaId"));
 				((ConjuntoCasas) objeto).setTime(jsonObject.getInt("time"));
-
-				//Comprobar firma
-				String signature = jsonObject.getString("signature");
-				String[] args = new String[2];
-				args[0] = "\"messageType\": " + VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO + ", \"consum\": \"" + (jsonObject.getString("consum")) + "\", \"contadorId\":" + (jsonObject.getInt("contadorId")) + ", \"zonaId\":" + (jsonObject.getInt("zonaId")) + ", \"time\":" + (jsonObject.getInt("time"));
-				args[1] = signature;
-				Sign.getInstance().VerSig(args);
 			} else if (type == VariablesGlobales._MESSAGE_TYPE_ENVIAR_PRECIO_PROVIDER) {
 				objeto = Float.parseFloat(jsonObject.getString("price"));
 			} else if (type == VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_PROVIDER) {
@@ -197,13 +195,6 @@ public class Agregador {
 				((requestPaillierObject) objeto).zonaid = jsonObject.getInt("zonaId");
 				((requestPaillierObject) objeto).latitud = Float.parseFloat(jsonObject.getString("latitud"));
 				((requestPaillierObject) objeto).longitud = Float.parseFloat(jsonObject.getString("longitud"));
-
-				//Comprobar firma
-				String signature = jsonObject.getString("signature");
-				String[] args = new String[2];
-				args[0] = "\"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS + ", \"contadorId\": " + (jsonObject.getInt("contadorId")) + ", \"zonaId\": " + (jsonObject.getInt("zonaId")) + ", \"latitud\": \"" + Float.parseFloat(jsonObject.getString("latitud")) + "\", \"longitud\": \"" + Float.parseFloat(jsonObject.getString("longitud")) + "\"";
-				args[1] = signature;
-				Sign.getInstance().VerSig(args);
 			}
 		} catch (NumberFormatException | JSONException e) {
 			e.printStackTrace();

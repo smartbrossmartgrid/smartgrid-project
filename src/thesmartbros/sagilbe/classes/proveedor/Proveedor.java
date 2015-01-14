@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import thesmartbros.sagilbe.tools.Encrip_Decrip;
 import thesmartbros.sagilbe.tools.Paillier;
 import thesmartbros.sagilbe.tools.PrinterTools;
+import thesmartbros.sagilbe.tools.Sign;
 import thesmartbros.sagilbe.tools.SocketTools;
 import thesmartbros.sagilbe.tools.ToolsMap;
 import thesmartbros.sagilbe.tools.VariablesGlobales;
@@ -127,6 +128,11 @@ public class Proveedor {
 		try { // parsear los datos
 			jsonObject = new JSONObject(jsonMessage);
 			type = jsonObject.getInt("messageType");
+
+			//Comprobar firma
+			String signature = jsonObject.getString("signature");
+			Sign.getInstance().VerSig(jsonMessage, signature);
+
 			if (type == VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO_AGREGADO) {
 				int zonaid = jsonObject.getInt("zona");
 				// buscar la zona en el arraylist
@@ -153,7 +159,6 @@ public class Proveedor {
 			} else if (type == VariablesGlobales._MESSAGE_TYPE_REQUEST_TECNICO) {
 				longitud = Float.parseFloat(jsonObject.getString("longitud"));
 				latitud = Float.parseFloat(jsonObject.getString("latitud"));
-
 			}
 		} catch (NumberFormatException | JSONException e) {
 			e.printStackTrace();
