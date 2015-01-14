@@ -11,15 +11,29 @@ import org.apache.commons.codec.binary.Base64;
 
 public class Sign {
 
-	KeyPair pair;
-	PrivateKey priv;
-	PublicKey pub;
+	static KeyPair pair;
+	static PrivateKey priv;
+	static PublicKey pub;
 
 	private static Sign INSTANCE = null;
 
 	private synchronized static void createInstance() {
 		if (INSTANCE == null) {
 			INSTANCE = new Sign();
+			try {
+				KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA",
+						"SUN");
+				SecureRandom random = SecureRandom.getInstance("SHA1PRNG",
+						"SUN");
+
+				keyGen.initialize(1024, random);
+
+				pair = keyGen.generateKeyPair();
+				priv = pair.getPrivate();
+				pub = pair.getPublic();
+			} catch (Exception e) {
+				System.err.println("Caught exception " + e.toString());
+			}
 		}
 	}
 
@@ -38,17 +52,6 @@ public class Sign {
 			System.out.println("Usage: GenSig nameOfFileToSign");
 		} else
 			try {
-				KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA",
-						"SUN");
-				SecureRandom random = SecureRandom.getInstance("SHA1PRNG",
-						"SUN");
-
-				keyGen.initialize(1024, random);
-
-				pair = keyGen.generateKeyPair();
-				priv = pair.getPrivate();
-				pub = pair.getPublic();
-
 				Signature dsa = Signature.getInstance("SHA1withDSA", "SUN");
 
 				dsa.initSign(priv);

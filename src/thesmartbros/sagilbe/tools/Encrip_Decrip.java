@@ -28,6 +28,9 @@ public final class Encrip_Decrip {
 				pair = keyGen.generateKeyPair();
 				pub = pair.getPublic();
 				priv = pair.getPrivate();
+				PublicKey pub1=pair.getPublic();
+				PrivateKey priv1=pair.getPrivate();
+				
 			} catch (NoSuchAlgorithmException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -63,7 +66,7 @@ public final class Encrip_Decrip {
 		try {
 			// get an RSA cipher object and print the provider
 			final Cipher cipher = Cipher.getInstance(ALGORITHM);
-
+			PublicKey pub1=pub;
 			// decrypt the text using the private key
 			cipher.init(Cipher.DECRYPT_MODE, priv);
 			dectyptedText = cipher.doFinal(text);
