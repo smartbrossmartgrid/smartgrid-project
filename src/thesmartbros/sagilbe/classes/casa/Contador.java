@@ -180,7 +180,6 @@ public class Contador {
 		String signature = Sign.getInstance().GenSig(args);
 		String jsonMessage = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS + ", \"contadorId\": " + this.contadorId + ", \"zonaId\": " + this.zonaId + ", \"latitud\": \"" + Float.toString(this.latitud) + "\", \"longitud\": \"" + Float.toString(this.longitud) + "\", \"signature\": \"" + signature + "\" }";
 		PrinterTools.printJSON(jsonMessage);
-		//jsonMessage = Encrip_Decrip.getInstance().encrypt(jsonMessage);
 		if (SocketTools.send(VariablesGlobales._IP_AGREGADOR, port, jsonMessage)) {
 			PrinterTools.log("[Contador=" + this.contadorId + " at zoneid=" + this.zonaId + " asks for Paillier; time=" + this.time + " to " + VariablesGlobales._IP_AGREGADOR + ":" + port + "]");
 		} else

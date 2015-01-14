@@ -20,6 +20,7 @@ public class SocketTools {
 				return false;
 			outstream = socket.getOutputStream();
 			out = new PrintWriter(outstream);
+			message = Encrip_Decrip.getInstance().encrypt(message);
 			out.print(message);
 			return true;
 		} catch (UnknownHostException e) {
