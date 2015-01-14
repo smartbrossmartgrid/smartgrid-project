@@ -28,8 +28,6 @@ public final class Encrip_Decrip {
 				pair = keyGen.generateKeyPair();
 				pub = pair.getPublic();
 				priv = pair.getPrivate();
-				PublicKey pub1=pair.getPublic();
-				PrivateKey priv1=pair.getPrivate();
 				
 			} catch (NoSuchAlgorithmException e1) {
 				// TODO Auto-generated catch block
