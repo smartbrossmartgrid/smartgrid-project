@@ -1,12 +1,5 @@
 package thesmartbros.sagilbe.tools;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -23,12 +16,22 @@ public final class Encrip_Decrip {
 	static PublicKey pub;
 	public static final String ALGORITHM = "RSA";
 
-
 	private static Encrip_Decrip INSTANCE = null;
 
 	private synchronized static void createInstance() {
 		if (INSTANCE == null) {
 			INSTANCE = new Encrip_Decrip();
+			KeyPairGenerator keyGen;
+			try {
+				keyGen = KeyPairGenerator.getInstance(ALGORITHM);
+				keyGen.initialize(2048);
+				pair = keyGen.generateKeyPair();
+				pub = pair.getPublic();
+				priv = pair.getPrivate();
+			} catch (NoSuchAlgorithmException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 	}
 
@@ -39,20 +42,6 @@ public final class Encrip_Decrip {
 	}
 
 	public static String encrypt(String text) {
-
-		KeyPairGenerator keyGen;
-		try {
-			keyGen = KeyPairGenerator.getInstance(ALGORITHM);
-			keyGen.initialize(2048);
-			pair = keyGen.generateKeyPair();
-			pub = pair.getPublic();
-			priv = pair.getPrivate();
-		} catch (NoSuchAlgorithmException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
-
 		byte[] cipherText = null;
 		try {
 			// get an RSA cipher object and print the provider

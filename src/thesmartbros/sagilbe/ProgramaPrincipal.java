@@ -29,7 +29,7 @@ public class ProgramaPrincipal {
 		Contador c06 = new Contador(numContadores++, numZones, 41.266977f, 1.967604f, VariablesGlobales._PERFIL_SOLTERO, 3);
 		//System.out.println(c1.toString());
 		c01.work();
-		c02.work();
+		/*c02.work();
 		c03.work();
 		c04.work();
 		c05.work();
