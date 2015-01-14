@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import thesmartbros.sagilbe.tools.PrinterTools;
+import thesmartbros.sagilbe.tools.Sign;
 import thesmartbros.sagilbe.tools.SocketTools;
 import thesmartbros.sagilbe.tools.VariablesGlobales;
 
@@ -38,7 +39,7 @@ public class Agregador {
 	}
 
 	public void start() {
-		boolean listening = true;
+		final boolean listening = true;
 		int port = VariablesGlobales._DEFAULT_AGREGADOR_PORT + zona;
 		try {
 			serverSocket = new ServerSocket(port);
@@ -64,7 +65,9 @@ public class Agregador {
 				String jsonMessageFromContador = SocketTools.getJSON(socket); //desde el socket conseguir el JSON
 				//System.out.println(jsonMessageFromContador);
 				Container c = parseJSON(jsonMessageFromContador); //parsear el JSON
+				
 				if (c.type == VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO) {
+					
 					ConjuntoCasas casa = (ConjuntoCasas) c.objeto;
 					/* comprobar que los valores del contador recibido no
 					 * existen ya */
@@ -171,6 +174,13 @@ public class Agregador {
 				((ConjuntoCasas) objeto).setIdcasa(jsonObject.getInt("contadorId"));
 				((ConjuntoCasas) objeto).setZonaid(jsonObject.getInt("zonaId"));
 				((ConjuntoCasas) objeto).setTime(jsonObject.getInt("time"));
+				
+				//Comprobar firma
+				String signature = jsonObject.getString("signature");
+				String[] args = new String[2];
+				args[0]= "\"messageType\": " + VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO + ", \"consum\": \"" + (jsonObject.getString("consum")) + "\", \"contadorId\":" + (jsonObject.getInt("contadorId")) + ", \"zonaId\":" + (jsonObject.getInt("zonaId")) + ", \"time\":" + (jsonObject.getInt("time"));
+				args[1]= signature;		
+				Sign.getInstance().VerSig(args);
 			} else if (type == VariablesGlobales._MESSAGE_TYPE_ENVIAR_PRECIO_PROVIDER) {
 				objeto = Float.parseFloat(jsonObject.getString("price"));
 			} else if (type == VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_PROVIDER) {
@@ -180,8 +190,16 @@ public class Agregador {
 			} else if (type == VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS) {
 				objeto = new requestPaillierObject();
 				((requestPaillierObject) objeto).contadorId = jsonObject.getInt("contadorId");
+				((requestPaillierObject) objeto).zonaid = jsonObject.getInt("zonaId");
 				((requestPaillierObject) objeto).latitud = Float.parseFloat(jsonObject.getString("latitud"));
 				((requestPaillierObject) objeto).longitud = Float.parseFloat(jsonObject.getString("longitud"));
+				
+				//Comprobar firma
+				String signature = jsonObject.getString("signature");
+				String[] args = new String[2];
+				args[0]= "\"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS + ", \"contadorId\": \"" + (jsonObject.getInt("contadorId")) + ", \"zonaId\":" + (jsonObject.getInt("zonaId")) + ", \"latitud\": \"" + Float.parseFloat(jsonObject.getString("latitud")) + "\", \"longitud\": \"" + Float.parseFloat(jsonObject.getString("longitud"));
+				args[1]= signature;		
+				Sign.getInstance().VerSig(args);
 			}
 		} catch (NumberFormatException | JSONException e) {
 			e.printStackTrace();
@@ -272,6 +290,7 @@ public class Agregador {
 		public int contadorId = 0;
 		public float latitud = 0.0f;
 		public float longitud = 0.0f;
+		public int zonaid = 0;
 	}
 
 }

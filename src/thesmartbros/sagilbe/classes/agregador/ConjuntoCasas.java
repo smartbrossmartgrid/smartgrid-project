@@ -90,4 +90,5 @@ class ConjuntoCasas {
 		this.time = time;
 	}
 
+
 }

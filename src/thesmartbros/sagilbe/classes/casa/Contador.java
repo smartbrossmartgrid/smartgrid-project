@@ -10,6 +10,7 @@ import java.util.TimerTask;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import thesmartbros.sagilbe.tools.Sign;
 import thesmartbros.sagilbe.tools.PrinterTools;
 import thesmartbros.sagilbe.tools.SocketTools;
 import thesmartbros.sagilbe.tools.VariablesGlobales;
@@ -152,7 +153,11 @@ public class Contador {
 		if (consumoInstantaneoPaillier == BigInteger.ZERO)
 			requestPaillierParameters(); /* si no tiene Paillier, enviar request */
 		else {
-			String jsonMessage = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO + ", \"consum\": \"" + consumoInstantaneoPaillier.toString() + "\", \"contadorId\":" + this.contadorId + ", \"zonaId\":" + this.zonaId + ", \"time\":" + tiempo + "}";
+			String Message = "\"messageType\": " + VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO + ", \"consum\": \"" + consumoInstantaneoPaillier.toString() + "\", \"contadorId\":" + this.contadorId + ", \"zonaId\":" + this.zonaId + ", \"time\":" + tiempo;
+			String[] args = new String[1];
+			args[0]=Message;
+			String signature=Sign.getInstance().GenSig(args);
+			String jsonMessage = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO + ", \"consum\": \"" + consumoInstantaneoPaillier.toString() + "\", \"contadorId\":" + this.contadorId + ", \"zonaId\":" + this.zonaId + ", \"time\":" + tiempo + ", \"signature\":" +signature+ "}";
 			PrinterTools.printJSON(jsonMessage);
 			if (SocketTools.send(VariablesGlobales._IP_AGREGADOR, port, jsonMessage)) {
 				PrinterTools.log("[Contador=" + this.contadorId + " at zoneid=" + this.zonaId + " sends data; time=" + tiempo + " to " + VariablesGlobales._IP_AGREGADOR + ":" + port + "]");
@@ -164,7 +169,11 @@ public class Contador {
 	// cuando hace request de Paillier, tambien se identifica en el sistema.
 	private void requestPaillierParameters() {
 		int port = VariablesGlobales._DEFAULT_AGREGADOR_PORT + zonaId;
-		String jsonMessage = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS + ", \"contadorId\": " + this.contadorId + ", \"zonaId\": " + this.zonaId + ", \"latitud\": \"" + Float.toString(this.latitud) + "\", \"longitud\": \"" + Float.toString(this.longitud) + "\"}";
+		String Message = "\"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS + ", \"contadorId\": " + this.contadorId + ", \"zonaId\": " + this.zonaId + ", \"latitud\": \"" + Float.toString(this.latitud) + "\", \"longitud\": \"" + Float.toString(this.longitud);
+		String[] args = new String[1];
+		args[0]=Message;
+		String signature=Sign.getInstance().GenSig(args);
+		String jsonMessage = "{ \"messageType\": " + VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS + ", \"contadorId\": " + this.contadorId + ", \"zonaId\": " + this.zonaId + ", \"latitud\": \"" + Float.toString(this.latitud) + "\", \"longitud\": \"" + Float.toString(this.longitud) + "\", \"signature\": \"" + signature + "\"}";
 		PrinterTools.printJSON(jsonMessage);
 		if (SocketTools.send(VariablesGlobales._IP_AGREGADOR, port, jsonMessage)) {
 			PrinterTools.log("[Contador=" + this.contadorId + " at zoneid=" + this.zonaId + " asks for Paillier; time=" + this.time + " to " + VariablesGlobales._IP_AGREGADOR + ":" + port + "]");
