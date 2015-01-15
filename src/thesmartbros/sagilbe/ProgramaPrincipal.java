@@ -5,7 +5,6 @@ import java.io.IOException;
 import thesmartbros.sagilbe.classes.agregador.Agregador;
 import thesmartbros.sagilbe.classes.casa.Contador;
 import thesmartbros.sagilbe.classes.proveedor.Proveedor;
-import thesmartbros.sagilbe.tools.ToolsMap;
 import thesmartbros.sagilbe.tools.VariablesGlobales;
 
 public class ProgramaPrincipal {

@@ -8,6 +8,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import org.json.JSONObject;
+
 public class SocketTools {
 
 	public static synchronized boolean send(String IP, int port, String message) {
@@ -22,7 +24,8 @@ public class SocketTools {
 			out = new PrintWriter(outstream);
 			message = SignatureSAGILBE.getInstance().GenSig(message);
 			PrinterTools.printJSON(message);
-			message = SecurityTools.getInstance().encrypt(message);
+			message = SymmetricEncrypt.getInstance().encryptData(message);
+			PrinterTools.printEJSON(message);
 			out.print(message);
 			return true;
 		} catch (UnknownHostException e) {
@@ -64,6 +67,10 @@ public class SocketTools {
 		try {
 			outstream = socket.getOutputStream();
 			out = new PrintWriter(outstream);
+			message = SignatureSAGILBE.getInstance().GenSig(message);
+			PrinterTools.printJSON(message);
+			message = SymmetricEncrypt.getInstance().encryptData(message);
+			PrinterTools.printEJSON(message);
 			out.print(message);
 			if (socket.isClosed())
 				PrinterTools.socketLog(socket + " has closed");
@@ -96,7 +103,15 @@ public class SocketTools {
 			while ((line = reader.readLine()) != null)
 				sb.append(line).append("\n");
 			//socket.close();
+			String message = sb.toString();
+			message = SymmetricEncrypt.getInstance().decryptData(message);
+			JSONObject jsonObject = new JSONObject(message);
+			String signature = jsonObject.getString("signature");
+			SignatureSAGILBE.getInstance().VerSig(message, signature);
+			return message;
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return sb.toString();

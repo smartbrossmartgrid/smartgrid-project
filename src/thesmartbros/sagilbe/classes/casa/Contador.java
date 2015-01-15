@@ -10,11 +10,9 @@ import java.util.TimerTask;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import thesmartbros.sagilbe.tools.SignatureSAGILBE;
 import thesmartbros.sagilbe.tools.PrinterTools;
 import thesmartbros.sagilbe.tools.SocketTools;
 import thesmartbros.sagilbe.tools.VariablesGlobales;
-import thesmartbros.sagilbe.tools.SecurityTools;
 
 public class Contador {
 
@@ -85,6 +83,11 @@ public class Contador {
 					day = 1;
 					year++;
 					PrinterTools.log("[    HAPPY NEW YEAR " + year + " ;)   ]");
+				}
+				if (day % 30 == 0) {
+					PrinterTools.log("[  ***************************************** ]");
+					PrinterTools.log("[    CONSUMO ACUMULADO MES (id=" + contadorId + "): " + energiaConsumidaMensual + " kW ]");
+					PrinterTools.log("[  ***************************************** ]");
 				}
 				if (time < stopWorkingTime)
 					enviarConsumoInstantaneo(time);
@@ -177,15 +180,9 @@ public class Contador {
 		Object objeto = null;
 		JSONObject jsonObject = null;
 		int type = -1;
-		jsonMessage = SecurityTools.getInstance().decrypt(jsonMessage);
 		try { // parsear los datos
 			jsonObject = new JSONObject(jsonMessage);
 			type = jsonObject.getInt("messageType");
-			
-			//Comprobar firma
-			String signature = jsonObject.getString("signature");
-			SignatureSAGILBE.getInstance().VerSig(jsonMessage, signature);
-			
 			if (type == VariablesGlobales._MESSAGE_TYPE_ENVIAR_PRECIO_CONTADOR) {
 				Float price = Float.parseFloat(jsonObject.getString("price"));
 				objeto = price;

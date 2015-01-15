@@ -20,7 +20,7 @@ public class Zona {
 	private int averias_sol = 0; 
 
 	//historial de consumo, vector de 24 posiciones (horas) para hacer estadistica
-	private int[] historial_consumo = new int[24];
+	//private int[] historial_consumo = new int[24];
 
 	//por ejemplo maximo num usuarios
 	//private int max_users = 10;

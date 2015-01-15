@@ -11,10 +11,8 @@ import java.util.TimerTask;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import thesmartbros.sagilbe.tools.SecurityTools;
 import thesmartbros.sagilbe.tools.Paillier;
 import thesmartbros.sagilbe.tools.PrinterTools;
-import thesmartbros.sagilbe.tools.SignatureSAGILBE;
 import thesmartbros.sagilbe.tools.SocketTools;
 import thesmartbros.sagilbe.tools.ToolsMap;
 import thesmartbros.sagilbe.tools.VariablesGlobales;
@@ -122,15 +120,9 @@ public class Proveedor {
 		float latitud = 0;
 		JSONObject jsonObject = null;
 		int type = -1;
-		jsonMessage = SecurityTools.getInstance().decrypt(jsonMessage);
 		try { // parsear los datos
 			jsonObject = new JSONObject(jsonMessage);
 			type = jsonObject.getInt("messageType");
-
-			//Comprobar firma
-			String signature = jsonObject.getString("signature");
-			SignatureSAGILBE.getInstance().VerSig(jsonMessage, signature);
-
 			if (type == VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO_AGREGADO) {
 				int zonaid = jsonObject.getInt("zona");
 				// buscar la zona en el arraylist

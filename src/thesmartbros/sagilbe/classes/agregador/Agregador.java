@@ -10,10 +10,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import thesmartbros.sagilbe.tools.PrinterTools;
-import thesmartbros.sagilbe.tools.SignatureSAGILBE;
 import thesmartbros.sagilbe.tools.SocketTools;
 import thesmartbros.sagilbe.tools.VariablesGlobales;
-import thesmartbros.sagilbe.tools.SecurityTools;
 
 public class Agregador {
 	/* Esta funcion hace de agregador en un entorno de Smart Grid. Las
@@ -151,6 +149,7 @@ public class Agregador {
 					casa.setIdcasa(((requestPaillierObject) c.objeto).contadorId);
 					casa.setLatitud(((requestPaillierObject) c.objeto).latitud);
 					casa.setLongitud(((requestPaillierObject) c.objeto).longitud);
+					casa.setZonaid(((requestPaillierObject) c.objeto).zonaid);
 					listaCasas.add(casa);
 					if (paillierAgregador.g == null) {//no tengo los parametros, los pido
 						requestPaillierParameters();
@@ -168,15 +167,9 @@ public class Agregador {
 		Object objeto = null;
 		JSONObject jsonObject = null;
 		int type = -1;
-		jsonMessage = SecurityTools.getInstance().decrypt(jsonMessage);
 		try { // parsear los datos
 			jsonObject = new JSONObject(jsonMessage);
 			type = jsonObject.getInt("messageType");
-
-			//Comprobar firma
-			String signature = jsonObject.getString("signature");
-			SignatureSAGILBE.getInstance().VerSig(jsonMessage, signature);
-
 			if (type == VariablesGlobales._MESSAGE_TYPE_ENVIAR_CONSUMO) {
 				objeto = new ConjuntoCasas();
 				((ConjuntoCasas) objeto).setConsuma_enc(new BigInteger(jsonObject.getString("consum")));

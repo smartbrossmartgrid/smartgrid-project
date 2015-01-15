@@ -64,7 +64,7 @@ public class SignatureSAGILBE {
 				System.err.println("Caught exception " + e.toString());
 			}
 			String signature = Base64.encodeBase64String(realSig);
-			mensaje = mensajeAFirmar + ", signature: \"" + signature + "\"}";
+			mensaje = mensajeAFirmar + ", \"signature\": \"" + signature + "\" }";
 			return mensaje;
 		}
 		return null;
@@ -87,7 +87,7 @@ public class SignatureSAGILBE {
 				sig.initVerify(_PUBLIC_KEY);
 				sig.update(message);
 				verifies = sig.verify(signatureToVerify);
-				System.out.println("signature verifies: " + verifies);
+				PrinterTools.printEJSON("signature verifies: " + verifies);
 			} catch (Exception e) {
 				System.err.println("Caught exception " + e.toString());
 			}
@@ -104,7 +104,7 @@ public class SignatureSAGILBE {
 	}
 
 	private String removeSignature(String str) {
-		return str.substring(0, str.indexOf(", signature: \""));
+		return str.substring(0, str.indexOf(", \"signature\": \""));
 	}
 
 }
