@@ -31,7 +31,7 @@ public class SignatureSAGILBE {
 				_PRIVATE_KEY = pair.getPrivate();
 				_PUBLIC_KEY = pair.getPublic();
 			} catch (Exception e) {
-				System.err.println("Caught exception " + e.toString());
+				PrinterTools.errorsLog("ERROR: "+e.getMessage());
 			}
 		}
 	}
@@ -50,7 +50,7 @@ public class SignatureSAGILBE {
 		/* Generate a DSA signature */
 
 		if (args.length != 1) {
-			System.out.println("Usage: GenSig nameOfFileToSign");
+			PrinterTools.errorsLog("ERROR: Usage: GenSig nameOfFileToSign");
 		} else {
 			mensaje = args[0];
 			String mensajeAFirmar = removeLastChar(mensaje); // last char es el "}"
@@ -76,7 +76,7 @@ public class SignatureSAGILBE {
 		byte[] signatureToVerify = null;
 		/* Verify a DSA signature */
 		if (args.length != 2) {
-			System.out.println("Usage: VerSig publickeyfile signaturefile datafile");
+			PrinterTools.errorsLog("ERROR: Usage: VerSig publickeyfile signaturefile datafile");
 		} else {
 			try {
 				String messageToVerify = removeSignature(args[0]);

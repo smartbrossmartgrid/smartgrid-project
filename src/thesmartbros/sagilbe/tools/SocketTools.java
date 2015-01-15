@@ -29,9 +29,9 @@ public class SocketTools {
 			out.print(message);
 			return true;
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			PrinterTools.errorsLog("ERROR: "+e.getMessage());
 		} catch (IOException e) {
-			e.printStackTrace();
+			PrinterTools.errorsLog("ERROR: "+e.getMessage());
 		} finally {
 			try {
 				out.close();
@@ -39,9 +39,9 @@ public class SocketTools {
 				socket.close();
 				PrinterTools.socketLog(socket + " has been closed");
 			} catch (IOException e) {
-				e.printStackTrace();
+				PrinterTools.errorsLog("ERROR: "+e.getMessage());
 			} catch (Exception e) {
-				e.printStackTrace();
+				PrinterTools.errorsLog("ERROR: "+e.getMessage());
 			}
 		}
 		return false;
@@ -54,9 +54,9 @@ public class SocketTools {
 			sendSynchronized(socket, message);
 			return socket;
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			PrinterTools.errorsLog("ERROR: "+e.getMessage());
 		} catch (IOException e) {
-			e.printStackTrace();
+			PrinterTools.errorsLog("ERROR: "+e.getMessage());
 		}
 		return null;
 	}
@@ -76,18 +76,18 @@ public class SocketTools {
 				PrinterTools.socketLog(socket + " has closed");
 			return true;
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			PrinterTools.errorsLog("ERROR: "+e.getMessage());
 		} catch (IOException e) {
-			e.printStackTrace();
+			PrinterTools.errorsLog("ERROR: "+e.getMessage());
 		} finally {
 			try {
 				out.close();
 				outstream.close();
 				PrinterTools.socketLog(socket + " has been closed");
 			} catch (IOException e) {
-				e.printStackTrace();
+				PrinterTools.errorsLog("ERROR: "+e.getMessage());
 			} catch (Exception e) {
-				e.printStackTrace();
+				PrinterTools.errorsLog("ERROR: "+e.getMessage());
 			}
 		}
 		return false;
@@ -110,9 +110,9 @@ public class SocketTools {
 			SignatureSAGILBE.getInstance().VerSig(message, signature);
 			return message;
 		} catch (IOException e) {
-			e.printStackTrace();
+			PrinterTools.errorsLog("ERROR: "+e.getMessage());
 		} catch (Exception e) {
-			e.printStackTrace();
+			PrinterTools.errorsLog("ERROR: "+e.getMessage());
 		}
 		return sb.toString();
 	}
@@ -125,7 +125,7 @@ public class SocketTools {
 				PrinterTools.socketLog(socket + " has been closed");
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			PrinterTools.errorsLog("ERROR: "+e.getMessage());
 		}
 		return line;
 	}

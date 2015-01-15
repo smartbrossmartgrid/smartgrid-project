@@ -35,7 +35,7 @@ public class ToolsMap {
             String route = results.getString("formatted_address");
             return route;
         } catch (JSONException e) {
-            e.printStackTrace();
+        	PrinterTools.errorsLog(e.toString());
         }
         return null;
     }	

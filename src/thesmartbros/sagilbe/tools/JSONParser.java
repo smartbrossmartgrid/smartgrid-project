@@ -36,14 +36,10 @@ public class JSONParser {
 			}
 			rd.close();
 			return response.toString();
-
 		} catch (Exception e) {
-
-			e.printStackTrace();
+			//e.printStackTrace();
 			return null;
-
 		} finally {
-
 			if (connection != null) {
 				connection.disconnect();
 			}

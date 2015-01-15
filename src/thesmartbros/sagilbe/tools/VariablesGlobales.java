@@ -7,10 +7,12 @@ public class VariablesGlobales {
 	public final static String _IP_PROVIDER = "127.0.0.1";
 	public final static String _IP_AGREGADOR = "127.0.0.1";
 	public final static String _IP_CONTADOR = "127.0.0.1";
+	public final static String _IP_MANAGER = "127.0.0.1";
 
 	public final static int _DEFAULT_PROVIDER_PORT = 50000;
 	public final static int _DEFAULT_AGREGADOR_PORT = 40000;
 	public final static int _DEFAULT_CONTADOR_PORT = 30000;
+	public final static int _DEFAULT_MANAGER_TEST_PORT = 20000;
 
 	public final static int _MAX_TIME_TO_NOT_RESPOND = 3; /* times */
 
@@ -28,6 +30,9 @@ public class VariablesGlobales {
 	public final static int _MESSAGE_TYPE_ENVIAR_PRECIO_PROVIDER = 300;
 	public final static int _MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_PROVIDER = 302;
 	public final static int _MESSAGE_TYPE_ENVIAR_TECNICO = 303;
+	
+	/* variable de mensajes de management (400) */
+	public final static int _MESSAGE_TYPE_ALERTA_CONSUMO_SUPERADO = 400;
 
 	/* calculo del precio */
 	public final static float _MAX_PRICE = 0.12337f; /* euros/kWh */

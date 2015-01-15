@@ -36,8 +36,7 @@ public class Proveedor {
 		try {
 			serverSocket = new ServerSocket(VariablesGlobales._DEFAULT_PROVIDER_PORT);
 		} catch (IOException e) {
-			System.err.println("Could not listen on port: " + VariablesGlobales._DEFAULT_PROVIDER_PORT);
-			e.printStackTrace();
+			PrinterTools.errorsLog("Could not listen on port: " + VariablesGlobales._DEFAULT_PROVIDER_PORT);
 			System.exit(-1);
 		}
 		Thread t = new Thread(new Runnable() {

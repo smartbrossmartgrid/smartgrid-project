@@ -25,6 +25,7 @@ public class Contador {
 	private int energiaConsumidaMensual = 0;
 	private int contadorId = 0;
 	private int zonaId = 0;
+	private float precio_maximo_kwh = -1.0f;
 
 	/* map */
 	private float latitud;
@@ -34,6 +35,8 @@ public class Contador {
 	private int time = 0; /* from 0 to 23 */
 	private int day = 1; /* from 1 to 365 */
 	private int year = 2015; /* from 2015 */
+
+	/* constants */
 	public final static int _THREAD_TIME_INTERVAL = 15000; /* ms */
 	public final static int _DEFAULT_DELAY = 100; /* ms */
 
@@ -47,19 +50,21 @@ public class Contador {
 	private ElectrodomesticoResource casa;
 	private PaillierContador paillierContador = new PaillierContador();
 
-	public Contador(int contadorId, int zonaId, float latitud, float longitud, int perfil) {
+	public Contador(int contadorId, int zonaId, float latitud, float longitud, float precio_maximo, int perfil) {
 		this.contadorId = contadorId;
 		this.zonaId = zonaId;
 		this.latitud = latitud;
 		this.longitud = longitud;
+		this.precio_maximo_kwh = precio_maximo;
 		this.casa = new ElectrodomesticoResource(perfil);
 	}
 
-	public Contador(int contadorId, int zonaId, float latitud, float longitud, int perfil, int falla) {
+	public Contador(int contadorId, int zonaId, float latitud, float longitud, float precio_maximo, int perfil, int falla) {
 		this.contadorId = contadorId;
 		this.zonaId = zonaId;
 		this.latitud = latitud;
 		this.longitud = longitud;
+		this.precio_maximo_kwh = precio_maximo;
 		this.casa = new ElectrodomesticoResource(perfil);
 		this.stopWorkingTime = falla;
 	}
@@ -110,8 +115,7 @@ public class Contador {
 		try {
 			serverSocket = new ServerSocket(port);
 		} catch (IOException e) {
-			System.err.println("Could not listen on port: " + port);
-			e.printStackTrace();
+			PrinterTools.errorsLog("Could not listen on port: " + port);
 			System.exit(-1);
 		}
 		Thread t = new Thread(new Runnable() {
@@ -134,6 +138,8 @@ public class Contador {
 					Float preciokWh = (Float) c.objeto;
 					precio_actual = preciokWh.floatValue();
 					PrinterTools.log("[contador" + contadorId + " stores new price: " + precio_actual + " EUR/kWh]");
+					if (precio_actual > precio_maximo_kwh && precio_maximo_kwh > 0.0f)
+						enviarAlertaConsumo();
 				} else if (c.type == VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR) {
 					enviarConsumoInstantaneo(time); //envio lo que no habia podido enviar por no tener pallier
 				}
@@ -173,6 +179,15 @@ public class Contador {
 			PrinterTools.log("[Contador=" + this.contadorId + " at zoneid=" + this.zonaId + " asks for Paillier; time=" + this.time + " to " + VariablesGlobales._IP_AGREGADOR + ":" + port + "]");
 		} else
 			PrinterTools.log("ERROR [Contador=" + this.contadorId + " at zoneid=" + this.zonaId + " asks for Paillier; time=" + this.time + " to " + VariablesGlobales._IP_AGREGADOR + ":" + port + "]");
+	}
+
+	private void enviarAlertaConsumo() {
+		int port = VariablesGlobales._DEFAULT_MANAGER_TEST_PORT;
+		String jsonMessage = "{\"messageType\": " + VariablesGlobales._MESSAGE_TYPE_ALERTA_CONSUMO_SUPERADO + ", \"contadorId\": " + this.contadorId + ", \"zonaId\": " + this.zonaId + ", \"latitud\": \"" + Float.toString(this.latitud) + "\", \"longitud\": \"" + Float.toString(this.longitud) + "\"}";
+		if (SocketTools.send(VariablesGlobales._IP_MANAGER, port, jsonMessage)) {
+			PrinterTools.log("[*!*!*!* Contador=" + this.contadorId + " at zoneid=" + this.zonaId + " sends ALERTA CONSUMO SUPERADO; time=" + this.time + " to " + VariablesGlobales._IP_AGREGADOR + ":" + port + "]");
+		} else
+			PrinterTools.log("ERROR [*!*!*!* Contador=" + this.contadorId + " at zoneid=" + this.zonaId + " asks for Paillier; time=" + this.time + " to " + VariablesGlobales._IP_AGREGADOR + ":" + port + "]");
 	}
 
 	private Container parseJSON(String jsonMessage) {

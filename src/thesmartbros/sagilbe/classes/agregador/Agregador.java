@@ -43,8 +43,7 @@ public class Agregador {
 		try {
 			serverSocket = new ServerSocket(port);
 		} catch (IOException e) {
-			System.err.println("Could not listen on port: " + port);
-			e.printStackTrace();
+			PrinterTools.errorsLog("Could not listen on port: " + port);
 			System.exit(-1);
 		}
 		Thread t = new Thread(new Runnable() {
@@ -55,7 +54,7 @@ public class Agregador {
 					serverSocket.close();
 					serverSocket = null;
 				} catch (Exception e) {
-					e.printStackTrace();
+					PrinterTools.errorsLog("ERROR: "+e.getMessage());
 				}
 			}
 

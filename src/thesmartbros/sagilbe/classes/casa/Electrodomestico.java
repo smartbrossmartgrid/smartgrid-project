@@ -1,5 +1,7 @@
 package thesmartbros.sagilbe.classes.casa;
 
+import thesmartbros.sagilbe.tools.PrinterTools;
+
 public class Electrodomestico {
 
 	// nombre del electrodoméstico
@@ -82,7 +84,7 @@ public class Electrodomestico {
 
 		this.forzar_apagado = true;
 
-		System.out.println("Apagando electrodomestico");
+		PrinterTools.log("Apagando electrodomestico");
 		return forzar_apagado;
 
 	}
@@ -90,8 +92,7 @@ public class Electrodomestico {
 	// forzar el encendido de un electrodoméstico
 	public boolean forzarencender() {
 		this.forzar_encendido = true;
-
-		System.out.println("Electrodomestico encendido");
+		PrinterTools.log("Electrodomestico encendido");
 		return forzar_encendido;
 
 	}

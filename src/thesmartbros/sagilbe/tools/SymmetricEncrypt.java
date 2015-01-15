@@ -54,7 +54,7 @@ public class SymmetricEncrypt {
 			keyGen.init(128);
 			secretKey = keyGen.generateKey();
 		} catch (Exception exp) {
-			System.out.println(" Exception inside constructor " + exp);
+			PrinterTools.errorsLog(" Exception inside constructor " + exp);
 		}
 
 	}
@@ -90,18 +90,17 @@ public class SymmetricEncrypt {
 			strCipherText = Base64.encodeBase64String(byteCipherText);
 			return strCipherText;
 		} catch (NoSuchAlgorithmException noSuchAlgo) {
-			System.out.println(" No Such Algorithm exists " + noSuchAlgo);
+			PrinterTools.errorsLog(" No Such Algorithm exists " + noSuchAlgo);
 		} catch (NoSuchPaddingException noSuchPad) {
-			System.out.println(" No Such Padding exists " + noSuchPad);
+			PrinterTools.errorsLog(" No Such Padding exists " + noSuchPad);
 		} catch (InvalidKeyException invalidKey) {
-			System.out.println(" Invalid Key " + invalidKey);
+			PrinterTools.errorsLog(" Invalid Key " + invalidKey);
 		} catch (BadPaddingException badPadding) {
-			System.out.println(" Bad Padding " + badPadding);
+			PrinterTools.errorsLog(" Bad Padding " + badPadding);
 		} catch (IllegalBlockSizeException illegalBlockSize) {
-			System.out.println(" Illegal Block Size " + illegalBlockSize);
-			illegalBlockSize.printStackTrace();
+			PrinterTools.errorsLog(" Illegal Block Size " + illegalBlockSize);
 		} catch (Exception exp) {
-			exp.printStackTrace();
+			PrinterTools.errorsLog(exp.toString());
 		}
 		return null;
 	}
@@ -129,20 +128,17 @@ public class SymmetricEncrypt {
 		}
 
 		catch (NoSuchAlgorithmException noSuchAlgo) {
-			System.out.println(" No Such Algorithm exists " + noSuchAlgo);
+			PrinterTools.errorsLog(" No Such Algorithm exists " + noSuchAlgo);
 		} catch (NoSuchPaddingException noSuchPad) {
-			System.out.println(" No Such Padding exists " + noSuchPad);
+			PrinterTools.errorsLog(" No Such Padding exists " + noSuchPad);
 		} catch (InvalidKeyException invalidKey) {
-			System.out.println(" Invalid Key " + invalidKey);
-			invalidKey.printStackTrace();
+			PrinterTools.errorsLog(" Invalid Key " + invalidKey);
 		} catch (BadPaddingException badPadding) {
-			System.out.println(" Bad Padding " + badPadding);
-			badPadding.printStackTrace();
+			PrinterTools.errorsLog(" Bad Padding " + badPadding);
 		} catch (IllegalBlockSizeException illegalBlockSize) {
-			System.out.println(" Illegal Block Size " + illegalBlockSize);
-			illegalBlockSize.printStackTrace();
+			PrinterTools.errorsLog(" Illegal Block Size " + illegalBlockSize);
 		} catch (InvalidAlgorithmParameterException invalidParam) {
-			System.out.println(" Invalid Parameter " + invalidParam);
+			PrinterTools.errorsLog(" Invalid Parameter " + invalidParam);
 		}
 		return null;
 	}

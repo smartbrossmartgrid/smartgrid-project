@@ -20,4 +20,8 @@ public class PrinterTools {
 	public static void contadorLog(String log) {
 		//System.out.println(log);
 	}
+	
+	public static void errorsLog(String log) {
+		//System.out.println(log);
+	}
 }
