@@ -28,21 +28,21 @@ public class ProgramaPrincipal {
 		Contador c06 = new Contador(numContadores++, numZones, 41.266977f, 1.967604f, VariablesGlobales._PERFIL_SOLTERO, 3);
 		//System.out.println(c1.toString());
 		c01.work();
-		/*c02.work();
+		c02.work();
 		c03.work();
 		c04.work();
 		c05.work();
 		c06.work();
 
 		numZones++;
-/*
+
 		// Ciudad de Gava
 		Agregador ag1 = new Agregador(numZones);
 		ag1.start();
 
-		Contador c11 = new Contador(numContadores++, numZones, 41.301757f, 2.001421f);
-		Contador c12 = new Contador(numContadores++, numZones, 41.304303f, 2.003546f);
-		Contador c13 = new Contador(numContadores++, numZones, 41.306286f, 2.004576f);
+		Contador c11 = new Contador(numContadores++, numZones, 41.301757f, 2.001421f, VariablesGlobales._PERFIL_4PERSONAS);
+		Contador c12 = new Contador(numContadores++, numZones, 41.304303f, 2.003546f, VariablesGlobales._PERFIL_MEDIO_CONSUMO);
+		Contador c13 = new Contador(numContadores++, numZones, 41.306286f, 2.004576f, VariablesGlobales._PERFIL_TRABAJO_TARDE);
 		//System.out.println(c1.toString());
 		c11.work();
 		c12.work();
@@ -54,15 +54,15 @@ public class ProgramaPrincipal {
 		Agregador ag2 = new Agregador(numZones);
 		ag2.start();
 
-		Contador c21 = new Contador(numContadores++, numZones, 41.316037f, 2.015090f);
-		Contador c22 = new Contador(numContadores++, numZones, 41.317262f, 2.017386f);
-		Contador c23 = new Contador(numContadores++, numZones, 41.315699f, 2.025261f);
+		Contador c21 = new Contador(numContadores++, numZones, 41.316037f, 2.015090f, VariablesGlobales._PERFIL_SOLTERO);
+		Contador c22 = new Contador(numContadores++, numZones, 41.317262f, 2.017386f, VariablesGlobales._PERFIL_SOLTERO);
+		Contador c23 = new Contador(numContadores++, numZones, 41.315699f, 2.025261f, VariablesGlobales._PERFIL_MEDIO_CONSUMO);
 		//System.out.println(c1.toString());
 		c21.work();
 		c22.work();
 		c23.work();
 
-		*/
+		
 		
 		
 		//List<Electrodomestico> electrodomesticos = new ArrayList<Electrodomestico>();

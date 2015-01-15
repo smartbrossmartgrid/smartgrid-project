@@ -34,7 +34,7 @@ public class Contador {
 	private int time = 0; /* from 0 to 23 */
 	private int day = 1; /* from 1 to 365 */
 	private int year = 2015; /* from 2015 */
-	public final static int _THREAD_TIME_INTERVAL = 5000; /* ms */
+	public final static int _THREAD_TIME_INTERVAL = 15000; /* ms */
 	public final static int _DEFAULT_DELAY = 100; /* ms */
 
 	/* variables principales, de socket */
