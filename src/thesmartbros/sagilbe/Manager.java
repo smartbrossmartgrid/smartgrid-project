@@ -54,13 +54,13 @@ public class Manager {
 				String jsonMessageFromContador = SocketTools.getJSONClean(socket);
 				Container c = parseJSON(jsonMessageFromContador);
 				if (c.type == VariablesGlobales._MESSAGE_TYPE_ALERTA_CONSUMO_SUPERADO) {
+					Scanner Console = new Scanner(System.in);
 					String calle = ToolsMap.getLocationFromName(c.latitud, c.longitud);
 					System.out.println("[-------- Contador (id=" + c.contadorid + ") en la calle: " + calle + " --------]");
 					System.out.println("Indique el número del electroméstico que quiera apagar (0 para finalizar)");
 					for (int i = 0; i < c.electrodomesticos.size(); i++) {
 						System.out.println(i + 1 + ") " + c.electrodomesticos.get(i).getNombre() + " ----- consumo: " + c.electrodomesticos.get(i).getConsumo() + " Wh");
 					}
-					Scanner Console = new Scanner(System.in);
 					String pattern = "[0-9]+"; /* Se compara la entrada de
 												 * texto con este patron que
 												 * solo incluye números */
@@ -68,7 +68,8 @@ public class Manager {
 					if (s.matches(pattern)) {
 						int j = Integer.parseInt(s);
 						while (j != 0) {
-							c.electrodomesticos.get(j-1).setEncendido(false);
+							if (j < c.electrodomesticos.size())
+								c.electrodomesticos.get(j - 1).setEncendido(false);
 							s = Console.nextLine();
 							if (s.matches(pattern)) {
 								j = Integer.parseInt(s);
