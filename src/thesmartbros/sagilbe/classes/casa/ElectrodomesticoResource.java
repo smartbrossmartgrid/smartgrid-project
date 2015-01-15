@@ -137,7 +137,7 @@ public class ElectrodomesticoResource {
 		for (int j = 0; j < electrodomesticos.size(); j++) {
 			result += "Nombre: " + electrodomesticos.get(j).getNombre() + "\n";
 			result += "Consumo: " + electrodomesticos.get(j).getConsumo() + "\n";
-			result += "Estado: " + electrodomesticos.get(j).getEstado() + "\n";
+			result += "Estado: " + electrodomesticos.get(j).isEncendido() + "\n";
 			result += "Tiempos: ";
 
 			int i = 0;
@@ -157,5 +157,15 @@ public class ElectrodomesticoResource {
 			consumto_total += electrodomesticos.get(i).getConsumoActual(horaActual);
 		}
 		return consumto_total;
+	}
+
+	public List<ElectrodomesticoJSON> getTurnedOnDevices() {
+		List<ElectrodomesticoJSON> turnedOnDevices = new ArrayList<ElectrodomesticoJSON>();
+		for (int i = 0; i < electrodomesticos.size(); i++)
+			if (electrodomesticos.get(i).isEncendido()) {
+				Electrodomestico e = electrodomesticos.get(i);
+				turnedOnDevices.add(new ElectrodomesticoJSON(e.getNombre(), e.getConsumo(), true));
+			}
+		return turnedOnDevices;
 	}
 }

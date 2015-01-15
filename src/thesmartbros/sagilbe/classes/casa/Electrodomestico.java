@@ -1,15 +1,17 @@
 package thesmartbros.sagilbe.classes.casa;
 
+import java.io.Serializable;
+
 import thesmartbros.sagilbe.tools.PrinterTools;
 
-public class Electrodomestico {
+public class Electrodomestico implements Serializable {
 
 	// nombre del electrodoméstico
 	private String nombre;
 
 	private int coste_energetico;
 	// estado, encendido/apagado
-	private String estado;
+	private boolean encendido;
 
 	// para apagar o encender
 	private boolean forzar_apagado = false;
@@ -33,7 +35,7 @@ public class Electrodomestico {
 	public Electrodomestico(String n, int c, int t1_i, int t1_f, int t2_i, int t2_f) {
 		this.setNombre(n);
 		this.setConsumo(c);
-		this.setEstado("encendido");
+		this.encendido = true;
 		this.setForzar_apagado(false);
 		this.setForzar_encendido(false);
 		this.tiempos[0][0] = t1_i;
@@ -50,6 +52,18 @@ public class Electrodomestico {
 	// para obtener el consumo actual
 	public int getConsumoActual(int hora_actual) {
 		int i = 0;
+		// si está apagado devuelvo consumo 0
+		if (this.forzar_apagado == true) {
+			encendido = false;
+			return 0;
+		}
+
+		// si está encendido devuelvo el consumo sin mirar la hora
+		else if (this.forzar_encendido == true) {
+			encendido = true;
+			return consumo;
+		}
+
 		// mientras el contador sea menor al número máximo de entradas de
 		// horas
 		while (i < max) {
@@ -60,19 +74,11 @@ public class Electrodomestico {
 			// inicial y final
 			if ((this.tiempos[0][i] <= hora_actual) && (hora_actual <= this.tiempos[1][i])) {
 				// devuelves el consumo de ese electrodomestico en particular
+				encendido = true;
 				return consumo;
-			}
+			} else
+				encendido = false;
 			i++;
-		}
-
-		// si está apagado devuelvo consumo 0
-		if (this.forzar_apagado == true) {
-			return 0;
-		}
-
-		// si está encendido devuelvo el consumo sin mirar la hora
-		else if (this.forzar_encendido == true) {
-			return consumo;
 		}
 
 		// devuelve el valor entero del consumo
@@ -81,9 +87,7 @@ public class Electrodomestico {
 
 	// forzar el apagado de un electrodoméstico
 	public boolean forzarapagar() {
-
 		this.forzar_apagado = true;
-
 		PrinterTools.log("Apagando electrodomestico");
 		return forzar_apagado;
 
@@ -92,6 +96,7 @@ public class Electrodomestico {
 	// forzar el encendido de un electrodoméstico
 	public boolean forzarencender() {
 		this.forzar_encendido = true;
+		this.encendido = true;
 		PrinterTools.log("Electrodomestico encendido");
 		return forzar_encendido;
 
@@ -144,19 +149,12 @@ public class Electrodomestico {
 		this.forzar_encendido = forzar_encendido;
 	}
 
-	/**
-	 * @return the estado
-	 */
-	public String getEstado() {
-		return estado;
+	public boolean isEncendido() {
+		return encendido;
 	}
 
-	/**
-	 * @param estado
-	 *            the estado to set
-	 */
-	public void setEstado(String estado) {
-		this.estado = estado;
+	public void setEncendido(boolean encendido) {
+		this.encendido = encendido;
 	}
 
 	/**

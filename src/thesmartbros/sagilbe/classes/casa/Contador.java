@@ -4,9 +4,12 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -37,7 +40,7 @@ public class Contador {
 	private int year = 2015; /* from 2015 */
 
 	/* constants */
-	public final static int _THREAD_TIME_INTERVAL = 15000; /* ms */
+	public final static int _THREAD_TIME_INTERVAL = 5000; /* ms */
 	public final static int _DEFAULT_DELAY = 100; /* ms */
 
 	/* variables principales, de socket */
@@ -184,6 +187,15 @@ public class Contador {
 	private void enviarAlertaConsumo() {
 		int port = VariablesGlobales._DEFAULT_MANAGER_TEST_PORT;
 		String jsonMessage = "{\"messageType\": " + VariablesGlobales._MESSAGE_TYPE_ALERTA_CONSUMO_SUPERADO + ", \"contadorId\": " + this.contadorId + ", \"zonaId\": " + this.zonaId + ", \"latitud\": \"" + Float.toString(this.latitud) + "\", \"longitud\": \"" + Float.toString(this.longitud) + "\"}";
+		try {
+			JSONObject json = new JSONObject(jsonMessage);
+			List<ElectrodomesticoJSON> turnedOnDevices = casa.getTurnedOnDevices();
+			JSONArray array = new JSONArray(turnedOnDevices);
+			json.put("turnedOnDevices", array);
+			jsonMessage = json.toString();
+		} catch (JSONException e) {
+			PrinterTools.errorsLog(e.toString());
+		}
 		if (SocketTools.send(VariablesGlobales._IP_MANAGER, port, jsonMessage)) {
 			PrinterTools.log("[*!*!*!* Contador=" + this.contadorId + " at zoneid=" + this.zonaId + " sends ALERTA CONSUMO SUPERADO; time=" + this.time + " to " + VariablesGlobales._IP_AGREGADOR + ":" + port + "]");
 		} else
