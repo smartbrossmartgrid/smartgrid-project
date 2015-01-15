@@ -33,6 +33,7 @@ public class VariablesGlobales {
 	
 	/* variable de mensajes de management (400) */
 	public final static int _MESSAGE_TYPE_ALERTA_CONSUMO_SUPERADO = 400;
+	public final static int _MESSAGE_TYPE_CLIENTE = 401;
 
 	/* calculo del precio */
 	public final static float _MAX_PRICE = 0.12337f; /* euros/kWh */
