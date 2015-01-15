@@ -13,7 +13,6 @@ import org.json.JSONObject;
 
 import thesmartbros.sagilbe.tools.PrinterTools;
 import thesmartbros.sagilbe.tools.SocketTools;
-import thesmartbros.sagilbe.tools.ToolsMap;
 import thesmartbros.sagilbe.tools.VariablesGlobales;
 
 //clase perteneciente al objeto proveedor

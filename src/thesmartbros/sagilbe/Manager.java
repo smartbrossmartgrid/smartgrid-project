@@ -11,9 +11,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import thesmartbros.sagilbe.classes.casa.ElectrodomesticoJSON;
+import thesmartbros.sagilbe.classes.proveedor.ToolsMap;
 import thesmartbros.sagilbe.tools.PrinterTools;
 import thesmartbros.sagilbe.tools.SocketTools;
-import thesmartbros.sagilbe.tools.ToolsMap;
 import thesmartbros.sagilbe.tools.VariablesGlobales;
 
 public class Manager {

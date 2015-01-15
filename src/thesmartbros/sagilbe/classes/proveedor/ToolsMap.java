@@ -1,8 +1,11 @@
-package thesmartbros.sagilbe.tools;
+package thesmartbros.sagilbe.classes.proveedor;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import thesmartbros.sagilbe.tools.JSONParser;
+import thesmartbros.sagilbe.tools.PrinterTools;
 
 
 public class ToolsMap {
