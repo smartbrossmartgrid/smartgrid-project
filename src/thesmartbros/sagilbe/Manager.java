@@ -82,6 +82,7 @@ public class Manager {
 						System.out.println("Inserte un número");
 					}
 				}
+				System.out.println("ADIOS!");
 			}
 		});
 		t.start();
@@ -143,7 +144,7 @@ public class Manager {
 		} catch (JSONException e) {
 			PrinterTools.errorsLog(e.toString());
 		}
-		if (SocketTools.send(VariablesGlobales._IP_CONTADOR, port, jsonMessage)) {
+		if (SocketTools.sendClean(VariablesGlobales._IP_CONTADOR, port, jsonMessage)) {
 			PrinterTools.log("[Customer sends new config " + VariablesGlobales._IP_CONTADOR + ":" + port + "]");
 		} else
 			PrinterTools.log("ERROR [*!*!*!* Customer sends new config " + VariablesGlobales._IP_CONTADOR + ":" + port + "]");

@@ -18,12 +18,12 @@ public class ProgramaPrincipal {
 		Agregador ag0 = new Agregador(numZones);
 		ag0.start();
 
-		Contador c01 = new Contador(numContadores++, numZones, 41.276808f, 1.966329f, 0.14337f, VariablesGlobales._PERFIL_ALTO_CONSUMO);
-		Contador c02 = new Contador(numContadores++, numZones, 41.278787f, 1.967584f, 0.12337f, VariablesGlobales._PERFIL_ALTO_CONSUMO);
-		Contador c03 = new Contador(numContadores++, numZones, 41.274869f, 1.973668f, 0.10337f, VariablesGlobales._PERFIL_TRABAJO_MANANA);
-		Contador c04 = new Contador(numContadores++, numZones, 41.276808f, 1.966329f, 0.11337f, VariablesGlobales._PERFIL_TRABAJO_MANANA);
-		Contador c05 = new Contador(numContadores++, numZones, 41.265896f, 1.953828f, 0.10000f, VariablesGlobales._PERFIL_SOLTERO);
-		Contador c06 = new Contador(numContadores++, numZones, 41.266977f, 1.967604f, 0.20000f, VariablesGlobales._PERFIL_SOLTERO, 2);
+		Contador c01 = new Contador(numContadores++, numZones, 41.276808f, 1.966329f, 0.01f, VariablesGlobales._PERFIL_ALTO_CONSUMO);
+		Contador c02 = new Contador(numContadores++, numZones, 41.278787f, 1.967584f, 0.42337f, VariablesGlobales._PERFIL_ALTO_CONSUMO);
+		Contador c03 = new Contador(numContadores++, numZones, 41.274869f, 1.973668f, 0.40337f, VariablesGlobales._PERFIL_TRABAJO_MANANA);
+		Contador c04 = new Contador(numContadores++, numZones, 41.276808f, 1.966329f, 0.41337f, VariablesGlobales._PERFIL_TRABAJO_MANANA);
+		Contador c05 = new Contador(numContadores++, numZones, 41.265896f, 1.953828f, 0.40000f, VariablesGlobales._PERFIL_SOLTERO);
+		Contador c06 = new Contador(numContadores++, numZones, 41.266977f, 1.967604f, 0.40000f, VariablesGlobales._PERFIL_SOLTERO, 6);
 		//System.out.println(c1.toString());
 		c01.work();
 		c02.work();

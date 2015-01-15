@@ -29,6 +29,8 @@ public class Contador {
 	private int contadorId = 0;
 	private int zonaId = 0;
 	private float precio_maximo_kwh = -1.0f;
+	private boolean mensajeManager = false;
+	private int consumoActual = 0;
 
 	/* map */
 	private float latitud;
@@ -141,7 +143,7 @@ public class Contador {
 					Float preciokWh = (Float) c.objeto;
 					precio_actual = preciokWh.floatValue();
 					PrinterTools.log("[contador" + contadorId + " stores new price: " + precio_actual + " EUR/kWh]");
-					if (precio_actual > precio_maximo_kwh && precio_maximo_kwh > 0.0f)
+					if (precio_actual*(float)consumoActual/1000.0 > precio_maximo_kwh && precio_maximo_kwh > 0.0f && !mensajeManager)
 						enviarAlertaConsumo();
 				} else if (c.type == VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR) {
 					enviarConsumoInstantaneo(time); //envio lo que no habia podido enviar por no tener pallier
@@ -150,6 +152,7 @@ public class Contador {
 					for (ElectrodomesticoJSON e : mm.electrodomesticos)
 						if (!e.isEncendido())
 							casa.apagarElectrodomestico(e.getNombre());
+					mensajeManager = false;
 				}
 			}
 		});
@@ -158,6 +161,7 @@ public class Contador {
 
 	private void enviarConsumoInstantaneo(int tiempo) {
 		int consumoInstantaneo = casa.getConsumoTotal(tiempo);
+		consumoActual = consumoInstantaneo;
 		PrinterTools.contadorLog(consumoInstantaneo + " Wh @ contador" + contadorId + " t=" + tiempo + " h");
 		/* cargar precio */
 		precio_acumulado += (float) consumoInstantaneo * precio_actual * VariablesGlobales._RATIO_TIME / 1000; // kWh
@@ -201,10 +205,11 @@ public class Contador {
 		} catch (JSONException e) {
 			PrinterTools.errorsLog(e.toString());
 		}
-		if (SocketTools.send(VariablesGlobales._IP_MANAGER, port, jsonMessage)) {
+		if (SocketTools.sendClean(VariablesGlobales._IP_MANAGER, port, jsonMessage)) {
 			PrinterTools.log("[*!*!*!* Contador=" + this.contadorId + " at zoneid=" + this.zonaId + " sends ALERTA CONSUMO SUPERADO; time=" + this.time + " to " + VariablesGlobales._IP_AGREGADOR + ":" + port + "]");
 		} else
 			PrinterTools.log("ERROR [*!*!*!* Contador=" + this.contadorId + " at zoneid=" + this.zonaId + " asks for Paillier; time=" + this.time + " to " + VariablesGlobales._IP_AGREGADOR + ":" + port + "]");
+		mensajeManager = true;
 	}
 
 	private Container parseJSON(String jsonMessage) {
@@ -225,8 +230,6 @@ public class Contador {
 				ManagerMessage mm = new ManagerMessage();
 				List<ElectrodomesticoJSON> turnedOnDevices = new ArrayList<ElectrodomesticoJSON>();
 				mm.contadorid = jsonObject.getInt("contadorId");
-				mm.longitud = Float.parseFloat(jsonObject.getString("longitud"));
-				mm.latitud = Float.parseFloat(jsonObject.getString("latitud"));
 				JSONArray array = jsonObject.getJSONArray("turnedOnDevices");
 				for (int i = 0; i < array.length(); i++) {
 					JSONObject jsonArrayObject = array.getJSONObject(i);
@@ -259,8 +262,6 @@ public class Contador {
 	private class ManagerMessage {
 		public int type = 0;
 		public int contadorid = 0;
-		public float longitud = 0;
-		public float latitud = 0;
 		public List<ElectrodomesticoJSON> electrodomesticos = new ArrayList<ElectrodomesticoJSON>();
 	}
 }

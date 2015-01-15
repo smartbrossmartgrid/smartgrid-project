@@ -136,7 +136,7 @@ public class SymmetricEncrypt {
 		} catch (BadPaddingException badPadding) {
 			PrinterTools.errorsLog(" Bad Padding " + badPadding);
 		} catch (IllegalBlockSizeException illegalBlockSize) {
-			PrinterTools.errorsLog(" Illegal Block Size " + illegalBlockSize);
+			//PrinterTools.errorsLog(" Illegal Block Size " + illegalBlockSize);
 		} catch (InvalidAlgorithmParameterException invalidParam) {
 			PrinterTools.errorsLog(" Invalid Parameter " + invalidParam);
 		}
