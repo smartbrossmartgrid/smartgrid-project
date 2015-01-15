@@ -68,7 +68,7 @@ public class Manager {
 					if (s.matches(pattern)) {
 						int j = Integer.parseInt(s);
 						while (j != 0) {
-							c.electrodomesticos.get(j - 1).setEncendido(false);
+							c.electrodomesticos.get(j-1).setEncendido(false);
 							s = Console.nextLine();
 							if (s.matches(pattern)) {
 								j = Integer.parseInt(s);
