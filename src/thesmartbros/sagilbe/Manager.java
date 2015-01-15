@@ -51,7 +51,7 @@ public class Manager {
 					String calle = getStreet(c.latitud, c.longitud);
 					System.out.println("[-------- Contador: " + c.contadorid + "en la calle: " + calle + "--------]");
 					for (int i = 0; i < c.electrodomesticos.size(); i++) {
-						System.out.println(i + 1 + ") " + c.electrodomesticos.get(i).getNombre() + " ----- " + c.electrodomesticos.get(i).getConsumo());
+						System.out.println((i+1) + ") " + c.electrodomesticos.get(i).getNombre() + " ----- " + c.electrodomesticos.get(i).getConsumo());
 					}
 					Scanner Console = new Scanner(System.in);
 					System.out.print("Indique el número del electroméstico que quiera apagar (0 para finalizar)");
@@ -62,7 +62,7 @@ public class Manager {
 					if (s.matches(pattern)) {
 						int j = Integer.parseInt(s);
 						while (j != 0) {
-							c.electrodomesticos.get(j - 1).setEncendido(false);
+							c.electrodomesticos.get(j-1).setEncendido(false);
 							s = Console.nextLine();
 							if (s.matches(pattern)) {
 								j = Integer.parseInt(s);
