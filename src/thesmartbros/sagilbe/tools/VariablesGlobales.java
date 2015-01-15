@@ -53,4 +53,5 @@ public class VariablesGlobales {
 	
 	/* variables de proveedor */
 	public final static int _TIEMPO_ESPERA_PARA_ENVIAR_TECNICO = 6; /* en horas (ejemplo: = 6h), puede que sea mas tiempo porque no hay un reajuste */
+	public final static int _TIEMPO_ESPERA_RECUPERAR_TECNICO = 2;
 }
