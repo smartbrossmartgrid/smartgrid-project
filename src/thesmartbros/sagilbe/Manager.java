@@ -25,11 +25,9 @@ public class Manager {
 	public void start() {
 		final boolean listening = true;
 		try {
-			serverSocket = new ServerSocket(
-					VariablesGlobales._DEFAULT_MANAGER_TEST_PORT);
+			serverSocket = new ServerSocket(VariablesGlobales._DEFAULT_MANAGER_TEST_PORT);
 		} catch (IOException e) {
-			PrinterTools.errorsLog("Could not listen on port: "
-					+ VariablesGlobales._DEFAULT_MANAGER_TEST_PORT);
+			PrinterTools.errorsLog("Could not listen on port: " + VariablesGlobales._DEFAULT_MANAGER_TEST_PORT);
 			System.exit(-1);
 		}
 		Thread t = new Thread(new Runnable() {
@@ -40,51 +38,42 @@ public class Manager {
 					serverSocket.close();
 					serverSocket = null;
 				} catch (Exception e) {
-					e.printStackTrace();
+					PrinterTools.errorsLog(e.toString());
 				}
 			}
 
 			private void startManagerFunctions(Socket socket) {
 				System.out.println("Bienvenido a SAGILBE");
-				PrinterTools.socketLog("Client connected to Manager... OK ("
-						+ socket + ")");
-				String jsonMessageFromContador = SocketTools.getJSON(socket); 
-				Container c = parseJSON(jsonMessageFromContador); 
+				PrinterTools.socketLog("Client connected to Manager... OK (" + socket + ")");
+				String jsonMessageFromContador = SocketTools.getJSON(socket);
+				Container c = parseJSON(jsonMessageFromContador);
 				if (c.type == VariablesGlobales._MESSAGE_TYPE_ALERTA_CONSUMO_SUPERADO) {
 					String calle = getStreet(c.latitud, c.longitud);
-					System.out.println("[-------- Contador: " + c.contadorid
-							+ "en la calle: " + calle + "--------]");
+					System.out.println("[-------- Contador: " + c.contadorid + "en la calle: " + calle + "--------]");
 					for (int i = 0; i < c.electrodomesticos.size(); i++) {
-						System.out.println(i + 1 + ") "
-								+ c.electrodomesticos.get(i).getNombre()
-								+ " ----- "
-								+ c.electrodomesticos.get(i).getConsumo());
+						System.out.println(i + 1 + ") " + c.electrodomesticos.get(i).getNombre() + " ----- " + c.electrodomesticos.get(i).getConsumo());
 					}
 					Scanner Console = new Scanner(System.in);
-					System.out
-							.print("Indique el número del electroméstico que quiera apagar (0 para finalizar)");
-					String pattern = "[0-9]+"; /*Se compara la entrada de texto con este patron que solo incluye números*/
+					System.out.print("Indique el número del electroméstico que quiera apagar (0 para finalizar)");
+					String pattern = "[0-9]+"; /* Se compara la entrada de
+												 * texto con este patron que
+												 * solo incluye números */
 					String s = Console.nextLine();
 					if (s.matches(pattern)) {
 						int j = Integer.parseInt(s);
-
 						while (j != 0) {
 							c.electrodomesticos.get(j - 1).setEncendido(false);
 							s = Console.nextLine();
 							if (s.matches(pattern)) {
 								j = Integer.parseInt(s);
-							}
-							else {
+							} else {
 								System.out.println("Inserte un número");
-								
 							}
 						}
-						
 						if (j == 0)
 							enviar(c.electrodomesticos, c.contadorid);
 					} else {
 						System.out.println("Inserte un número");
-
 					}
 				}
 			}
@@ -113,12 +102,10 @@ public class Manager {
 					int consumo = jsonArrayObject.getInt("consumo");
 					boolean encendido = jsonArrayObject.getBoolean("encendido");
 					String nombre = jsonArrayObject.getString("nombre");
-					ElectrodomesticoJSON ejson = new ElectrodomesticoJSON(
-							nombre, consumo, encendido);
+					ElectrodomesticoJSON ejson = new ElectrodomesticoJSON(nombre, consumo, encendido);
 					turnedOnDevices.add(ejson);
 				}
 			}
-
 		} catch (NumberFormatException | JSONException e) {
 			e.printStackTrace();
 		}
@@ -127,7 +114,6 @@ public class Manager {
 		c.longitud = longitud;
 		c.latitud = latitud;
 		c.electrodomesticos = turnedOnDevices;
-
 		return c;
 	}
 
@@ -137,12 +123,12 @@ public class Manager {
 		public float longitud = 0;
 		public float latitud = 0;
 		public List<ElectrodomesticoJSON> electrodomesticos = new ArrayList<ElectrodomesticoJSON>();
-
 	}
 
 	private String getStreet(float latitud, float longitud) {
 		return ToolsMap.getLocationFromName(latitud, longitud);
 	}
+
 	private void enviar(List<ElectrodomesticoJSON> electrodomesticos, int contadorid) {
 		int port = VariablesGlobales._DEFAULT_CONTADOR_PORT + contadorid;
 		String jsonMessage = "{\"messageType\": " + VariablesGlobales._MESSAGE_TYPE_CLIENTE + ", \"contadorId\": " + contadorid + "\"}";
