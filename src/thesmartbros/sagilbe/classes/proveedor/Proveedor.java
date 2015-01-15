@@ -11,7 +11,6 @@ import java.util.TimerTask;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import thesmartbros.sagilbe.tools.Paillier;
 import thesmartbros.sagilbe.tools.PrinterTools;
 import thesmartbros.sagilbe.tools.SocketTools;
 import thesmartbros.sagilbe.tools.ToolsMap;

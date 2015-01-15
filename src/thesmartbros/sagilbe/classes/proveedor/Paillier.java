@@ -1,4 +1,4 @@
-package thesmartbros.sagilbe.tools;
+package thesmartbros.sagilbe.classes.proveedor;
 
 /**
  * This program is free software: you can redistribute it and/or modify it 
@@ -17,6 +17,8 @@ package thesmartbros.sagilbe.tools;
 
 import java.math.*;
 import java.util.*;
+
+import thesmartbros.sagilbe.tools.PrinterTools;
 
 /**
  * http://www.csee.umbc.edu/~kunliu1/research/Paillier.java
