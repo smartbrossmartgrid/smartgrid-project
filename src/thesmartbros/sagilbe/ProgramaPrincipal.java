@@ -33,7 +33,7 @@ public class ProgramaPrincipal {
 		c04.work();
 		c05.work();
 		c06.work();
-
+/*
 		numZones++;
 
 		// Ciudad de Gava
@@ -69,7 +69,7 @@ public class ProgramaPrincipal {
 		//InputStreamReader isr = new InputStreamReader(System.in);
 		//BufferedReader br = new BufferedReader (isr);
 
-		/*// defino una serie de electrodomesticos Electrodomestico elec = new
+		// defino una serie de electrodomesticos Electrodomestico elec = new
 		 * Electrodomestico(); elec.setNombre("Tele"); elec.setConsumo(120);
 		 * elec.setEstado("encendido"); elec.setForzar_apagado(false);
 		 * elec.setForzar_encendido(false);

@@ -179,7 +179,7 @@ public class Proveedor {
 		class Contador extends TimerTask {
 			public void run() {
 				segundos++;
-				if (segundos == 60) {
+				if (segundos == thesmartbros.sagilbe.classes.casa.Contador._THREAD_TIME_INTERVAL*2) {
 					tecnicos++;
 					timer.cancel();
 				}

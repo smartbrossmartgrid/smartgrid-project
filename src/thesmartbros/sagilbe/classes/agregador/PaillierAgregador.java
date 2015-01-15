@@ -42,11 +42,12 @@ class PaillierAgregador {
 			return em[0].mod(nsquare);
 		else if (em.length == 2)
 			return em[0].multiply(em[1]).mod(nsquare);
-		else {
+		else if (em.length > 2) {
 			BigInteger result = em[0].multiply(em[1]).mod(nsquare);
 			for (int i = 2; i < em.length; i++)
-				result = result.multiply(em[i]).mod(nsquare);
+				if (em[i] != null) result = result.multiply(em[i]).mod(nsquare);
 			return result;
 		}
+		return BigInteger.ZERO;
 	}
 }
