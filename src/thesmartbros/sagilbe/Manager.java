@@ -23,7 +23,7 @@ public class Manager {
 	private static ServerSocket serverSocket = null;
 
 	public static void main(String args[]) {
-		System.out.println(" WELCOME!           ");
+		System.out.println(" WELCOME to MANAGER!           ");
 		System.out.println("Waiting for connections...");
 		start();
 	}

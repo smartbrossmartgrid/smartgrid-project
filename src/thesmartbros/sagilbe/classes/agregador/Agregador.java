@@ -233,7 +233,7 @@ public class Agregador {
 			int contadorId = listaCasas.get(i).getIdcasa();
 			int port = VariablesGlobales._DEFAULT_CONTADOR_PORT + contadorId;
 			if (SocketTools.send(VariablesGlobales._IP_CONTADOR, port, jsonMessage))
-				PrinterTools.log("[Agregador sends data to " + VariablesGlobales._IP_CONTADOR + ":" + port + ": price is now " + Float.toString(preciokWh) + "]");
+				PrinterTools.log("[ZonaAgregador= " + this.zona + " sends data to " + VariablesGlobales._IP_CONTADOR + ":" + port + ": price is now " + Float.toString(preciokWh) + "]");
 			else
 				PrinterTools.log("ERROR [Agregador sends data to " + VariablesGlobales._IP_CONTADOR + ":" + port + ": price is now " + Float.toString(preciokWh) + "]");
 		}

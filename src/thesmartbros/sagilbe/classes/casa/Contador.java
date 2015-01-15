@@ -260,7 +260,6 @@ public class Contador {
 	}
 
 	private class ManagerMessage {
-		public int type = 0;
 		public int contadorid = 0;
 		public List<ElectrodomesticoJSON> electrodomesticos = new ArrayList<ElectrodomesticoJSON>();
 	}
