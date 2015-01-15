@@ -3,6 +3,7 @@ package thesmartbros.sagilbe.classes.casa;
 import java.util.ArrayList;
 import java.util.List;
 
+import thesmartbros.sagilbe.tools.PrinterTools;
 import thesmartbros.sagilbe.tools.VariablesGlobales;
 
 public class ElectrodomesticoResource {
@@ -167,5 +168,14 @@ public class ElectrodomesticoResource {
 				turnedOnDevices.add(new ElectrodomesticoJSON(e.getNombre(), e.getConsumo(), true));
 			}
 		return turnedOnDevices;
+	}
+
+	public void apagarElectrodomestico(String nombre) {
+		for (int i = 0; i < electrodomesticos.size(); i++) {
+			if (electrodomesticos.get(i).getNombre().equals(nombre)) {
+				electrodomesticos.get(i).setForzar_apagado(true);
+				PrinterTools.log("[ !*!*! Se ha apagado el electrodomestico: " + nombre + "]");
+			}
+		}
 	}
 }

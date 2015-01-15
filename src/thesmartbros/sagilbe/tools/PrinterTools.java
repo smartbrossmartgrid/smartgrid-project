@@ -10,7 +10,7 @@ public class PrinterTools {
 	}
 
 	public static void log(String log) {
-		//System.out.println(log);
+		System.out.println(log);
 	}
 
 	public static void socketLog(String socketLog) {
@@ -22,6 +22,6 @@ public class PrinterTools {
 	}
 	
 	public static void errorsLog(String log) {
-		//System.out.println(log);
+		System.out.println(log);
 	}
 }

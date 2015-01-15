@@ -1,10 +1,8 @@
 package thesmartbros.sagilbe.classes.casa;
 
-import java.io.Serializable;
-
 import thesmartbros.sagilbe.tools.PrinterTools;
 
-public class Electrodomestico implements Serializable {
+public class Electrodomestico {
 
 	// nombre del electrodoméstico
 	private String nombre;
@@ -75,9 +73,12 @@ public class Electrodomestico implements Serializable {
 			if ((this.tiempos[0][i] <= hora_actual) && (hora_actual <= this.tiempos[1][i])) {
 				// devuelves el consumo de ese electrodomestico en particular
 				encendido = true;
+				forzar_encendido = false;
 				return consumo;
-			} else
+			} else {
 				encendido = false;
+				forzar_apagado = false;
+			}
 			i++;
 		}
 

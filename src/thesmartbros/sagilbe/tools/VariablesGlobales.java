@@ -12,7 +12,7 @@ public class VariablesGlobales {
 	public final static int _DEFAULT_PROVIDER_PORT = 50000;
 	public final static int _DEFAULT_AGREGADOR_PORT = 40000;
 	public final static int _DEFAULT_CONTADOR_PORT = 30000;
-	public final static int _DEFAULT_MANAGER_TEST_PORT = 20000;
+	public final static int _DEFAULT_MANAGER_TEST_PORT = 60000;
 
 	public final static int _MAX_TIME_TO_NOT_RESPOND = 3; /* times */
 
@@ -52,5 +52,5 @@ public class VariablesGlobales {
 	public final static int _PERFIL_SOLTERO = 7;
 	
 	/* variables de proveedor */
-	public final static int _TIEMPO_ESPERA_PARA_ENVIAR_TECNICO = 6; /* en horas (ejemplo: = 6h), puede que sea mas tiempo porque no hay un reajuste */
+	public final static int _TIEMPO_ESPERA_PARA_ENVIAR_TECNICO = 1; /* en horas (ejemplo: = 6h), puede que sea mas tiempo porque no hay un reajuste */
 }

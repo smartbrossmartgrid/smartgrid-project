@@ -1,7 +1,5 @@
 package thesmartbros.sagilbe;
 
-import java.io.IOException;
-
 import thesmartbros.sagilbe.classes.agregador.Agregador;
 import thesmartbros.sagilbe.classes.casa.Contador;
 import thesmartbros.sagilbe.classes.proveedor.Proveedor;
@@ -12,7 +10,7 @@ public class ProgramaPrincipal {
 	private static int numContadores = 0;
 	private static int numZones = 0;
 
-	public static void main(String args[]) throws NumberFormatException, IOException {
+	public static void main(String args[]) {
 		Proveedor provider = new Proveedor();
 		provider.start();
 
@@ -25,7 +23,7 @@ public class ProgramaPrincipal {
 		Contador c03 = new Contador(numContadores++, numZones, 41.274869f, 1.973668f, 0.10337f, VariablesGlobales._PERFIL_TRABAJO_MANANA);
 		Contador c04 = new Contador(numContadores++, numZones, 41.276808f, 1.966329f, 0.11337f, VariablesGlobales._PERFIL_TRABAJO_MANANA);
 		Contador c05 = new Contador(numContadores++, numZones, 41.265896f, 1.953828f, 0.10000f, VariablesGlobales._PERFIL_SOLTERO);
-		Contador c06 = new Contador(numContadores++, numZones, 41.266977f, 1.967604f, 0.20000f, VariablesGlobales._PERFIL_SOLTERO, 3);
+		Contador c06 = new Contador(numContadores++, numZones, 41.266977f, 1.967604f, 0.20000f, VariablesGlobales._PERFIL_SOLTERO, 2);
 		//System.out.println(c1.toString());
 		c01.work();
 		c02.work();

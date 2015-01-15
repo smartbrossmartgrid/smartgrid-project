@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -144,6 +145,11 @@ public class Contador {
 						enviarAlertaConsumo();
 				} else if (c.type == VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR) {
 					enviarConsumoInstantaneo(time); //envio lo que no habia podido enviar por no tener pallier
+				} else if (c.type == VariablesGlobales._MESSAGE_TYPE_CLIENTE) {
+					ManagerMessage mm = (ManagerMessage) c.objeto;
+					for (ElectrodomesticoJSON e : mm.electrodomesticos)
+						if (!e.isEncendido())
+							casa.apagarElectrodomestico(e.getNombre());
 				}
 			}
 		});
@@ -215,6 +221,23 @@ public class Contador {
 			} else if (type == VariablesGlobales._MESSAGE_TYPE_REQUEST_PAILLIER_PARAMETERS_AGREGADOR) {
 				paillierContador.g = new BigInteger(jsonObject.getString("g"));
 				paillierContador.n = new BigInteger(jsonObject.getString("n"));
+			} else if (type == VariablesGlobales._MESSAGE_TYPE_CLIENTE) {
+				ManagerMessage mm = new ManagerMessage();
+				List<ElectrodomesticoJSON> turnedOnDevices = new ArrayList<ElectrodomesticoJSON>();
+				mm.contadorid = jsonObject.getInt("contadorId");
+				mm.longitud = Float.parseFloat(jsonObject.getString("longitud"));
+				mm.latitud = Float.parseFloat(jsonObject.getString("latitud"));
+				JSONArray array = jsonObject.getJSONArray("turnedOnDevices");
+				for (int i = 0; i < array.length(); i++) {
+					JSONObject jsonArrayObject = array.getJSONObject(i);
+					int consumo = jsonArrayObject.getInt("consumo");
+					boolean encendido = jsonArrayObject.getBoolean("encendido");
+					String nombre = jsonArrayObject.getString("nombre");
+					ElectrodomesticoJSON ejson = new ElectrodomesticoJSON(nombre, consumo, encendido);
+					turnedOnDevices.add(ejson);
+				}
+				mm.electrodomesticos = turnedOnDevices;
+				objeto = mm;
 			}
 		} catch (NumberFormatException | JSONException e) {
 			e.printStackTrace();
@@ -231,5 +254,13 @@ public class Contador {
 	private class Container {
 		public int type = 0;
 		public Object objeto = null;
+	}
+
+	private class ManagerMessage {
+		public int type = 0;
+		public int contadorid = 0;
+		public float longitud = 0;
+		public float latitud = 0;
+		public List<ElectrodomesticoJSON> electrodomesticos = new ArrayList<ElectrodomesticoJSON>();
 	}
 }

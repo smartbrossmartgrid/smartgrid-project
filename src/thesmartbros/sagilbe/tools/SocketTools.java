@@ -22,16 +22,21 @@ public class SocketTools {
 				return false;
 			outstream = socket.getOutputStream();
 			out = new PrintWriter(outstream);
-			message = SignatureSAGILBE.getInstance().GenSig(message);
-			PrinterTools.printJSON(message);
-			message = SymmetricEncrypt.getInstance().encryptData(message);
-			PrinterTools.printEJSON(message);
+			if (VariablesGlobales._DEFAULT_MANAGER_TEST_PORT != port) {
+				message = SignatureSAGILBE.getInstance().GenSig(message);
+				PrinterTools.printJSON(message);
+				System.out.println(message);
+				message = SymmetricEncrypt.getInstance().encryptData(message);
+				PrinterTools.printEJSON(message);
+				System.out.println(message);
+			} else
+				PrinterTools.printJSON(message);
 			out.print(message);
 			return true;
 		} catch (UnknownHostException e) {
-			PrinterTools.errorsLog("ERROR: "+e.getMessage());
+			PrinterTools.errorsLog("ERROR: " + e.getMessage());
 		} catch (IOException e) {
-			PrinterTools.errorsLog("ERROR: "+e.getMessage());
+			PrinterTools.errorsLog("ERROR: " + e.getMessage());
 		} finally {
 			try {
 				out.close();
@@ -39,9 +44,9 @@ public class SocketTools {
 				socket.close();
 				PrinterTools.socketLog(socket + " has been closed");
 			} catch (IOException e) {
-				PrinterTools.errorsLog("ERROR: "+e.getMessage());
+				PrinterTools.errorsLog("ERROR: " + e.getMessage());
 			} catch (Exception e) {
-				PrinterTools.errorsLog("ERROR: "+e.getMessage());
+				PrinterTools.errorsLog("ERROR: " + e.getMessage());
 			}
 		}
 		return false;
@@ -54,9 +59,9 @@ public class SocketTools {
 			sendSynchronized(socket, message);
 			return socket;
 		} catch (UnknownHostException e) {
-			PrinterTools.errorsLog("ERROR: "+e.getMessage());
+			PrinterTools.errorsLog("ERROR: " + e.getMessage());
 		} catch (IOException e) {
-			PrinterTools.errorsLog("ERROR: "+e.getMessage());
+			PrinterTools.errorsLog("ERROR: " + e.getMessage());
 		}
 		return null;
 	}
@@ -76,18 +81,18 @@ public class SocketTools {
 				PrinterTools.socketLog(socket + " has closed");
 			return true;
 		} catch (UnknownHostException e) {
-			PrinterTools.errorsLog("ERROR: "+e.getMessage());
+			PrinterTools.errorsLog("ERROR: " + e.getMessage());
 		} catch (IOException e) {
-			PrinterTools.errorsLog("ERROR: "+e.getMessage());
+			PrinterTools.errorsLog("ERROR: " + e.getMessage());
 		} finally {
 			try {
 				out.close();
 				outstream.close();
 				PrinterTools.socketLog(socket + " has been closed");
 			} catch (IOException e) {
-				PrinterTools.errorsLog("ERROR: "+e.getMessage());
+				PrinterTools.errorsLog("ERROR: " + e.getMessage());
 			} catch (Exception e) {
-				PrinterTools.errorsLog("ERROR: "+e.getMessage());
+				PrinterTools.errorsLog("ERROR: " + e.getMessage());
 			}
 		}
 		return false;
@@ -110,9 +115,28 @@ public class SocketTools {
 			SignatureSAGILBE.getInstance().VerSig(message, signature);
 			return message;
 		} catch (IOException e) {
-			PrinterTools.errorsLog("ERROR: "+e.getMessage());
+			PrinterTools.errorsLog("ERROR: " + e.getMessage());
 		} catch (Exception e) {
-			PrinterTools.errorsLog("ERROR: "+e.getMessage());
+			PrinterTools.errorsLog("ERROR: " + e.getMessage());
+		}
+		return sb.toString();
+	}
+	
+	public static String getJSONClean(Socket socket) {
+		StringBuilder sb = new StringBuilder();
+		String line;
+		try {
+			if (socket.isClosed())
+				return "";
+			BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			while ((line = reader.readLine()) != null)
+				sb.append(line).append("\n");
+			//socket.close();
+			return sb.toString();
+		} catch (IOException e) {
+			PrinterTools.errorsLog("ERROR: " + e.getMessage());
+		} catch (Exception e) {
+			PrinterTools.errorsLog("ERROR: " + e.getMessage());
 		}
 		return sb.toString();
 	}
@@ -125,7 +149,7 @@ public class SocketTools {
 				PrinterTools.socketLog(socket + " has been closed");
 			}
 		} catch (IOException e) {
-			PrinterTools.errorsLog("ERROR: "+e.getMessage());
+			PrinterTools.errorsLog("ERROR: " + e.getMessage());
 		}
 		return line;
 	}

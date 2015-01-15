@@ -20,9 +20,15 @@ import thesmartbros.sagilbe.tools.VariablesGlobales;
 public class Manager {
 
 	/* variables principales, de socket */
-	private ServerSocket serverSocket = null;
+	private static ServerSocket serverSocket = null;
 
-	public void start() {
+	public static void main(String args[]) {
+		System.out.println(" WELCOME!           ");
+		System.out.println("Waiting for connections...");
+		start();
+	}
+
+	public static void start() {
 		final boolean listening = true;
 		try {
 			serverSocket = new ServerSocket(VariablesGlobales._DEFAULT_MANAGER_TEST_PORT);
@@ -45,16 +51,16 @@ public class Manager {
 			private void startManagerFunctions(Socket socket) {
 				System.out.println("Bienvenido a SAGILBE");
 				PrinterTools.socketLog("Client connected to Manager... OK (" + socket + ")");
-				String jsonMessageFromContador = SocketTools.getJSON(socket);
+				String jsonMessageFromContador = SocketTools.getJSONClean(socket);
 				Container c = parseJSON(jsonMessageFromContador);
 				if (c.type == VariablesGlobales._MESSAGE_TYPE_ALERTA_CONSUMO_SUPERADO) {
-					String calle = getStreet(c.latitud, c.longitud);
-					System.out.println("[-------- Contador: " + c.contadorid + "en la calle: " + calle + "--------]");
+					String calle = ToolsMap.getLocationFromName(c.latitud, c.longitud);
+					System.out.println("[-------- Contador (id=" + c.contadorid + ") en la calle: " + calle + " --------]");
+					System.out.println("Indique el número del electroméstico que quiera apagar (0 para finalizar)");
 					for (int i = 0; i < c.electrodomesticos.size(); i++) {
-						System.out.println(i + 1 + ") " + c.electrodomesticos.get(i).getNombre() + " ----- " + c.electrodomesticos.get(i).getConsumo());
+						System.out.println(i + 1 + ") " + c.electrodomesticos.get(i).getNombre() + " ----- consumo: " + c.electrodomesticos.get(i).getConsumo() + " Wh");
 					}
 					Scanner Console = new Scanner(System.in);
-					System.out.print("Indique el número del electroméstico que quiera apagar (0 para finalizar)");
 					String pattern = "[0-9]+"; /* Se compara la entrada de
 												 * texto con este patron que
 												 * solo incluye números */
@@ -81,7 +87,7 @@ public class Manager {
 		t.start();
 	}
 
-	private Container parseJSON(String jsonMessage) {
+	private static Container parseJSON(String jsonMessage) {
 		Container c = new Container();
 		float longitud = 0;
 		float latitud = 0;
@@ -117,7 +123,7 @@ public class Manager {
 		return c;
 	}
 
-	private class Container {
+	private static class Container {
 		public int type = 0;
 		public int contadorid = 0;
 		public float longitud = 0;
@@ -125,13 +131,9 @@ public class Manager {
 		public List<ElectrodomesticoJSON> electrodomesticos = new ArrayList<ElectrodomesticoJSON>();
 	}
 
-	private String getStreet(float latitud, float longitud) {
-		return ToolsMap.getLocationFromName(latitud, longitud);
-	}
-
-	private void enviar(List<ElectrodomesticoJSON> electrodomesticos, int contadorid) {
+	private static void enviar(List<ElectrodomesticoJSON> electrodomesticos, int contadorid) {
 		int port = VariablesGlobales._DEFAULT_CONTADOR_PORT + contadorid;
-		String jsonMessage = "{\"messageType\": " + VariablesGlobales._MESSAGE_TYPE_CLIENTE + ", \"contadorId\": " + contadorid + "\"}";
+		String jsonMessage = "{\"messageType\": " + VariablesGlobales._MESSAGE_TYPE_CLIENTE + ", \"contadorId\": " + contadorid + "}";
 		try {
 			JSONObject json = new JSONObject(jsonMessage);
 			List<ElectrodomesticoJSON> turnedOnDevices = electrodomesticos;
